@@ -1,9 +1,9 @@
 resources:
-  - name: MyGitHub
+  - name: MyBB
     type: GitRepo
     configuration:
-      path: jfrog/jfrog-pipelines-extensions-sample/pipeline    # <-- Change to your repository path
-      gitProvider: tw_github                                    # <-- Change to your GitHub integration
+      path: taylorl/pipelines-extensions/pipeline
+      gitProvider: my_bb
       
   - name: MyTest
     type: tutorials/test
@@ -30,4 +30,4 @@ pipelines:
            - "This is another string"
           inputResources:
            - name: MyTest
-           - name: MyGitHub
+           - name: MyBB
