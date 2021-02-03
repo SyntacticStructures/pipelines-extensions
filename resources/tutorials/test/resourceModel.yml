@@ -7,4 +7,3 @@ configuration:
     type: Int
   flag:
     type: Boolean
-    
