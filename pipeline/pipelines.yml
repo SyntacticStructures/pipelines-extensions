@@ -4,7 +4,7 @@ resources:
     configuration:
       path: ~TAYLORL/pipelines-extensions
       gitProvider: myBB
-      
+
   - name: MyTest
     type: tutorials/test
     configuration:
@@ -18,12 +18,12 @@ resources:
       sourceArtifactory: artifactoryIntegration
       pattern: "example-repo-local/myApp.sh"
 
-pipelines: 
+pipelines:
   - name: MyHealthCheck
     configuration:
       environmentVariables:
         readOnly:
-          my_env_var: "hello" 
+          my_env_var: "hello"
     steps:
       - name: Health_Check_Step
         type: tutorials/HealthCheck
@@ -31,19 +31,19 @@ pipelines:
           healthCheckUrl: "https://jfrog.com"
           notifyOnSuccess: false
           notifyOnFailure: false
-          stuff: 
-           - "This is a string"
-           - "This is another string"
+          stuff:
+            - "This is a string"
+            - "This is another string"
           inputResources:
-           - name: MyTest
-           - name: MyBB
+            - name: MyTest
+            - name: MyBB
   - name: DeployToVM
-      steps:
-        - name: myDeploy
-          type: tutorials/DeployApplication
-          configuration:
-            environmentVariables:
-              DEPLOY_TARGETS: "192.168.50.19"
-              SSHKEY_INTEGRATION_NAME: "bpu18"
-            inputResources:
-              - name: myApp
+    steps:
+      - name: myDeploy
+        type: tutorials/DeployApplication
+        configuration:
+          environmentVariables:
+            DEPLOY_TARGETS: "192.168.50.19"
+            SSHKEY_INTEGRATION_NAME: "bpu18"
+          inputResources:
+            - name: myApp
