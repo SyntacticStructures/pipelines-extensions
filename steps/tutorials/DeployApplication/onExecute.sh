@@ -2,7 +2,7 @@ deployApplication() {
   echo "finding resource..."
   ls $res_myApp_resourcePath
   cat $res_myApp_resourcePath/myApp.sh
-  cat $res_myVM_publicKey
+  echo $res_myVM_publicKey
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
