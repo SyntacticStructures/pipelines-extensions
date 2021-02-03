@@ -3,6 +3,8 @@ deployApplication() {
   ls $res_myApp_resourcePath
   cat $res_myApp_resourcePath/myApp.sh
   echo $res_myVM_publicKey
+  echo $res_myVM_name
+  echo $res_myVM_targets
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
