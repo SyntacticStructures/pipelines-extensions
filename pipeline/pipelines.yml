@@ -18,6 +18,13 @@ resources:
       sourceArtifactory: artifactoryIntegration
       pattern: "example-repo-local/myApp.sh"
 
+  - name: myVM
+    type: VmCluster
+    configuration:
+      sshKey: u16ssh
+      targets:
+        - 192.168.50.19
+
 pipelines:
   - name: MyHealthCheck
     configuration:
@@ -46,4 +53,5 @@ pipelines:
             DEPLOY_TARGETS: "192.168.50.19"
             SSHKEY_INTEGRATION_NAME: "bpu18"
           inputResources:
+            - name: myVM
             - name: myApp
