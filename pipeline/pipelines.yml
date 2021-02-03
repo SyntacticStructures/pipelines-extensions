@@ -2,7 +2,7 @@ resources:
   - name: MyBB
     type: GitRepo
     configuration:
-      path: taylorl/pipelines-extensions/pipeline
+      path: ~TAYLORL/pipelines-extension-2
       gitProvider: myBB
       
   - name: MyTest
