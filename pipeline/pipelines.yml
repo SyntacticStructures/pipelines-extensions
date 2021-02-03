@@ -3,7 +3,7 @@ resources:
     type: GitRepo
     configuration:
       path: taylorl/pipelines-extensions/pipeline
-      gitProvider: my_bb
+      gitProvider: myBB
       
   - name: MyTest
     type: tutorials/test
