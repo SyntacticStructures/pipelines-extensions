@@ -2,7 +2,8 @@ deployApplication() {
   echo "finding resource..."
   ls $res_myApp_resourcePath
   cat $res_myApp_resourcePath/myApp.sh
-  echo $res_myVM_publicKey
+  echo $res_myVM_publicKey >> test.txt
+  cat test.txt
   echo $res_myVM_name
   echo $res_myVM_targets
 #  local success=true
