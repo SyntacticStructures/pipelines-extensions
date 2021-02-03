@@ -1,7 +1,7 @@
 deployApplication() {
   echo "finding resource..."
   ls $res_myApp_resourcePath
-  cat $res_myApp_resourcePath
+  cat $res_myApp_resourcePath/myApp.sh
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
