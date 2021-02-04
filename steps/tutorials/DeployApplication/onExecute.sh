@@ -1,12 +1,12 @@
 deployApplication() {
   eval `ssh-agent`
   ssh-add -k
-  echo $res_myVM_publicKey
-  cat test.txt
+  echo "ssh add done"
   echo $res_myVM_name
   echo $res_myVM_targets
   echo "hey" >> file.txt
-  scp -v ./file.txt 192.168.50.19:/opt/file.txt
+  echo "created file"
+  scp ./file.txt 192.168.50.19:/opt/file.txt
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
