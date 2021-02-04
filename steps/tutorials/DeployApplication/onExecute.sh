@@ -1,7 +1,6 @@
 deployApplication() {
-  echo "finding resource..."
-  ls $res_myApp_resourcePath
-  cat $res_myApp_resourcePath/myApp.sh
+  eval `ssh-agent`
+  ssh-add -k
   echo $res_myVM_publicKey
   cat test.txt
   echo $res_myVM_name
