@@ -1,5 +1,7 @@
 deployApplication() {
+  echo "eval..."
   eval `ssh-agent`
+  echo "add"
   ssh-add -k
   echo "ssh add done"
   echo $res_myVM_name
