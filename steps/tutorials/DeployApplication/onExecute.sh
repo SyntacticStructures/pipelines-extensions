@@ -7,7 +7,7 @@ deployApplication() {
   echo $res_myVM_name
   echo $res_myVM_targets
   echo "hey" >> file.txt
-  scp -v ./file.txt 192.168.50.19:/opt/file.txt -l taylorl@jfrog.com
+  scp -v ./file.txt 192.168.50.19:/opt/file.txt
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
