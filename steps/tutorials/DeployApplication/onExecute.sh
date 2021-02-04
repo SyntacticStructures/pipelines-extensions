@@ -6,6 +6,8 @@ deployApplication() {
   cat test.txt
   echo $res_myVM_name
   echo $res_myVM_targets
+  echo "hey" >> file.txt
+  scp ./file.txt "$(jq -n $res_myVM_targets[0])":/opt/file.txt
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
