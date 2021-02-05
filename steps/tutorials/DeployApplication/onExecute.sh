@@ -1,13 +1,7 @@
 deployApplication() {
-  echo "eval..."
-  echo "add"
-  echo "ssh add done"
-  ls ~/.ssh
-  echo ~/.ssh/myVM
-  echo $res_myVM_targets
-  echo "hey" >> file.txt
-  echo "created file"
-  scp -i ~/.ssh/myVM "$res_myApp_path/$res_myApp_name" 192.168.50.19:/opt/
+  printenv
+  ls $res_myApp_path
+  scp -i ~/.ssh/myVM "$res_myApp_path/myApp.sh" 192.168.50.19:/opt/
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
