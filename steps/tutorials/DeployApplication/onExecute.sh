@@ -1,4 +1,5 @@
 deployApplication() {
+  printenv
   # TODO: install rsync on imageBuilds
   apt-get install -y rsync
 
