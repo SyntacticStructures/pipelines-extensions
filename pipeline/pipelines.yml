@@ -33,3 +33,4 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myApp
+          targetDirectory: "/opt"
