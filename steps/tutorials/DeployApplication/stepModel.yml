@@ -1,3 +1,9 @@
 configuration:
   targetDirectory:
     type: String
+  fastFail:
+    type: Boolean
+  deployCommand:
+    type: String
+  rolloutDelay:
+    type: Int
