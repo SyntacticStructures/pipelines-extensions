@@ -4,9 +4,9 @@ deployApplication() {
 #   apt-get install -y rsync
    local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
    local res_targets_var_name=res_"$vm_cluster_name"_targets
-   echo $"${res_targets_var_name}"
-#   local ip_addr=$(jq $"$res_targets_var_name"[0] --raw-output --null-input)
-#   echo "$ip_addr"
+   echo $res_targets_var_name
+   local ip_addr=$(jq "${!res_targets_var_name}"[0] --raw-output --null-input)
+   echo "$ip_addr"
 #  local ssh_id="$HOME/.ssh/myVM"
 
 
