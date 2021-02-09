@@ -1,6 +1,7 @@
 deployApplication() {
   printenv
 #  scp -i ~/.ssh/myVM "$res_myApp_resourcePath" $(jq -n $res_myVM_targets[0]):/opt/
+  ls "$res_myApp_resourcePath"
   scp -i ~/.ssh/myVM "$res_myApp_resourcePath" 192.168.50.19/opt/
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
