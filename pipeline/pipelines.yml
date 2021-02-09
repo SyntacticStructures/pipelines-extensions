@@ -33,7 +33,6 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myApp
-            - name: myOtherVM
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "bash ./myApp.sh"
