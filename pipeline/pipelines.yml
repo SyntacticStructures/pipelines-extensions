@@ -18,6 +18,13 @@ resources:
       targets:
         - 192.168.50.18
 
+  - name: myOtherVM
+    type: VmCluster
+    configuration:
+      sshKey: u16ssh
+      targets:
+        - 192.168.50.18
+
 pipelines:
   - name: DeployToVM
     steps:
@@ -33,6 +40,7 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myApp
+            - name: myOtherVM
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "bash ./myApp.sh"
