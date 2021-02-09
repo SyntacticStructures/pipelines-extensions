@@ -6,7 +6,7 @@ deployApplication() {
   local ssh_id="$HOME/.ssh/myVM"
 
   rsync -e "ssh -i $ssh_id" "$res_myApp_resourcePath" "$ip_addr":"$step_configuration_targetDirectory"
-  ssh -i
+  ssh -i "$ssh_id" "$step_configuration_deployCommand"
 
   echo "deployApplication running"
 }
