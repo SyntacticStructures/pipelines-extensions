@@ -34,4 +34,4 @@ pipelines:
             - name: myVM
             - name: myApp
           targetDirectory: "/opt"
-          deployCommand: "myApp.sh"
+          deployCommand: "./myApp.sh"
