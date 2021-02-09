@@ -25,7 +25,7 @@ pipelines:
         type: tutorials/DeployApplication
         configuration:
           environmentVariables:
-            DEPLOY_TARGETS: "192.168.50.19"
+            DEPLOY_TARGETS: "192.168.50.3"
             SSHKEY_INTEGRATION_NAME: "bpu18"
           inputResources:
             - name: myVM
