@@ -3,7 +3,8 @@ deployApplication() {
 #  scp -i ~/.ssh/myVM "$res_myApp_resourcePath" $(jq -n $res_myVM_targets[0]):/opt/
   ls "$res_myApp_resourcePath"
   local ip_addr=$(jq $res_myVM_targets[0] --raw-output --null-input)
-  scp -i ~/.ssh/myVM "$res_myApp_resourcePath"/myApp.sh "$ip_addr":/opt/
+  ls ~/.ssh
+  rsync -e "ssh -i ~/.ssh/u16ssh" "$res_myApp_resourcePath"/myApp.sh "$ip_addr":/opt/
 #  local success=true
 #  local url=$(find_step_configuration_value "healthCheckUrl")
 #  {
