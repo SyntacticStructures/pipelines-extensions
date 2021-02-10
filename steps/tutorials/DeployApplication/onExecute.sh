@@ -9,8 +9,10 @@ deployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
 
+  # make a real array
+  local targets="${!res_targets}"
 
-  for i in "${${!res_targets}[@]}"
+  for i in "${targets[@]}"
   do
     :
     echo "ipaddr >> $i"
