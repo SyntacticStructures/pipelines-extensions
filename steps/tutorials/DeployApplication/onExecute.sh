@@ -11,6 +11,8 @@ deployApplication() {
   echo "here"
   echo $app_resource_path
   echo "there"
+  ls $res_myApp_resourcePath
+  ls ${!app_resource_path}
   rsync -e "ssh -i $ssh_id" "${!app_resource_path}" "$ip_addr":"$step_configuration_targetDirectory" --ignore-times
   ssh -i "$ssh_id" "$ip_addr" "cd $step_configuration_targetDirectory; $step_configuration_deployCommand"
 
