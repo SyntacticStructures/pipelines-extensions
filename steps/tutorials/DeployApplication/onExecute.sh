@@ -12,10 +12,8 @@ deployApplication() {
   # make a real array
   local targets="${!res_targets}"
 
-  for i in "${targets[@]}"
-  do
-    :
-    echo "ipaddr >> $i"
+  echo "${!res_targets}" | jq -c '.[]' | while read -r object; do
+    echo "$object"
   done
 
 #  rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
