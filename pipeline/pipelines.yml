@@ -36,4 +36,4 @@ pipelines:
             - name: myApp
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
-          deployCommand: "./myApp.sh"
+          deployCommand: "bash ./myApp.sh"
