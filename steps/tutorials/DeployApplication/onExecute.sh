@@ -13,7 +13,13 @@ deployApplication() {
     echo "ipaddr >> $i"
   done
 
-  rsync -avH "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" --ignore-times
+  rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
+  --ignore-times \
+  --archive \
+  --verbose \
+  --hard-links \
+  --perms
+
   ssh -i "$ssh_id" "$ip_addr" "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
 
   echo "deployApplication running"
