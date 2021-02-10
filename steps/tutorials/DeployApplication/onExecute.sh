@@ -1,6 +1,6 @@
 deployApplication() {
   # TODO: install rsync on the image. not here
-  apt-get install -y rsync
+#  apt-get install -y rsync
 
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
@@ -9,26 +9,21 @@ deployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
 
-  # TODO: deleteme
-  echo "${!res_targets}"
 
-
-  for i in "${!res_targets}"[@]
+  for i in "${${!res_targets}[@]}"
   do
     :
     echo "ipaddr >> $i"
   done
 
-  rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
-  --ignore-times \
-  --archive \
-  --verbose \
-  --hard-links \
-  --perms
-
-  ssh -i "$ssh_id" "$ip_addr" "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
-
-  echo "deployApplication running"
+#  rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
+#  --ignore-times \
+#  --archive \
+#  --verbose \
+#  --hard-links \
+#  --perms
+#
+#  ssh -i "$ssh_id" "$ip_addr" "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
 }
 
 execute_command deployApplication
