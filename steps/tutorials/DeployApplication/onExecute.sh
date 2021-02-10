@@ -10,7 +10,8 @@ deployApplication() {
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
 
   # TODO: deleteme
-  echo
+  echo "${!res_targets}"
+
 
   for i in "${!res_targets}"[@]
   do
