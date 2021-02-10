@@ -8,6 +8,9 @@ deployApplication() {
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 
+  echo "here"
+  echo $app_resource_path
+  echo "there"
   rsync -e "ssh -i $ssh_id" "${!app_resource_path}" "$ip_addr":"$step_configuration_targetDirectory" --ignore-times
   ssh -i "$ssh_id" "$ip_addr" "cd $step_configuration_targetDirectory; $step_configuration_deployCommand"
 
