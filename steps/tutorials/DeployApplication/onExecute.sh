@@ -1,4 +1,5 @@
 deployApplication() {
+  # TODO: install rsync on the image. not here
   apt-get install -y rsync
 
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
@@ -7,7 +8,11 @@ deployApplication() {
   local app_resource_path=res_"$app_filespec_name"_resourcePath
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
-  for i in "${!res_targets[@]}}"
+
+  # TODO: deleteme
+  echo
+
+  for i in "${!res_targets}"[@]
   do
     :
     echo "ipaddr >> $i"
