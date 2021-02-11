@@ -20,11 +20,11 @@ deployApplication() {
 
     # Upload app dir to vm, preserving any hardlinks or permissions
     echo "Deploying $app_filespec_name to $vm_addr"
-    rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$vm_addr":"$step_configuration_targetDirectory" \
+    execute_command "rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
     --ignore-times \
     --archive \
     --hard-links \
-    --perms
+    --perms"
 
     # Run the deploy command from within the uploaded dir
     echo "Running \"$step_configuration_deployCommand\" on $vm_addr"
