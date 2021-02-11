@@ -34,6 +34,8 @@ DeployApplication() {
       echo "yeah yeah we here"
       upload_command+=" || echo failed to upload; continue"
       deploy_command+=" || continue"
+
+      echo "$upload_command"
     fi
 
     execute_command "$upload_command"
