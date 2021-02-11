@@ -9,10 +9,7 @@ deployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local ip_addr=$(jq "${!res_targets}"[0] --raw-output --null-input)
 
-  # make a real array
-  local targets="${!res_targets}"
-
-  echo "${!res_targets}" | jq -c '.[]' | while read -r object; do
+  echo "${!res_targets}" | jq -c '.[]' --raw-output --null-input | while read -r object; do
     echo "$object"
   done
 
