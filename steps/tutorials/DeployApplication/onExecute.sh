@@ -13,14 +13,12 @@ deployApplication() {
   echo "${!res_targets}" | jq -c '.[]' --raw-output | while ((idx++)); read -r vm_addr; do
 
     if [ -n "$step_configuration_rolloutDelay" ] && [ "$idx" != 1 ]; then
-      echo "index >>> $idx"
       echo "Waiting ${step_configuration_rolloutDelay}s before next deploy"
-
+      sleep "${step_configuration_rolloutDelay}"s
     fi
 
-    echo "Deploying $app_filespec_name to $vm_addr"
-
     # Upload app dir to vm, preserving any hardlinks or permissions
+    echo "Deploying $app_filespec_name to $vm_addr"
     rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$vm_addr":"$step_configuration_targetDirectory" \
     --ignore-times \
     --archive \
