@@ -1,6 +1,6 @@
 deployApplication() {
   # TODO: install rsync on the image. not here
-  apt-get install -y rsync
+  apt-get install -y rsync > /dev/null 2>&1
 
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
@@ -23,7 +23,6 @@ deployApplication() {
     "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
 
   done
-
 }
 
 execute_command deployApplication
