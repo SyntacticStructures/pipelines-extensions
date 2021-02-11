@@ -31,7 +31,6 @@ DeployApplication() {
 
     # Don't fail commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      echo "yeah yeah we here"
       upload_command+=" || continue"
       deploy_command+=" || continue"
 
