@@ -46,4 +46,4 @@ DeployApplication() {
   done
 }
 
-DeployApplication
+execute_command DeployApplication
