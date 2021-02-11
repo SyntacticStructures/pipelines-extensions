@@ -11,10 +11,6 @@ DeployApplication() {
   local app_resource_path=res_"$app_filespec_name"_resourcePath
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 
-  if [ -v "$step_configuration_fastFail" ]; then
-      echo "yeah yeah we here2"
-  fi
-
   # Iterate over json array of vm addresses.
   # We can't use a regular for loop because it's a json string, not a bash array.
   echo "${!res_targets}" | jq -c '.[]' --raw-output | while ((idx++)); read -r vm_addr; do
@@ -37,7 +33,7 @@ DeployApplication() {
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
     # Don't fail commands if fastFail is specified as false
-    if [ -v "$step_configuration_fastFail" ]; then
+    if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       echo "yeah yeah we here"
       upload_command+=" || echo failed to upload; continue"
       deploy_command+=" || continue"
