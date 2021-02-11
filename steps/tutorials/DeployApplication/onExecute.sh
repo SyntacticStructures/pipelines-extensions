@@ -1,4 +1,4 @@
-deployApplication() {
+DeployApplication() {
   # TODO: install rsync on the image. not here
   apt-get install -y rsync > /dev/null 2>&1
 
@@ -32,4 +32,4 @@ deployApplication() {
   done
 }
 
-execute_command deployApplication
+DeployApplication
