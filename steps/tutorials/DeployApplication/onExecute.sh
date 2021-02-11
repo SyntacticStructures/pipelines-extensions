@@ -8,15 +8,19 @@ deployApplication() {
   local app_resource_path=res_"$app_filespec_name"_resourcePath
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 
+  # Iterate over json array of vm addresses.
+  # We can't use a regular for loop because it's a json string, not a bash array.
   echo "${!res_targets}" | jq -c '.[]' --raw-output | while read -r vm_addr; do
     echo "Deploying $app_filespec_name to $vm_addr..."
+
+    # Upload app dir to vm, preserving any hardlinks or permissions
     rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$vm_addr":"$step_configuration_targetDirectory" \
     --ignore-times \
     --archive \
     --hard-links \
     --perms
 
-
+    # Run the deploy command from within the uploaded dir
     echo "Running $step_configuration_deployCommand on $vm_addr..."
     ssh -i "$ssh_id" \
     -n "$vm_addr" \
