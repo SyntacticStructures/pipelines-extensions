@@ -27,7 +27,7 @@ DeployApplication() {
     # Run the deploy command from within the uploaded dir
     execute_command "ssh -i $ssh_id \
     -n $vm_addr \
-    cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
+    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
   done
 }
