@@ -30,7 +30,7 @@ DeployApplication() {
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
     # Don't fail commands if fastFail is specified as false
-    if [ -z "$step_configuration_fastFail" ] && ! [ "$fastFail" ]; then
+    if [ -z "$step_configuration_fastFail" ] && ! [ "$step_configuration_fastFail" ]; then
       echo "yeah yeah we here"
       upload_command+=" || echo failed to upload; continue"
       deploy_command+=" || continue"
