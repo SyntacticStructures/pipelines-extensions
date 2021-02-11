@@ -13,6 +13,7 @@ deployApplication() {
   echo "${!res_targets}" | jq -c '.[]' --raw-output | while ((i++)); read -r vm_addr; do
 
     if [ -n "$step_configuration_rolloutDelay" ] && [ "$i" != 0 ] ; then
+      echo "index >>> $i"
       echo "Waiting ${step_configuration_rolloutDelay}s before next deploy"
 
     fi
