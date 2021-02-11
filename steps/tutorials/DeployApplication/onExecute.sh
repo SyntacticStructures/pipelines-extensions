@@ -18,14 +18,14 @@ DeployApplication() {
     fi
 
     # Command to upload app dir to vm, preserving any hardlinks or permissions
-    upload_command="rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
+    local upload_command="rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
     --ignore-times \
     --archive \
     --hard-links \
-    --perms || $step_configuration_fastFail"
+    --perms"
 
     # Command to run the deploy command from within the uploaded dir
-    deploy_command="ssh -i $ssh_id \
+    local deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
