@@ -29,10 +29,10 @@ pipelines:
         configuration:
           environmentVariables:
             # should override vm ips if present
-            DEPLOY_TARGETS: "192.168.50.3"
-            # should append to
-            ADDITIONAL_TARGETS: "192.168.50.4"
-            SSHKEY_INTEGRATION_NAME: "bpu18"
+            DEPLOY_TARGETS: "192.168.50.3,192.168.50.4"
+            # should append to vm ips
+#            ADDITIONAL_TARGETS: "192.168.50.4"
+            SSHKEY_INTEGRATION_NAME: "u16ssh"
           inputResources:
             - name: myVM
             - name: myApp
