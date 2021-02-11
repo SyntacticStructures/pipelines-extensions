@@ -2,9 +2,6 @@ DeployApplication() {
   # TODO: install rsync on the image. not here
   apt-get install -y rsync > /dev/null 2>&1
 
-  echo $step_configuration_fastFail
-  echo "fastFail?"
-
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
   local res_targets=res_"$vm_cluster_name"_targets
@@ -35,7 +32,7 @@ DeployApplication() {
     # Don't fail commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       echo "yeah yeah we here"
-      upload_command+=" || echo failed to upload; continue"
+      upload_command+=" || continue"
       deploy_command+=" || continue"
 
       echo "$upload_command"
@@ -46,4 +43,4 @@ DeployApplication() {
   done
 }
 
-execute_command DeployApplication
+DeployApplication
