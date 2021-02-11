@@ -12,7 +12,7 @@ deployApplication() {
   # We can't use a regular for loop because it's a json string, not a bash array.
   echo "${!res_targets}" | jq -c '.[]' --raw-output | while ((idx++)); read -r vm_addr; do
 
-    if [ -n "$step_configuration_rolloutDelay" ] && [ "$idx" != 0 ]; then
+    if [ -n "$step_configuration_rolloutDelay" ] && [ "$idx" != 1 ]; then
       echo "index >>> $idx"
       echo "Waiting ${step_configuration_rolloutDelay}s before next deploy"
 
