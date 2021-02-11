@@ -17,18 +17,20 @@ DeployApplication() {
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
-    # Upload app dir to vm, preserving any hardlinks or permissions
-    execute_command "rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
+    # Command to upload app dir to vm, preserving any hardlinks or permissions
+    upload_command="rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
     --ignore-times \
     --archive \
     --hard-links \
-    --perms"
+    --perms || $step_configuration_fastFail"
 
-    # Run the deploy command from within the uploaded dir
-    execute_command "ssh -i $ssh_id \
+    # Command to run the deploy command from within the uploaded dir
+    deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
+    execute_command "$upload_command"
+    execute_command "$deploy_command"
   done
 }
 
