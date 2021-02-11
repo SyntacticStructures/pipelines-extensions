@@ -8,14 +8,20 @@ deployApplication() {
   local app_resource_path=res_"$app_filespec_name"_resourcePath
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 
-  echo "${!res_targets}" | jq -c '.[]' --raw-output | while read -r ip_addr; do
-    rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
+  echo "${!res_targets}" | jq -c '.[]' --raw-output | while read -r vm_addr; do
+    echo "Deploying $app_filespec_name to $vm_addr..."
+    rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$vm_addr":"$step_configuration_targetDirectory" \
     --ignore-times \
     --archive \
     --hard-links \
     --perms
 
-    ssh -i "$ssh_id" -n "$ip_addr" "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
+
+    echo "Running $step_configuration_deployCommand on $vm_addr..."
+    ssh -i "$ssh_id" \
+    -n "$vm_addr" \
+    "cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand"
+
   done
 
 }
