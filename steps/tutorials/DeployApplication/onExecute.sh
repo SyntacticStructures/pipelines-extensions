@@ -14,12 +14,10 @@ deployApplication() {
 
     # Wait between deploys if delay was specified
     if [ -n "$step_configuration_rolloutDelay" ] && [ "$idx" != 1 ]; then
-      echo "Waiting ${step_configuration_rolloutDelay}s before next deploy"
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
     # Upload app dir to vm, preserving any hardlinks or permissions
-    echo "Deploying $app_filespec_name to $vm_addr"
     execute_command "rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
     --ignore-times \
     --archive \
