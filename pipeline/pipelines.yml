@@ -37,3 +37,4 @@ pipelines:
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "bash ./myApp.sh"
+          rolloutDelay: 3
