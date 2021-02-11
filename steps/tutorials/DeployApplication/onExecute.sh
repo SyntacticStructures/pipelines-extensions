@@ -12,7 +12,6 @@ deployApplication() {
     rsync "${!app_resource_path}" -e "ssh -i $ssh_id" "$ip_addr":"$step_configuration_targetDirectory" \
     --ignore-times \
     --archive \
-    --verbose \
     --hard-links \
     --perms
 
