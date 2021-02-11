@@ -29,6 +29,12 @@ DeployApplication() {
     -n $vm_addr \
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
+    # Don't fail commands if fastFail is specified as false
+    if [ -z "$step_configuration_fastFail" ] && ! [ "$fastFail" ]; then
+      upload_command+=" || echo failed to upload; continue"
+      deploy_command+=" || continue"
+    fi
+
     execute_command "$upload_command"
     execute_command "$deploy_command"
   done
