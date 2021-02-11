@@ -24,8 +24,6 @@ DeployApplication() {
     vm_addrs=( "${vm_addrs[@]}" $(echo "$ADDITIONAL_TARGETS" | tr ',' '\n') )
   fi
 
-  echo "${vm_addrs[@]}"
-
   for i in "${!vm_addrs[@]}"
   do
 
