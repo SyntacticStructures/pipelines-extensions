@@ -15,7 +15,7 @@ deployApplication() {
     # Wait between deploys if delay was specified
     if [ -n "$step_configuration_rolloutDelay" ] && [ "$idx" != 1 ]; then
       echo "Waiting ${step_configuration_rolloutDelay}s before next deploy"
-      sleep "${step_configuration_rolloutDelay}"s
+      execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
     # Upload app dir to vm, preserving any hardlinks or permissions
