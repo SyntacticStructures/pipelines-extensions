@@ -5,5 +5,7 @@ configuration:
     type: Boolean
   deployCommand:
     type: String
+  postDeployCommand:
+    type: String
   rolloutDelay:
     type: Int

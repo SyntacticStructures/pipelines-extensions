@@ -46,16 +46,23 @@ DeployApplication() {
     -n $vm_addr \
     \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
 
-    # Don't fail commands if fastFail is specified as false
-    if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      upload_command+=" || continue"
-      deploy_command+=" || continue"
+    # Command to run after the deploy command from within the uploaded dir
+    local deploy_command="ssh -i $ssh_id \
+    -n $vm_addr \
+    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_postDeployCommand\""
 
-      echo "$upload_command"
+
+    # Don't exit on failed commands if fastFail is specified as false
+    if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
+      fast_fail_suffix=" || continue"
+      upload_command+="$fast_fail_suffix"
+      deploy_command+="$fast_fail_suffix"
+      post_deploy_command+="$fast_fail_suffix"
     fi
 
     execute_command "$upload_command"
     execute_command "$deploy_command"
+    execute_command "$post_deploy_command"
   done
 }
 
