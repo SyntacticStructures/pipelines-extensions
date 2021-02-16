@@ -24,6 +24,9 @@ DeployApplication() {
     vm_addrs=( "${vm_addrs[@]}" $(echo "$ADDITIONAL_TARGETS" | tr ',' '\n') )
   fi
 
+  app_filespec_tarball_name="$app_filespec_name.tar.gz"
+  execute_command "tar -czvf $app_filespec_tarball_name ${!app_resource_path}"
+
   for i in "${!vm_addrs[@]}"
   do
 
@@ -42,14 +45,17 @@ DeployApplication() {
     --perms"
 
     # Command to run the deploy command from within the uploaded dir
+#    local deploy_command="ssh -i $ssh_id \
+#    -n $vm_addr \
+#    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
     local deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
-    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
+    \"cd $step_configuration_targetDirectory/$app_filespec_name; ls -a \""
 
     # Command to run after the deploy command from within the uploaded dir
-    local deploy_command="ssh -i $ssh_id \
-    -n $vm_addr \
-    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_postDeployCommand\""
+#    local post_deploy_command="ssh -i $ssh_id \
+#    -n $vm_addr \
+#    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_postDeployCommand\""
 
 
     # Don't exit on failed commands if fastFail is specified as false

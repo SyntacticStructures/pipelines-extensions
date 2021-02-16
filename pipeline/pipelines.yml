@@ -16,10 +16,15 @@ resources:
     configuration:
       sshKey: u16ssh
       targets:
-        - 192.168.50.18
-        - 192.168.50.18
         - 192.168.50.19
-        - 192.168.50.19
+
+  resources:
+    - name: myBuildInfo
+      type: BuildInfo
+      configuration:
+        sourceArtifactory: artifactoryIntegration
+        buildName: myBuild
+        buildNumber: 129
 
 pipelines:
   - name: DeployToVM
