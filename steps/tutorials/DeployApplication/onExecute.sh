@@ -49,12 +49,7 @@ DeployApplication() {
 #    -n $vm_addr \
 #    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
     local deploy_command="ssh -i $ssh_id -n $vm_addr \
-    \"
-    cd $step_configuration_targetDirectory/; \
-    tar -xvf $app_filespec_tarball_name; \
-    cd $app_filespec_name; \
-    $step_configuration_deployCommand; \
-    \""
+    \"cd $step_configuration_targetDirectory/; tar -xvf $app_filespec_tarball_name; cd $app_filespec_name; $step_configuration_deployCommand;\""
 
     # Command to run after the deploy command from within the uploaded dir
 #    local post_deploy_command="ssh -i $ssh_id \
