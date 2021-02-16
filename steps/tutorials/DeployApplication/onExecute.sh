@@ -64,10 +64,10 @@ DeployApplication() {
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      fast_fail_suffix=" || continue"
-      upload_command+="$fast_fail_suffix"
-      deploy_command+="$fast_fail_suffix"
-      post_deploy_command+="$fast_fail_suffix"
+      ignore_failure_suffix=" || continue"
+      upload_command+="$ignore_failure_suffix"
+      deploy_command+="$ignore_failure_suffix"
+      post_deploy_command+="$ignore_failure_suffix"
     fi
 
     execute_command "$upload_command"
