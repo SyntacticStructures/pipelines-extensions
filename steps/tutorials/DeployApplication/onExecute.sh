@@ -38,7 +38,7 @@ DeployApplication() {
     fi
 
     # Command to upload app dir to vm, preserving any hardlinks or permissions
-    local upload_command="rsync ${!app_resource_path} -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
+    local upload_command="rsync ./$app_filespec_tarball_name -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
     --ignore-times \
     --archive \
     --hard-links \
