@@ -18,13 +18,12 @@ resources:
       targets:
         - 192.168.50.19
 
-  resources:
-    - name: myBuildInfo
-      type: BuildInfo
-      configuration:
-        sourceArtifactory: artifactoryIntegration
-        buildName: myBuild
-        buildNumber: 129
+  - name: myBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      buildName: myBuild
+      buildNumber: 129
 
 pipelines:
   - name: DeployToVM
@@ -42,6 +41,7 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myApp
+            - name: myBuildInfo
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "bash ./myApp.sh"
