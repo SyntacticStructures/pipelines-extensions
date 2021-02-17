@@ -3,7 +3,7 @@ DeployApplication() {
    printenv
    cd workspace
    jfrog rt dl "*" --build-name="$res_myBuildInfo_buildName" --build-number="$res_myBuildInfo_buildNumber"
-   lsf
+   ls
 #   local app_resource_path=res_"$buildinfo_name"_resourcePath
 #   echo "${!app_resource_path}"
 #   ls "${!app_resource_path}"
