@@ -11,14 +11,6 @@ resources:
       path: ~TAYLORL/maven-hello-world
       gitProvider: myBB
 
-  - name: MyMVNBuildInfo
-    type: BuildInfo
-    configuration:
-      sourceArtifactory: artifactoryIntegration
-      buildName: myMVNBuild
-      buildNumber: 1
-      externalCI: jenkinsIntegration
-
   - name: myApp
     type: FileSpec
     configuration:
@@ -56,16 +48,3 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'"
           rolloutDelay: 3
 #          fastFail: false
-  - name: buildMVNModule
-    steps:
-      - name: buildMVN
-        type: MvnBuild
-        configuration:
-          autoPublishBuildInfo: true
-          integrations:
-            - name: artifactoryIntegration
-          inputResources:
-            - name: MyMVNBuildBB         # required
-          outputResources:
-            - name: MyMVNBuildInfo
-
