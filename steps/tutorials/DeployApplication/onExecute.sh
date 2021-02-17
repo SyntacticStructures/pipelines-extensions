@@ -2,6 +2,9 @@ DeployApplication() {
    local buildinfo_name=$(get_resource_name --type BuildInfo --operation IN)
    local app_resource_path=res_"$buildinfo_name"_resourcePath
    ls "${!app_resource_path}"
+
+   local app_resource_path2="${!"res_"$buildinfo_name"_resourcePath"}"
+   ls $app_resource_path2
 #  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
 #  local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
 #  local res_targets=res_"$vm_cluster_name"_targets
