@@ -1,12 +1,11 @@
 DeployApplication() {
-   local buildinfo_name=$(get_resource_name --type BuildInfo --operation IN)
-   apt-get install -y tree
-   mkdir work
-   cd work
+   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
+   local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
+   local buildinfo_name=res_"$buildinfo_res_name"_buildName
+
+   jfrog rt dl "*" --build="${!buildinfo_name}"/"${!buildinfo_number}"
    ls
    echo "ell ess"
-   jfrog rt dl "*" --build-name="$res_myBuildInfo_buildName" --build-number="$res_myBuildInfo_buildNumber"
-   tree
 #   local app_resource_path=res_"$buildinfo_name"_resourcePath
 #   echo "${!app_resource_path}"
 #   ls "${!app_resource_path}"
