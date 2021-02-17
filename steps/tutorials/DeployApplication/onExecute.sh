@@ -1,7 +1,8 @@
 DeployApplication() {
    local buildinfo_name=$(get_resource_name --type BuildInfo --operation IN)
    apt-get install -y tree
-   cd workspace
+   mkdir work
+   cd work
    jfrog rt dl "*" --build-name="$res_myBuildInfo_buildName" --build-number="$res_myBuildInfo_buildNumber"
    tree
 #   local app_resource_path=res_"$buildinfo_name"_resourcePath
