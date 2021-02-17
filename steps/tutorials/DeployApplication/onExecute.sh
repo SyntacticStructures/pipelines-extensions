@@ -1,16 +1,8 @@
 DeployApplication() {
-   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
-   local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
-   local buildinfo_name=res_"$buildinfo_res_name"_buildName
-
-   jfrog rt dl "*" --build="${!buildinfo_name}"/"${!buildinfo_number}"
-   ls
-   echo "ell ess"
-#   local app_resource_path=res_"$buildinfo_name"_resourcePath
-#   echo "${!app_resource_path}"
-#   ls "${!app_resource_path}"
-
-
+  ls workspace
+#  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
+#  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
+#  local buildinfo_name=res_"$buildinfo_res_name"_buildName
 #  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
 #  local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
 #  local res_targets=res_"$vm_cluster_name"_targets
@@ -19,6 +11,12 @@ DeployApplication() {
 #
 #  # Convert json array to bash array
 #  local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
+#
+#  # download buildInfo
+#  execute_command "jfrog rt dl "*" --build=${!buildinfo_name}/${!buildinfo_number}"
+#
+#  # TODO: delete ls
+#  ls
 #
 #  app_filespec_tarball_name="$app_filespec_name.tar.gz"
 #  execute_command "tar -czvf $app_filespec_tarball_name ${!app_resource_path}"
