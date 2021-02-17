@@ -53,6 +53,8 @@ pipelines:
       - name: buildGo
         type: GoBuild
         configuration:
+          integrations:
+            - name: artifactoryIntegration
           inputResources:
             - name: MyGoBuildBB         # required
 
