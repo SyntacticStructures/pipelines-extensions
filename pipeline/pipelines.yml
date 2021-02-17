@@ -8,7 +8,7 @@ resources:
   - name: MyMVNBuildBB
     type: GitRepo
     configuration:
-      path: ~TAYLORL/maven-hello-world
+      path: ~TAYLORL/maven-hello-world/my-app
       gitProvider: myBB
 
   - name: MyMVNBuildInfo
