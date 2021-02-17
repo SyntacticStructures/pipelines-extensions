@@ -11,19 +11,6 @@ DeployApplication() {
   # Convert json array to bash array
   local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
 
-  # Override VMCluster resource ip addrs
-  # if DEPLOY_TARGETS are specified
-  if [ -n "$DEPLOY_TARGETS" ]; then
-    # Convert csv to bash array
-    vm_addrs=( $(echo "$DEPLOY_TARGETS" | tr ',' '\n') )
-  fi
-
-  # Append extra vm addrs
-  # if ADDITIONAL_TARGETS is specified
-  if [ -n "$ADDITIONAL_TARGETS" ]; then
-    vm_addrs=( "${vm_addrs[@]}" $(echo "$ADDITIONAL_TARGETS" | tr ',' '\n') )
-  fi
-
   app_filespec_tarball_name="$app_filespec_name.tar.gz"
   execute_command "tar -czvf $app_filespec_tarball_name ${!app_resource_path}"
 
