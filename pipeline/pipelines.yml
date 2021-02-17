@@ -48,7 +48,7 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'"
           rolloutDelay: 3
 #          fastFail: false
-  - name: publishGoModule
+  - name: buildGoModule
     steps:
       - name: build and publish
         type: GoBuild
