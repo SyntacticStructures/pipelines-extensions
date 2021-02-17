@@ -3,6 +3,8 @@ DeployApplication() {
    apt-get install -y tree
    mkdir work
    cd work
+   ls
+   echo "ell ess"
    jfrog rt dl "*" --build-name="$res_myBuildInfo_buildName" --build-number="$res_myBuildInfo_buildNumber"
    tree
 #   local app_resource_path=res_"$buildinfo_name"_resourcePath
