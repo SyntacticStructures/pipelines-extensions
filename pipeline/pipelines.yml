@@ -53,6 +53,7 @@ pipelines:
       - name: buildGo
         type: GoBuild
         configuration:
+          repository: "myGoRepo"
           integrations:
             - name: artifactoryIntegration
           inputResources:
