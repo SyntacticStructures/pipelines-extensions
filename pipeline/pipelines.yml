@@ -5,11 +5,19 @@ resources:
       path: ~TAYLORL/pipelines-extensions
       gitProvider: myBB
 
-  - name: MyGoBuildBB
+  - name: MyMVNBuildBB
     type: GitRepo
     configuration:
-      path: ~TAYLORL/go-hello-world
+      path: ~TAYLORL/maven-hello-world
       gitProvider: myBB
+
+  - name: MyMVNBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      buildName: myMVNBuild
+      buildNumber: 1
+      externalCI: jenkinsIntegration
 
   - name: myApp
     type: FileSpec
@@ -53,9 +61,11 @@ pipelines:
       - name: buildGo
         type: GoBuild
         configuration:
-          repository: "myGoRepo"
+          autoPublishBuildInfo: true
           integrations:
             - name: artifactoryIntegration
           inputResources:
-            - name: MyGoBuildBB         # required
+            - name: MyMVNBuildBB         # required
+          outputResources:
+            - name: MyMVNBuildInfo
 
