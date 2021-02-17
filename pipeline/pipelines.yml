@@ -5,6 +5,12 @@ resources:
       path: ~TAYLORL/pipelines-extensions
       gitProvider: myBB
 
+  - name: MyGoBuildBB
+    type: GitRepo
+    configuration:
+      path: ~TAYLORL/go-hello-world
+      gitProvider: myBB
+
   - name: myApp
     type: FileSpec
     configuration:
@@ -42,3 +48,11 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'"
           rolloutDelay: 3
 #          fastFail: false
+  - name: publishGoModule
+    steps:
+      - name: build and publish
+        type: GoBuild
+        configuration:
+          inputResources:
+            - name: MyGoBuildBB         # required
+
