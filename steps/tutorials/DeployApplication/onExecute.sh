@@ -32,16 +32,14 @@ DeployApplication() {
     --perms"
 
     # Command to run the deploy command from within the uploaded dir
-#    local deploy_command="ssh -i $ssh_id \
-#    -n $vm_addr \
-#    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_deployCommand\""
-    local deploy_command="ssh -i $ssh_id -n $vm_addr \
-    \"cd $step_configuration_targetDirectory/; tar -xvf $app_filespec_tarball_name; cd $app_filespec_name; $step_configuration_deployCommand;\""
+    local untar="cd $step_configuration_targetDirectory/; tar -xvf $app_filespec_tarball_name; rm -f $app_filespec_tarball_name;"
+    local deploy="cd $app_filespec_name; $step_configuration_deployCommand;"
+    local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $deploy\""
 
     # Command to run after the deploy command from within the uploaded dir
-#    local post_deploy_command="ssh -i $ssh_id \
-#    -n $vm_addr \
-#    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_postDeployCommand\""
+    local post_deploy_command="ssh -i $ssh_id \
+    -n $vm_addr \
+    \"cd $step_configuration_targetDirectory/$app_filespec_name; $step_configuration_postDeployCommand\""
 
 
     # Don't exit on failed commands if fastFail is specified as false
@@ -49,12 +47,18 @@ DeployApplication() {
       ignore_failure_suffix=" || continue"
       upload_command+="$ignore_failure_suffix"
       deploy_command+="$ignore_failure_suffix"
-      post_deploy_command+="$ignore_failure_suffix"
+      if [ -n "$post_deploy_command" ]; then
+        post_deploy_command+="$ignore_failure_suffix"
+      fi
     fi
 
     execute_command "$upload_command"
     execute_command "$deploy_command"
-    execute_command "$post_deploy_command"
+
+    if [ -n "$post_deploy_command" ]; then
+      execute_command "$post_deploy_command"
+    fi
+
   done
 }
 
