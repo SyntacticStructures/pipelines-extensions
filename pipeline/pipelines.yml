@@ -29,8 +29,8 @@ resources:
     type: BuildInfo
     configuration:
       sourceArtifactory: artifactoryIntegration
-      buildName: myBuild
-      buildNumber: 129
+      buildName: myBuildInfo
+      buildNumber: 1
 
 pipelines:
   - name: DeployToVM
