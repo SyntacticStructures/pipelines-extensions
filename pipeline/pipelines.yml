@@ -50,7 +50,7 @@ pipelines:
 #          fastFail: false
   - name: buildGoModule
     steps:
-      - name: build and publish
+      - name: buildGo
         type: GoBuild
         configuration:
           inputResources:
