@@ -1,7 +1,4 @@
 DeployApplication() {
-  # TODO: install rsync on the image. not here
-  apt-get install -y rsync > /dev/null 2>&1
-
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
   local res_targets=res_"$vm_cluster_name"_targets
@@ -24,12 +21,8 @@ DeployApplication() {
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
-    # Command to upload app dir to vm, preserving any hardlinks or permissions
-    local upload_command="rsync ./$app_filespec_tarball_name -e \"ssh -i $ssh_id\" $vm_addr:$step_configuration_targetDirectory \
-    --ignore-times \
-    --archive \
-    --hard-links \
-    --perms"
+    # Command to upload app tarball to vm
+    local upload_command="scp -i $ssh_id ./$app_filespec_tarball_name $vm_addr:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
     local untar="cd $step_configuration_targetDirectory/; tar -xvf $app_filespec_tarball_name; rm -f $app_filespec_tarball_name;"
