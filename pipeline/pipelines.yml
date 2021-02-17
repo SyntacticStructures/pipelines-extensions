@@ -56,10 +56,10 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'"
           rolloutDelay: 3
 #          fastFail: false
-  - name: buildGoModule
+  - name: buildMVNModule
     steps:
-      - name: buildGo
-        type: GoBuild
+      - name: buildMVN
+        type: MvnBuild
         configuration:
           autoPublishBuildInfo: true
           integrations:
