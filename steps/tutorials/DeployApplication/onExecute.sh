@@ -34,7 +34,7 @@ DeployApplication() {
     mv "${!filespec_res_path}"/* "$tardir"/
 
     # download and unzip release bundle
-    execute_command "curl -o --insecure -XGET $bundle_download_url -u ${!distribution_user}:${!distribution_apikey}"
+    execute_command "curl -o --insecure -XGET ${!bundle_download_url} -u ${!distribution_user}:${!distribution_apikey}"
     unzip "${!release_bundle_name}"-"${!release_bundle_version}".zip
 
     # creat tarball from everything in the tardir
