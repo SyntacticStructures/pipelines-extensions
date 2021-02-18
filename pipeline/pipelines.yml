@@ -17,6 +17,12 @@ resources:
       sourceArtifactory: artifactoryIntegration
       pattern: "example-repo-local/myApp.sh"
 
+  - name: myApp2
+    type: FileSpec
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      pattern: "example-repo-local/myApp.sh"
+
   - name: myVM
     type: VmCluster
     configuration:
@@ -48,6 +54,7 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myApp
+            - name: myApp2
             - name: myBuildInfo
             - name: myReleaseBundle
           targetDirectory: "/opt"
