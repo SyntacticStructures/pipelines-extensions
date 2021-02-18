@@ -49,6 +49,7 @@ pipelines:
             - name: myVM
             - name: myApp
             - name: myBuildInfo
+            - name: myReleaseBundle
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
