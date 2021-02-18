@@ -38,7 +38,6 @@ resources:
       sourceDistribution: myDistro
       name: myReleaseTaylorl
       version: 1
-      isSigned: true
 
 pipelines:
   - name: DeployToVM
