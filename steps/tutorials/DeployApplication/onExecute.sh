@@ -1,26 +1,33 @@
 DeployApplication() {
-  ls workspace
-#  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
-#  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
-#  local buildinfo_name=res_"$buildinfo_res_name"_buildName
-#  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
-#  local app_filespec_name=$(get_resource_name --type FileSpec --operation IN)
-#  local res_targets=res_"$vm_cluster_name"_targets
-#  local app_resource_path=res_"$app_filespec_name"_resourcePath
-#  local ssh_id="$HOME/.ssh/$vm_cluster_name"
-#
-#  # Convert json array to bash array
-#  local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
-#
-#  # download buildInfo
-#  execute_command "jfrog rt dl "*" --build=${!buildinfo_name}/${!buildinfo_number}"
-#
-#  # TODO: delete ls
-#  ls
-#
-#  app_filespec_tarball_name="$app_filespec_name.tar.gz"
-#  execute_command "tar -czvf $app_filespec_tarball_name ${!app_resource_path}"
-#
+  printenv
+
+  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
+  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
+  local buildinfo_name=res_"$buildinfo_res_name"_buildName
+  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
+  local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
+  local res_targets=res_"$vm_cluster_name"_targets
+  local filespec_res_path=res_"$filespec_res_name"_resourcePath
+  local ssh_id="$HOME/.ssh/$vm_cluster_name"
+
+
+  # We put everything we want to upload to vms in a directory
+  # We will create a tarball from all of it
+  local tardir="${PWD}/work"
+  mkdir "$tardir"
+  cd "$tardir"
+
+
+  # download buildInfo artifacts to tardir
+  execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
+  # move the fileSpec to tardir
+  mv "${!filespec_res_path}"/* "$tardir"/
+
+  app_filespec_tarball_name="$filespec_res_name.tar.gz"
+  execute_command "tar -czvf $app_filespec_tarball_name ${!filespec_res_path}"
+
+  ls "$tardir"
+
 #  for i in "${!vm_addrs[@]}"
 #  do
 #
