@@ -1,4 +1,17 @@
 DeployApplication() {
+  local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
+  local release_bundle_version=res_"$release_bundle_res_name"_version
+  local release_bundle_name=res_"$release_bundle_res_name"_name
+  local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
+  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
+  local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
+  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
+
+  # We call this endpoint to make sure the release bundle is ready.
+  # If it's ready it will return a download url.
+  local release_bundle_status_url="${!distribution_url}/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
+  local bundle_download_url=$(curl -XGET "$release_bundle_status_url" -u "${!distribution_user}:${!distribution_apikey}" | jq ."download_url")
+
 
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
   local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
@@ -19,6 +32,10 @@ DeployApplication() {
     execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
     # move the fileSpec to tardir
     mv "${!filespec_res_path}"/* "$tardir"/
+
+    # download and unzip release bundle
+    curl --remote-name -XGET "$bundle_download_url" -u "${!distribution_user}:${!distribution_apikey}"
+    unzip "${!release_bundle_name}"-"${!release_bundle_version}".zip
 
     # creat tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
