@@ -37,7 +37,7 @@ resources:
     configuration:
       sourceDistribution: myDistro
       name: myReleaseTaylorl
-      version: 1
+      version: "1"
 
 pipelines:
   - name: DeployToVM
