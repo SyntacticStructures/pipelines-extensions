@@ -1,6 +1,14 @@
 DeployApplication() {
-  printenv
-  ls $res_myReleaseBundle_resourcePath
+  local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
+  local release_bundle_version=res_"$release_bundle_res_name"_version
+  local release_bundle_name=res_"$release_bundle_res_name"_name
+  local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
+  local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
+
+  # We call this endpoint to make sure the release bundle is ready.
+  # If it's ready it will return a download url.
+  local release_bundle_status_url="${!distribution_url}/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
+  curl XGET "$release_bundle_status_url" -H "X-JFrog-Art-Api:${!distribution_apikey}"
 
 #  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 #  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
