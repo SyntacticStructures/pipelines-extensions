@@ -32,6 +32,14 @@ resources:
       buildName: myBuildInfo
       buildNumber: 1
 
+  - name: myReleaseBundle
+    type: ReleaseBundle
+    configuration:
+      sourceDistribution: myDistro
+      name: myReleaseTaylorl
+      version: 1
+      isSigned: true
+
 pipelines:
   - name: DeployToVM
     steps:
