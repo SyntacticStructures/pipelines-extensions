@@ -45,12 +45,12 @@ resources:
       buildName: myBuild2
       buildNumber: 1
 
-  - name: myReleaseBundle
-    type: ReleaseBundle
-    configuration:
-      sourceDistribution: myDistro
-      name: myReleaseTaylorl
-      version: "1"
+#  - name: myReleaseBundle
+#    type: ReleaseBundle
+#    configuration:
+#      sourceDistribution: myDistro
+#      name: myReleaseTaylorl
+#      version: "1"
 
 pipelines:
   - name: DeployToVM
@@ -64,7 +64,7 @@ pipelines:
             - name: myApp2
             - name: myBuildInfo
             - name: myBuildInfo2
-            - name: myReleaseBundle
+#            - name: myReleaseBundle
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
