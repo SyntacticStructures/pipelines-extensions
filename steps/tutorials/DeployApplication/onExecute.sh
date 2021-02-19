@@ -108,7 +108,7 @@ DeployApplication() {
       echo "$buildinfo_number/$buildinfo_name"
 
       # download buildInfo artifacts to tardir
-      execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
+      execute_command "jfrog rt dl \"*\" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
 
       # move the fileSpecs to tardir
 #      mv "${!filespec_res_path}"/* "$tardir"/
