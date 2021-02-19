@@ -1,43 +1,43 @@
-resources:
-  - name: MyBB
-    type: GitRepo
-    configuration:
-      path: ~TAYLORL/pipelines-extensions
-      gitProvider: myBB
-
-  - name: myApp
-    type: FileSpec
-    configuration:
-      sourceArtifactory: artifactoryIntegration
-      pattern: "example-repo-local/myApp.sh"
-
-  - name: myApp2
-    type: FileSpec
-    configuration:
-      sourceArtifactory: artifactoryIntegration
-      pattern: "example-repo-local/myApp.sh"
-
-  - name: myVM
-    type: VmCluster
-    configuration:
-      sshKey: u16ssh
-      targets:
-        - 192.168.50.19
-        - 192.168.50.18
-
-  - name: myBuildInfo
-    type: BuildInfo
-    configuration:
-      sourceArtifactory: artifactoryIntegration
-      buildName: myBuild
-      buildNumber: 1
-
-  - name: myBuildInfo2
-    type: BuildInfo
-    configuration:
-      sourceArtifactory: artifactoryIntegration
-      buildName: myBuild2
-      buildNumber: 1
+#resources:
+#  - name: MyBB
+#    type: GitRepo
+#    configuration:
+#      path: ~TAYLORL/pipelines-extensions
+#      gitProvider: myBB
+#
+#  - name: myApp
+#    type: FileSpec
+#    configuration:
+#      sourceArtifactory: artifactoryIntegration
+#      pattern: "example-repo-local/myApp.sh"
+#
+#  - name: myApp2
+#    type: FileSpec
+#    configuration:
+#      sourceArtifactory: artifactoryIntegration
+#      pattern: "example-repo-local/myApp.sh"
+#
+#  - name: myVM
+#    type: VmCluster
+#    configuration:
+#      sshKey: u16ssh
+#      targets:
+#        - 192.168.50.19
+#        - 192.168.50.18
+#
+#  - name: myBuildInfo
+#    type: BuildInfo
+#    configuration:
+#      sourceArtifactory: artifactoryIntegration
+#      buildName: myBuild
+#      buildNumber: 1
+#
+#  - name: myBuildInfo2
+#    type: BuildInfo
+#    configuration:
+#      sourceArtifactory: artifactoryIntegration
+#      buildName: myBuild2
+#      buildNumber: 1
 
 #  - name: myReleaseBundle
 #    type: ReleaseBundle
