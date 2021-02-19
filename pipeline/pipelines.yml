@@ -52,8 +52,8 @@ pipelines:
       - name: myDeploy
         type: tutorials/DeployApplication
         configuration:
-          inputResources:
-            - name: myVM
+#          inputResources:
+#            - name: myVM
 #            - name: myApp
 #            - name: myApp2
 #            - name: myBuildInfo
