@@ -38,6 +38,13 @@ resources:
       buildName: myBuild
       buildNumber: 1
 
+  - name: myBuildInfo2
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      buildName: myBuild2
+      buildNumber: 1
+
   - name: myReleaseBundle
     type: ReleaseBundle
     configuration:
@@ -56,6 +63,7 @@ pipelines:
             - name: myApp
             - name: myApp2
             - name: myBuildInfo
+            - name: myBuildInfo2
             - name: myReleaseBundle
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
