@@ -54,10 +54,10 @@ pipelines:
         configuration:
           inputResources:
             - name: myVM
-            - name: myApp
-            - name: myApp2
-            - name: myBuildInfo
-            - name: myBuildInfo2
+#            - name: myApp
+#            - name: myApp2
+#            - name: myBuildInfo
+#            - name: myBuildInfo2
 #            - name: myReleaseBundle
           targetDirectory: "/opt"
           # Artifactory removes the executable bit from files
