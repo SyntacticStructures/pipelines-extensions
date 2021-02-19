@@ -1,10 +1,16 @@
+
+get_resource_name() {
+  local resource_names=( $(get_resource_names $@) )
+  echo "${resource_names[0]}"
+}
+
 get_resource_names() {
   if [[ $# -le 0 ]]; then
     echo "Usage: get_resource_name [--type] [--operation] [--syntax-version] [--namespace]" >&2
     exit 99
   fi
 
-  local resource_name=""
+  local resource_names=""
   local resource_type=""
   local resource_operation=""
   local resource_version=""
@@ -66,65 +72,58 @@ get_resource_names() {
       if [ "$resource_type" == "$resource_json_type" ] && [ "$resource_operation" == "$resource_json_operation" ] && [ "$resource_namespace" == "$resource_json_namespace" ]; then
         if [ ! -z "$resource_version" ]; then
           if [ "$resource_version" == "$resource_json_version" ]; then
-            resource_name+=$resource
-            break
+            resource_names+="$resource "
           fi
         else
-          resource_name+=$resource
-          break
+          resource_names+="$resource "
         fi
       fi
     fi
   done
 
-  echo "$resource_name"
+  echo "$resource_names"
 }
 
 DeployApplication() {
-#  local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
-#  local release_bundle_version=res_"$release_bundle_res_name"_version
-#  local release_bundle_name=res_"$release_bundle_res_name"_name
-#  local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
-#  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
-#  local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
-#  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
-
-  # We call this endpoint to make sure the release bundle is ready.
-  # If it's ready it will return a download url.
-#  local release_bundle_status_url="${!distribution_url}/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
-#  local bundle_download_url=$(curl -XGET "$release_bundle_status_url" -u "${!distribution_user}:${!distribution_apikey}" | jq ."download_url" --insecure)
-
-
-#  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
-#  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
-#  local buildinfo_name=res_"$buildinfo_res_name"_buildName
-#  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
+  local buildinfo_res_names=( $(get_resource_names --type BuildInfo --operation IN) )
+  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local filespec_res_name=$(get_resource_names --type FileSpec --operation IN)
-  echo "$filespec_res_name"
-#  local res_targets=res_"$vm_cluster_name"_targets
-#  local filespec_res_path=res_"$filespec_res_name"_resourcePath
-#  local ssh_id="$HOME/.ssh/$vm_cluster_name"
-#  local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
+  local res_targets=res_"$vm_cluster_name"_targets
+  local filespec_res_path=res_"$filespec_res_name"_resourcePath
+  local ssh_id="$HOME/.ssh/$vm_cluster_name"
+  local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
+
+  local filespec_res_names=( $(get_resource_names --type FileSpec --operation IN) )
 
   # We put everything we want to upload to vms in a directory
   # We will create a tarball from all of it
-#  local tardir="${PWD}/work"
-#  mkdir "$tardir"
-#  pushd "$tardir"
-#    # download buildInfo artifacts to tardir
-#    execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
-#    # move the fileSpec to tardir
-#    mv "${!filespec_res_path}"/* "$tardir"/
-#
-#    # download and unzip release bundle
-##    execute_command "curl -o --insecure -XGET ${!bundle_download_url} -u ${!distribution_user}:${!distribution_apikey}"
-##    unzip "${!release_bundle_name}"-"${!release_bundle_version}".zip
-#
-#    # creat tarball from everything in the tardir
-#    local tarball_name="$pipeline_name-$run_id.tar.gz"
-#    execute_command "tar -czvf ../$tarball_name ."
-#  popd
-#
+  local tardir="${PWD}/work"
+  mkdir "$tardir"
+  pushd "$tardir"
+    for res_name in "${buildinfo_res_names[@]}"
+    do
+      local buildinfo_number=res_"$res_name"_buildNumber
+      local buildinfo_name=res_"$res_name"_buildName
+
+      echo "$buildinfo_number/$buildinfo_name"
+
+      # download buildInfo artifacts to tardir
+      execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
+
+      # move the fileSpecs to tardir
+#      mv "${!filespec_res_path}"/* "$tardir"/
+    done
+
+
+    # download and unzip release bundle
+#    execute_command "curl -o --insecure -XGET ${!bundle_download_url} -u ${!distribution_user}:${!distribution_apikey}"
+#    unzip "${!release_bundle_name}"-"${!release_bundle_version}".zip
+
+    # creat tarball from everything in the tardir
+    local tarball_name="$pipeline_name-$run_id.tar.gz"
+    execute_command "tar -czvf ../$tarball_name ."
+  popd
+
 #  for i in "${!vm_addrs[@]}"
 #  do
 #
