@@ -5,6 +5,8 @@ get_resource_name() {
 }
 
 get_resource_names() {
+  echo "HELLO PIPELINES"
+  exit 0
   if [[ $# -le 0 ]]; then
     echo "Usage: get_resource_name [--type] [--operation] [--syntax-version] [--namespace]" >&2
     exit 99
