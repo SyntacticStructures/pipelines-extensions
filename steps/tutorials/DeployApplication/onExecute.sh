@@ -5,8 +5,6 @@ get_resource_name() {
 }
 
 get_resource_names() {
-  echo "HELLO PIPELINES"
-  exit 0
   if [[ $# -le 0 ]]; then
     echo "Usage: get_resource_name [--type] [--operation] [--syntax-version] [--namespace]" >&2
     exit 99
@@ -87,6 +85,8 @@ get_resource_names() {
 }
 
 DeployApplication() {
+  echo "HELLO PIPELINES"
+  exit 0
   local buildinfo_res_names=( $(get_resource_names --type BuildInfo --operation IN) )
   local filespec_res_names=( $(get_resource_names --type FileSpec --operation IN) )
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
