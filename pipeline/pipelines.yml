@@ -52,7 +52,7 @@ pipelines:
       - name: myDeploy
         type: tutorials/DeployApplication
         configuration:
-          nodePool: w19Taylorl
+#          nodePool: w19Taylorl
 #          inputResources:
 #            - name: myVM
 #            - name: myApp
