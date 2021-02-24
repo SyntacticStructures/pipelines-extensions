@@ -14,12 +14,12 @@ function DeployApplication() {
   echo $buildinfo_res_name
   echo $vmcluster_res_name
 
-  if (Test-Path buildinfo_res_name) {
+  if ($buildinfo_res_name -neq $null) {
     echo "res name"
     echo $buildinfo_res_name
   }
 
-  if (Test-Path filespec_res_name) {
+  if ($filespec_res_name -neq $null) {
     echo "well crap"
   }
 }
