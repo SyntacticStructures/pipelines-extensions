@@ -34,7 +34,7 @@ function DeployApplication() {
 
     ls $tardir
   } elseif ($filespec_res_name -ne "") {
-
+    echo "oh crap"
   }
 
 
