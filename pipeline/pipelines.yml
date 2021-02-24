@@ -23,13 +23,13 @@ resources:
       sshKey: u16ssh
       targets:
         - 192.168.50.17
-#
-#  - name: myBuildInfo
-#    type: BuildInfo
-#    configuration:
-#      sourceArtifactory: artifactoryIntegration
-#      buildName: myBuild
-#      buildNumber: 1
+
+  - name: myBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      buildName: myBuild
+      buildNumber: 1
 #
 #  - name: myBuildInfo2
 #    type: BuildInfo
@@ -56,7 +56,7 @@ pipelines:
             - name: myVM
 #            - name: myApp
 #            - name: myApp2
-#            - name: myBuildInfo
+            - name: myBuildInfo
 #            - name: myBuildInfo2
 #            - name: myReleaseBundle
           targetDirectory: "/opt"
