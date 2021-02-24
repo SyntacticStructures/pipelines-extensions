@@ -12,12 +12,12 @@ function DeployApplication() {
   $vmcluster_res_name = $(get_resource_name -type VmCluster -operation "IN")
   $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
 
-  if (Test-Path $buildinfo_res_name) {
+  if (Test-Path buildinfo_res_name) {
     echo "res name"
     echo $buildinfo_res_name
   }
 
-  if (Test-Path $filespec_res_name) {
+  if (Test-Path filespec_res_name) {
     echo "well crap"
   }
 }
