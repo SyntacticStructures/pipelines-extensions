@@ -1,5 +1,5 @@
 function DeployApplication() {
-  gci env:* | sort-object name
+#  gci env:* | sort-object name
   $buildinfo_res_name = $(get_resource_name -type BuildInfo -operation "IN")
   $buildinfo_number = "res_$($buildinfo_res_name)_buildNumber"
   $buildinfo_name = "res_$($buildinfo_res_name)_buildName"
@@ -25,12 +25,11 @@ function DeployApplication() {
   mkdir $tardir
 
   if ($buildinfo_res_name -ne "") {
-    execute_command "jfrog rt config show"
-    execute_command "jfrog rt dl \"*\" $tardir/ \
-    --build=$buildinfo_name/buildinfo_number \
-    --url=$buildinfo_rt_url \
-    --user=$buildinfo_rt_user \
-    --apikey=$buildinfo_rt_apikey"
+    echo "vars..."
+    echo $buildinfo_rt_url
+    echo $buildinfo_rt_user
+    echo $buildinfo_rt_apiKey
+    execute_command "jfrog rt dl \"*\" $tardir/ --build=$buildinfo_name/buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --apikey=$buildinfo_rt_apikey"
 
     ls $tardir
   } elseif ($filespec_res_name -ne "") {
