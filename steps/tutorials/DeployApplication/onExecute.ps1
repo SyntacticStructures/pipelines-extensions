@@ -14,14 +14,20 @@ function DeployApplication() {
   echo $buildinfo_res_name
   echo $vmcluster_res_name
 
+  # TODO: validate number of resources
+
+
+  $tardir="${PWD}/work"
+  mkdir $tardir
+
   if ($buildinfo_res_name -ne "") {
-    echo "res name"
-    echo $buildinfo_res_name
+    execute_command "jfrog rt dl \"*\" $tardir/ --build=$buildinfo_name/buildinfo_number"
+    ls $tardir
+  } elseif ($filespec_res_name -ne "") {
+
   }
 
-  if ($filespec_res_name -ne "") {
-    echo "well crap"
-  }
+
 }
 
 execute_command DeployApplication

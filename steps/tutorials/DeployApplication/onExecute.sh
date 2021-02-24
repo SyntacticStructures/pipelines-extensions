@@ -21,6 +21,7 @@ DeployApplication() {
 
   # We put everything we want to upload to vms in a directory
   # We will create a tarball from all of it
+  # TODO: put this in a tmp dir
   local tardir="${PWD}/work"
   mkdir "$tardir"
 
