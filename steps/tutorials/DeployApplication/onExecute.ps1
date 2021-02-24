@@ -6,6 +6,10 @@ function DeployApplication() {
   echo $buildinfo_res_name
 
   echo $vm_cluster_name
+
+  res_targets="$(res_$vm_cluster_name_targets)"
+  echo $res_targets
+  ls $res_targets
 }
 
 execute_command DeployApplication
