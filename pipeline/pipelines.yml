@@ -17,13 +17,12 @@
 #      sourceArtifactory: artifactoryIntegration
 #      pattern: "example-repo-local/myApp.sh"
 #
-#  - name: myVM
-#    type: VmCluster
-#    configuration:
-#      sshKey: u16ssh
-#      targets:
-#        - 192.168.50.19
-#        - 192.168.50.18
+  - name: myVM
+    type: VmCluster
+    configuration:
+      sshKey: u16ssh
+      targets:
+        - 192.168.50.17
 #
 #  - name: myBuildInfo
 #    type: BuildInfo
@@ -54,7 +53,7 @@ pipelines:
         configuration:
 #          nodePool: w19Taylorl
 #          inputResources:
-#            - name: myVM
+            - name: myVM
 #            - name: myApp
 #            - name: myApp2
 #            - name: myBuildInfo
