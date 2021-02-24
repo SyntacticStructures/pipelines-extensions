@@ -14,6 +14,7 @@ function DeployApplication() {
   $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
 
   echo $buildinfo_res_name
+  echo $vmcluster_res_name
 
   if (Test-Path buildinfo_res_name) {
     echo "res name"
