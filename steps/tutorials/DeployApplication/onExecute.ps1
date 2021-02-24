@@ -6,9 +6,7 @@ function DeployApplication() {
   echo $buildinfo_res_name
 
   echo $vm_cluster_name
-
-  $res_targets="res_$($vm_cluster_name)_targets"
-  p=$((Get-Variable -Name $res_targets).Value)
+  p=$((Get-Variable -Name "res_$($vm_cluster_name)_targets").Value)
   echo $p
 }
 
