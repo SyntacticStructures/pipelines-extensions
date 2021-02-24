@@ -21,6 +21,7 @@ function DeployApplication() {
   mkdir $tardir
 
   if ($buildinfo_res_name -ne "") {
+    execute_command "jfrog rt config show"
     execute_command "jfrog rt dl \"*\" $tardir/ --build=$buildinfo_name/buildinfo_number"
     ls $tardir
   } elseif ($filespec_res_name -ne "") {
