@@ -7,4 +7,4 @@ function DeployApplication() {
   echo $vm_cluster_name
 }
 
-DeployApplication
+execute_command DeployApplication
