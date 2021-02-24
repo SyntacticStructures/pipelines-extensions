@@ -54,9 +54,9 @@ pipelines:
 #          nodePool: w19Taylorl
           inputResources:
             - name: myVM
+            - name: myBuildInfo
 #            - name: myApp
 #            - name: myApp2
-            - name: myBuildInfo
 #            - name: myBuildInfo2
 #            - name: myReleaseBundle
           targetDirectory: "/opt"
