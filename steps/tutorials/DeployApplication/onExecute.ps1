@@ -1,4 +1,5 @@
 function DeployApplication() {
+  echo "hello deployApp"
 #  gci env:* | sort-object name
   $buildinfo_res_name = $(get_resource_name -type BuildInfo -operation "IN")
   $buildinfo_number = "res_$($buildinfo_res_name)_buildNumber"
