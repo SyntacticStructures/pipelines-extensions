@@ -9,7 +9,7 @@ function DeployApplication() {
 
   $res_targets="res_$($vm_cluster_name)_targets"
   echo $res_targets
-  ls $($res_targets)
+  echo $($res_targets)
 }
 
 execute_command DeployApplication
