@@ -1,5 +1,4 @@
-echo "hello ps1"
+execute_command "echo hello ps1"
 
-gci env:* | sort-object name
+execute_command "gci env:* | sort-object name"
 
-echo "hello powershell"
