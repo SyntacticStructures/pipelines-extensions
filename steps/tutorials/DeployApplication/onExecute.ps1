@@ -8,8 +8,8 @@ function DeployApplication() {
   echo $vm_cluster_name
 
   $res_targets="res_$($vm_cluster_name)_targets"
-  echo $res_targets
-  echo $($res_targets)
+  p=$((Get-Variable -Name $res_targets).Value)
+  echo $p
 }
 
 execute_command DeployApplication
