@@ -1,6 +1,6 @@
 function DeployApplication() {
   #  gci env:* | sort-object name
-  ssh-add - <<<$res_myVM_sshKey_privateKey
+  ssh-add - <<<"${res_myVM_sshKey_privateKey}"
 #  $vmcluster_res_name = $(get_resource_name -type VmCluster -operation "IN")
 #  $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
 #
