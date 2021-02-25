@@ -34,4 +34,4 @@ function DeployApplication() {
 
 }
 
-execute_command DeployApplication
+DeployApplication
