@@ -10,7 +10,7 @@ function DeployApplication() {
   # TODO: validate number of resources
 
 
-  $tardir="${PWD}/work"
+  $tardir="${PWD}\work"
   mkdir $tardir
 
   if ($buildinfo_res_name -ne "") {
@@ -24,7 +24,7 @@ function DeployApplication() {
     echo $buildinfo_rt_user
     echo $buildinfo_rt_apiKey
 
-    execute_command "jfrog rt dl `"*`" $tardir/ --build=$buildinfo_name/buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --apikey=$buildinfo_rt_apikey"
+    execute_command "jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --apikey=$buildinfo_rt_apikey  --insecure-tls"
 
     ls $tardir
   } elseif ($filespec_res_name -ne "") {
