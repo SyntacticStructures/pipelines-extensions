@@ -14,6 +14,7 @@ function DeployApplication() {
   mkdir $tardir
 
   if ($buildinfo_res_name -ne "") {
+    echo "trying"
     $buildinfo_number = $((Get-Variable -Name "res_$($buildinfo_res_name)_buildNumber").Value)
     $buildinfo_name = $((Get-Variable -Name "res_$($buildinfo_res_name)_buildName").Value)
     $buildinfo_rt_url = $((Get-Variable -Name "res_$($buildinfo_res_name)_sourceArtifactory_url").Value)
@@ -22,11 +23,7 @@ function DeployApplication() {
     echo $buildinfo_rt_url
     echo $buildinfo_rt_user
     echo $buildinfo_rt_apiKey
-    execute_command "jfrog rt dl \"*\" $tardir/ \
-    --build=$buildinfo_name/buildinfo_number \
-    --url=$buildinfo_rt_url \
-    --user=$buildinfo_rt_user \
-    --apikey=$buildinfo_rt_apikey"
+    execute_command "jfrog rt dl \"*\" $tardir/ --build=$buildinfo_name/buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --apikey=$buildinfo_rt_apikey"
 
     ls $tardir
   } elseif ($filespec_res_name -ne "") {
