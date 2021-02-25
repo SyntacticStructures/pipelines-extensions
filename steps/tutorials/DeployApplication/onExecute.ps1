@@ -1,6 +1,8 @@
 function DeployApplication() {
   #  gci env:* | sort-object name
-  ssh-add - <<<"${res_myVM_sshKey_privateKey}"
+   Set-Content -Path "${PWD}:\id_rsa" -Value $res_myVM_sshKey_privateKey
+  cat .\id_rsa
+  ssh -i .\id_rsa -n 192.168.50.3 "ls"
 #  $vmcluster_res_name = $(get_resource_name -type VmCluster -operation "IN")
 #  $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
 #
