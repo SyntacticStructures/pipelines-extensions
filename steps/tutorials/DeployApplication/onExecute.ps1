@@ -2,8 +2,6 @@ $ErrorActionPreference = "Stop"
 
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
-  echo $ssh_key_path
-  Get-Service ssh-agent
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
   Start-Service ssh-agent
   execute_command "ssh-add $ssh_key_path"
