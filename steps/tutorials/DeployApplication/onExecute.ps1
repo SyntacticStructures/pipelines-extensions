@@ -5,7 +5,6 @@ function SetupSSH($key_name) {
   Get-Service ssh-agent
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
   Start-Service ssh-agent
-  Get-Service ssh-agent
   ssh-add $ssh_key_path
 }
 
@@ -41,7 +40,7 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
-    execute_command "ssh 2.tcp.ngrok.io -p 18814 `"ls /`""
+    execute_command "ssh -vvv 2.tcp.ngrok.io -p 18814  -o StrictHostKeyChecking=no `"ls /`""
 #    ssh $vm_targets "ls /"
   }
 }
