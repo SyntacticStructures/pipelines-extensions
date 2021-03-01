@@ -41,7 +41,7 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
-    ssh 2.tcp.ngrok.io -p 18814 "ls /"
+    execute_command "ssh 2.tcp.ngrok.io -p 18814 `"ls /`""
 #    ssh $vm_targets "ls /"
   }
 }
