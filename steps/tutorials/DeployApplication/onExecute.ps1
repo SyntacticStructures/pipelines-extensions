@@ -39,8 +39,10 @@ function DeployApplication() {
     exit 1
   }
 
+  # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
-    ssh $vm_targets "ls /"
+    ssh 2.tcp.ngrok.io -p 18814 "ls /"
+#    ssh $vm_targets "ls /"
   }
 }
 
