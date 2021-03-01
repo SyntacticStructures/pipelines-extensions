@@ -39,7 +39,7 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
-    execute_command "ssh -i C:\Users\ContainerAdministrator\.ssh\myVM -vvv 2.tcp.ngrok.io -p 18205  -o StrictHostKeyChecking=no ls /""
+    execute_command "ssh -i C:\Users\ContainerAdministrator\.ssh\myVM -vvv 2.tcp.ngrok.io -p 18205  -o StrictHostKeyChecking=no `"ls /`""
 #    ssh $vm_targets "ls /"
   }
 }
