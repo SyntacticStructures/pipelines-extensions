@@ -2,8 +2,8 @@ function DeployApplication() {
   #  gci env:* | sort-object name
   $ssh_dir = Join-Path $env:USERPROFILE ".ssh"
   Get-Service ssh-agent
+  Get-Service -Name ssh-agent | Set-Service -StartupType Manual
   Start-Service ssh-agent
-#  Get-Service -Name ssh-agent | Set-Service -StartupType Manual
 #  ssh-agent
   ls $ssh_dir
   ssh-add
