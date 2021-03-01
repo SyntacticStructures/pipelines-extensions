@@ -5,7 +5,7 @@ function SetupSSH($key_name) {
   Get-Service ssh-agent
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
   Start-Service ssh-agent
-  ssh-add $ssh_key_path
+  execute_command "ssh-add $ssh_key_path"
 }
 
 function DeployApplication() {
