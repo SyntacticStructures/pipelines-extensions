@@ -4,9 +4,10 @@ function DeployApplication() {
   Get-Service ssh-agent
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
   Start-Service ssh-agent
+  Get-Service ssh-agent
 #  ssh-agent
   ls $ssh_dir
-  ssh-add
+#  ssh-add
   echo "anybody home?"
 #  $vmcluster_res_name = $(get_resource_name -type VmCluster -operation "IN")
 #  $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
