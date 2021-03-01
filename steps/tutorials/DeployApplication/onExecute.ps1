@@ -2,6 +2,7 @@ function DeployApplication() {
   #  gci env:* | sort-object name
   $ssh_dir = Join-Path $env:USERPROFILE ".ssh"
   ls $ssh_dir
+  ssh-add
   echo "anybody home?"
 #  $vmcluster_res_name = $(get_resource_name -type VmCluster -operation "IN")
 #  $vm_targets = $((Get-Variable -Name "res_$($vmcluster_res_name)_targets").Value | ConvertFrom-Json)
