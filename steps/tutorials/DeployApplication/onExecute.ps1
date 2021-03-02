@@ -16,7 +16,7 @@ function DeployApplication() {
   $filespec_res_name = $( get_resource_name -type FileSpec -operation "IN" )
   $releasebundle_res_name = $( get_resource_name -type ReleaseBundle -operation "IN" )
 
-  $deployable_resources = $(@($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length }))
+  $deployable_resources = @(@($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length }))
 
   execute_command "echo $deployable_resources"
   execute_command "echo $deployable_resources.Length"
