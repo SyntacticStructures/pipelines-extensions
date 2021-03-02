@@ -43,7 +43,7 @@ function DeployApplication() {
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
     execute_command "ssh -v $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no `"ls $step_configuration_targetDirectory`""
-    execute_command "scp $tarball_name root@2.tcp.ngrok.io`:$step_configuration_targetDirectory -P 10081"
+    execute_command "scp -P 10081 $tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
 #    ssh $vm_targets "ls /"
   }
 }
