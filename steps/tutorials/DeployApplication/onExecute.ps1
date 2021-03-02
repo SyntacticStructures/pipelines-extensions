@@ -76,4 +76,4 @@ function DeployApplication() {
   }
 }
 
-DeployApplication
+execute_command DeployApplication
