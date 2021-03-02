@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
@@ -51,6 +53,7 @@ function DeployApplication() {
     if ($step_configuration_postDeployCommand -ne $null) {
       $post_deploy_command="ssh -v -n $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
       execute_command "$post_deploy_command"
+      execute_command "echo something else"
     }
   }
 }
