@@ -51,7 +51,7 @@ function DeployApplication() {
     $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
 
     # Command to upload app tarball to vm
-    $upload_command "scp -P 10081 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
+    $upload_command = "scp -P 10081 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
     $untar = "cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
