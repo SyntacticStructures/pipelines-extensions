@@ -50,9 +50,14 @@ function DeployApplication() {
     $untar = "cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
     execute_command "$ssh_base_cmd `"$untar $step_configuration_deployCommand`""
 
+    execute_command "echo $step_configuration_fastFail"
+
     if ($step_configuration_postDeployCommand -ne $null) {
       $post_deploy_command="$ssh_base_cmd `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
       execute_command "$post_deploy_command"
+#      if($step_configuration_fastFail -eq $true) {
+#        execute_command "echo `"heyThere`""
+#      }
     }
   }
 }
