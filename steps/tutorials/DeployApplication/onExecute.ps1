@@ -38,10 +38,8 @@ function DeployApplication() {
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
-  execute_command "tar -czvf ../$tarball_name $tardir"
+  execute_command "tar -czvf ./$tarball_name $tardir"
   execute_command "ls"
-  execute_command "ls .."
-  execute_command "echo $step_configuration_targetDirectory"
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {

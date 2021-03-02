@@ -58,8 +58,6 @@ DeployApplication() {
 
     # Command to upload app tarball to vm
     # TODO: ssh-add, not scp -i
-    execute_command "ls"
-    execute_command "pwd"
     local upload_command="scp -i $ssh_id ./$tarball_name $vm_addr:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
