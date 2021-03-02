@@ -43,17 +43,16 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
+    $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
+    execute_command "$ssh_base_cmd `"ls /`""
 
-    execute_command "ssh -v $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no `"ls /`""
-
-    execute_command "scp -v -P 10081 .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
+    execute_command "scp -P 10081 .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
     $untar = "cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
-    execute_command "ssh -v $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no `"$untar $step_configuration_deployCommand`""
+    execute_command "$ssh_base_cmd `"$untar $step_configuration_deployCommand`""
 
     if ($step_configuration_postDeployCommand -ne $null) {
-      $post_deploy_command="ssh -v $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
+      $post_deploy_command="$ssh_base_cmd `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
       execute_command "$post_deploy_command"
-      execute_command "echo something else"
     }
   }
 }
