@@ -16,12 +16,17 @@ function DeployApplication() {
   $filespec_res_name = $( get_resource_name -type FileSpec -operation "IN" )
   $releasebundle_res_name = $( get_resource_name -type ReleaseBundle -operation "IN" )
 
+  deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where{ $_ -ne "" }
+
+  execute_command "echo $deployable_resources"
+
+
   SetupSSH($vmcluster_res_name)
 
   # TODO: validate number of resources
 
-  $tardir = Join-Path $PWD -ChildPath "work"
-  execute_command "mkdir $tardir"
+  $tardir = Join-Path $PWD -ChildPath "uploadFiles"
+  mkdir $tardir
 
   if ($buildinfo_res_name -ne "") {
     $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
