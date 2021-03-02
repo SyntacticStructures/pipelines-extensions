@@ -1,7 +1,5 @@
 DeployApplication() {
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
-  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
-  local buildinfo_name=res_"$buildinfo_res_name"_buildName
 
   local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
   local filespec_res_path=res_"$filespec_res_name"_resourcePath
@@ -27,6 +25,14 @@ DeployApplication() {
 
   if [ -n "$buildinfo_res_name" ]; then
     # download buildInfo artifacts to tardir
+    local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
+    local buildinfo_name=res_"$buildinfo_res_name"_buildName
+    local integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
+    local rt_url=res_"$buildinfo_res_name"_"$integration_alias"_url
+    local rt_user=res_"$buildinfo_res_name"_"$integration_alias"_user
+    local rt_apikey=res_"$buildinfo_res_name"_"$integration_alias"_apikey
+
+    retry_command jfrog rt config --insecure-tls="$no_verify_ssl" --url "$rt_url" --user "$rt_user" --apikey "$rt_apikey" --interactive=false
     execute_command "jfrog rt dl \"*\" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
   elif [ -n "$filespec_res_name" ]; then
     # move the fileSpecs to tardir
