@@ -64,4 +64,4 @@ pipelines:
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; ls"
           sshUser: root
-          fastFail: true
+#          fastFail: true

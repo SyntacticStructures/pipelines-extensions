@@ -43,20 +43,30 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
-    execute_command "scp -P 10081 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
-
     $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
+
+    # Command to upload app tarball to vm
+    $upload_command "scp -P 10081 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
+
+    # Command to run the deploy command from within the uploaded dir
     $untar = "cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
+    $deploy_command = "$ssh_base_cmd `"$untar $step_configuration_deployCommand`""
 
-    execute_command "$ssh_base_cmd `"$untar $step_configuration_deployCommand`""
-    execute_command "echo $step_configuration_fastFail"
+    # Command to run after the deploy command from within the uploaded dir
+    $post_deploy_command = "$ssh_base_cmd `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
 
-    if ($step_configuration_postDeployCommand -ne $null) {
-      $post_deploy_command="$ssh_base_cmd `"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand`""
-      execute_command "$post_deploy_command"
-#      if($step_configuration_fastFail -eq $true) {
-#        execute_command "echo `"heyThere`""
-#      }
+    try {
+      execute_command $upload_command
+      execute_command $deploy_command
+      if ($step_configuration_postDeployCommand -ne $null) {
+        execute_command $post_deploy_command
+      }
+    } catch {
+      # Don't exit on failed commands if fastFail is specified as false
+      if ($step_configuration_fastFail -eq $false) {
+        continue
+      }
+      throw
     }
   }
 }
