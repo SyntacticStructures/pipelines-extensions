@@ -1,5 +1,3 @@
-$ErrorActionPreference = "Stop"
-
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
@@ -21,7 +19,7 @@ function DeployApplication() {
   # TODO: validate number of resources
 
   $tardir = Join-Path $PWD -ChildPath "work"
-  mkdir $tardir
+  execute_command "mkdir $tardir"
 
   if ($buildinfo_res_name -ne "") {
     $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
@@ -40,7 +38,6 @@ function DeployApplication() {
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
   execute_command "tar -czvf ./$tarball_name $tardir"
-  execute_command "ls"
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
