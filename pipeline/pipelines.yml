@@ -5,12 +5,12 @@ resources:
 #      path: ~TAYLORL/pipelines-extensions
 #      gitProvider: myBB
 #
-#  - name: myApp
-#    type: FileSpec
-#    configuration:
-#      sourceArtifactory: artifactoryIntegration
-#      pattern: "example-repo-local/myApp.sh"
-#
+  - name: myApp
+    type: FileSpec
+    configuration:
+      sourceArtifactory: artifactoryIntegration
+      pattern: "example-repo-local/myApp.sh"
+
 #  - name: myApp2
 #    type: FileSpec
 #    configuration:
@@ -55,7 +55,7 @@ pipelines:
           inputResources:
             - name: myVM
             - name: myBuildInfo
-#            - name: myApp
+            - name: myApp
 #            - name: myApp2
 #            - name: myBuildInfo2
 #            - name: myReleaseBundle

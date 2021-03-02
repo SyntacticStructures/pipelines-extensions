@@ -3,9 +3,7 @@ $ErrorActionPreference = "Stop"
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
   Get-Service -Name ssh-agent | Set-Service -StartupType Manual
-  execute_command "ls $(Join-Path $env:USERPROFILE -ChildPath `".ssh`")"
   Start-Service ssh-agent
-  execute_command "cat $ssh_key_path.pub"
   execute_command "ssh-add $ssh_key_path"
 }
 
@@ -46,4 +44,4 @@ function DeployApplication() {
   }
 }
 
-execute_command DeployApplication
+DeployApplication
