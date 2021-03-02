@@ -39,12 +39,14 @@ function DeployApplication() {
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
   execute_command "tar -czvf ../$tarball_name $tardir"
+  execute_command "ls"
+  execute_command "ls .."
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
 #    try {
       execute_command "ssh -v $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no `"ls $step_configuration_targetDirectory`""
-      execute_command "scp -P 10081 ./$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
+      execute_command "scp -P 10081 .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
 #    } catch {
 #
 #    }
