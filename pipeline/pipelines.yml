@@ -63,4 +63,5 @@ pipelines:
           # Artifactory removes the executable bit from files
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; ls"
+          sshUser: root
 #          fastFail: false

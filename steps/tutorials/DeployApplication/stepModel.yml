@@ -12,3 +12,5 @@ configuration:
     type: String
   rolloutDelay:
     type: Int
+  sshUser:
+    type: String
