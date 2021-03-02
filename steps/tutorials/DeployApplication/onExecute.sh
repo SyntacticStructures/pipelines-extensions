@@ -44,7 +44,7 @@ DeployApplication() {
 
   # create tarball from everything in the tardir
   local tarball_name="$pipeline_name-$run_id.tar.gz"
-  execute_command "tar -czvf ../$tarball_name $tardir"
+  execute_command "tar -czvf ./$tarball_name $tardir"
 
   for i in "${!vm_addrs[@]}"
   do
