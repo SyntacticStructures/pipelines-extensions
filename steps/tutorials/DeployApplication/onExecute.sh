@@ -69,13 +69,12 @@ DeployApplication() {
     -n $vm_addr \
     \"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand\""
 
-
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       ignore_failure_suffix=" || continue"
       upload_command+="$ignore_failure_suffix"
       deploy_command+="$ignore_failure_suffix"
-      if [ -n "$post_deploy_command" ]; then
+      if [ -n "$step_configuration_postDeployCommand" ]; then
         post_deploy_command+="$ignore_failure_suffix"
       fi
     fi
@@ -83,7 +82,7 @@ DeployApplication() {
     execute_command "$upload_command"
     execute_command "$deploy_command"
 
-    if [ -n "$post_deploy_command" ]; then
+    if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "$post_deploy_command"
     fi
 
