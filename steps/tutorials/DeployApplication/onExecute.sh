@@ -92,7 +92,8 @@ DeployApplication() {
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
       local resp_body_file="$step_tmp_dir/response.json"
-      getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file"
+      local status=$(getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
+      execute_command "echo $status"
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
