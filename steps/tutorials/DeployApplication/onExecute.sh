@@ -13,8 +13,8 @@ DeployApplication() {
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
-    execute_command "write_output Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
-    exit 1
+    execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
+    return 1
   fi
 
   # We put everything we want to upload to vms in a directory
