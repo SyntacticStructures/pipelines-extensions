@@ -45,11 +45,11 @@ function DeployApplication() {
   execute_command "tar -czvf ./$tarball_name $tardir"
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
-  foreach ($vm_target in $vm_targets) {
+  for ($i = 0; $i -lt $vm_targets.Length; $i++) {
+    $vm_target = $vm_targets[$i]
 
-    if ($step_configuration_rolloutDelay -ne $null) {
-      execute_command "echo should delay"
-#      execute_command "Start-Sleep ${step_configuration_rolloutDelay}s"
+    if ($step_configuration_rolloutDelay -ne $null -and $i -ne 0) {
+      execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
     $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
