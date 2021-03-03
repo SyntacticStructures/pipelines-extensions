@@ -95,6 +95,7 @@ DeployApplication() {
       getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file"
     fi
     # create tarball from everything in the tardir
+    execute_command "echo got past it"
     local tarball_name="$pipeline_name-$run_id.tar.gz"
     execute_command "tar -czvf ../$tarball_name ."
   popd
