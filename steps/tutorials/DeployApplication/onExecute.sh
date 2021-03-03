@@ -134,4 +134,4 @@ DeployApplication() {
   done
 }
 
-execute_command DeployApplication
+DeployApplication
