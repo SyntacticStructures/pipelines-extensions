@@ -38,7 +38,7 @@ function DeployApplication() {
   }
   elseif ($filespec_res_name -ne "") {
     $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-    mv $filespec_res_path\* $tardir
+    execute_command "mv $filespec_res_path\* $tardir"
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
