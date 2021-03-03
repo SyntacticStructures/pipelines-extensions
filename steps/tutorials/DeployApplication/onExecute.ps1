@@ -18,7 +18,7 @@ function DeployApplication() {
 
   $deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length })
 
-  if(@($deployable_resources).Length -ne 1) {
+  if (@($deployable_resources).Length -ne 1) {
     execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
@@ -40,6 +40,13 @@ function DeployApplication() {
     elseif ($filespec_res_name -ne "") {
       $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
       execute_command "mv $filespec_res_path\* $tardir"
+    }
+    elseif ($releasebundle_res_name -ne "") {
+      $release_bundle_version=$( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
+      $release_bundle_name=$( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
+      $distribution_url=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
+      $distribution_user=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
+      $distribution_apikey=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
     }
     $tarball_name = "$pipeline_name-$run_id.tar.gz"
     execute_command "tar -czvf ../$tarball_name ."
@@ -71,7 +78,8 @@ function DeployApplication() {
       if ($step_configuration_postDeployCommand -ne $null) {
         execute_command $post_deploy_command
       }
-    } catch {
+    }
+    catch {
       # Don't exit on failed commands if fastFail is specified as false
       if ($step_configuration_fastFail -eq $false) {
         continue
