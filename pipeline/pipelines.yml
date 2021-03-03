@@ -31,7 +31,7 @@ resources:
       sourceArtifactory: artifactoryIntegration
       buildName: myBuild
       buildNumber: 1
-#
+
 #  - name: myBuildInfo2
 #    type: BuildInfo
 #    configuration:
@@ -39,12 +39,12 @@ resources:
 #      buildName: myBuild2
 #      buildNumber: 1
 
-#  - name: myReleaseBundle
-#    type: ReleaseBundle
-#    configuration:
-#      sourceDistribution: myDistro
-#      name: myReleaseTaylorl
-#      version: "1"
+  - name: myReleaseBundle
+    type: ReleaseBundle
+    configuration:
+      sourceDistribution: myDistro
+      name: myReleaseTaylorl
+      version: "1"
 
 pipelines:
   - name: DeployToVM
