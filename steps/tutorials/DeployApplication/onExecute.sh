@@ -156,9 +156,9 @@ getDistributionExportStatus() {
     curl_options+=" --insecure"
   fi
 
-  local comd="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
-  execute_command "$comd"
-  execute_command "cat $resp_body_file"
+  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
+  execute_command "status=$(request)"
+  execute_command "echo $status"
 }
 
 execute_command DeployApplication
