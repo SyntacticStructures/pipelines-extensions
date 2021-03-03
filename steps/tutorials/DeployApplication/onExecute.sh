@@ -150,7 +150,7 @@ getDistributionExportStatus() {
   local distribution_apikey=$5
   local resp_body_file=$6
 
-  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output=$resp_body_file -u $distribution_user:$distribution_apikey"
+  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output $resp_body_file -u $distribution_user:$distribution_apikey"
 
   if [ "$no_verify_ssl" == "true" ]; then
     curl_options+=" --insecure"
