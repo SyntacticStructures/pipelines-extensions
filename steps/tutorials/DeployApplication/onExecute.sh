@@ -97,7 +97,7 @@ DeployApplication() {
     local vm_addr="${vm_addrs[$i]}"
 
     # Wait between deploys if delay was specified
-    if [ -n "$step_configuration_rolloutDelay" ] && [ "$i" != 1 ]; then
+    if [ -n "$step_configuration_rolloutDelay" ] && [ "$i" != 0 ]; then
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
