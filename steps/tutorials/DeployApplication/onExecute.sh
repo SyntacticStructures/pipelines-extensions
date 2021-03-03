@@ -13,7 +13,7 @@ DeployApplication() {
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
-    execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
+    execute_command "write_output Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
     exit 1
   fi
 

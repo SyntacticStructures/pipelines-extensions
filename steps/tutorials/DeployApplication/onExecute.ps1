@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
-  Get-Service -Name ssh-agent | Set-Service -StartupType Manual
-  Start-Service ssh-agent
+  execute_command "Get-Service -Name ssh-agent | Set-Service -StartupType Manual"
+  execute_command "Start-Service ssh-agent"
   execute_command "ssh-add $ssh_key_path"
 }
 
@@ -19,7 +19,7 @@ function DeployApplication() {
   $deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length })
 
   if(@($deployable_resources).Length -ne 1) {
-    echo ""
+    execute_command "write_output Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
     exit 1
   }
 
@@ -28,7 +28,7 @@ function DeployApplication() {
   # TODO: validate number of resources
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
-  mkdir $tardir
+  execute_command "mkdir $tardir"
 
   if ($buildinfo_res_name -ne "") {
     $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
@@ -37,7 +37,7 @@ function DeployApplication() {
     $buildinfo_rt_user = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_user").Value )
     $buildinfo_rt_apiKey = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_apikey").Value )
 
-    execute_command "jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
+    execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
   }
   elseif ($filespec_res_name -ne "") {
     $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
