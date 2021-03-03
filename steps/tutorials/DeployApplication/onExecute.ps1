@@ -38,7 +38,7 @@ function DeployApplication() {
   }
   elseif ($filespec_res_name -ne "") {
     $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-    execute_command "throw `"this should not happen`""
+    mv $filespec_res_path\* $tardir
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
@@ -52,10 +52,10 @@ function DeployApplication() {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
-    $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
+    $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 19002 -o StrictHostKeyChecking=no"
 
     # Command to upload app tarball to vm
-    $upload_command = "scp -P 10081 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
+    $upload_command = "scp -P 19002 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@2.tcp.ngrok.io`:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
     $untar = "cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
