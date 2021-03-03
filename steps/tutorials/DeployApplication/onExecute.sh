@@ -92,7 +92,7 @@ DeployApplication() {
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
       local resp_body_file="$step_tmp_dir/response.json"
-      local status=$(getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
+      execute_command "local status=$(getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")"
       execute_command "echo $status"
     fi
     # create tarball from everything in the tardir
@@ -159,7 +159,7 @@ getDistributionExportStatus() {
   fi
 
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
-  execute_command "$request"
+  $request
 }
 
 DeployApplication
