@@ -19,7 +19,7 @@ function DeployApplication() {
   $deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length })
 
   if(@($deployable_resources).Length -ne 1) {
-    execute_command "write_output Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
+    execute_command "write_output Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported."
     exit 1
   }
 
