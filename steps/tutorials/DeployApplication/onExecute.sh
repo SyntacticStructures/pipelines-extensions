@@ -82,9 +82,17 @@ DeployApplication() {
       # move the fileSpecs to tardir
       execute_command "mv ${!filespec_res_path}/* $tardir/"
     elif [ "$releasebundle_res_name" ]; then
-      # TODO: support releaseBundles
-      echo "release bundles not yet supported"
-      exit 1
+      # Export and download release bundle
+      local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
+      local release_bundle_version=res_"$release_bundle_res_name"_version
+      local release_bundle_name=res_"$release_bundle_res_name"_name
+      local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
+      local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
+      local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
+      local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
+      # TODO: Check for ready status before exporting. It may already by exported.
+      local status=$(getDistributionExportStatus "$distribution_url" "$release_bundle_name" "$release_bundle_version" "$distribution_user" "$distribution_apikey")
+      execute_command "echo $status"
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
@@ -132,6 +140,22 @@ DeployApplication() {
     fi
 
   done
+}
+
+getDistributionExportStatus() {
+  local distribution_url=$1
+  local release_bundle_name=$2
+  local release_bundle_version=$3
+  local distribution_user=$4
+  local distribution_apikey=$5
+  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' -u $distribution_user:$distribution_apikey"
+
+  if [ "$no_verify_ssl" == "true" ]; then
+    curl_options+=" --insecure"
+  fi
+
+  execute_command "status=$(curl "$curl_options" "$distribution_url"/api/v1/export/release_bundle/"$release_bundle_name"/"$release_bundle_version"/status)"
+  echo "$status"
 }
 
 DeployApplication
