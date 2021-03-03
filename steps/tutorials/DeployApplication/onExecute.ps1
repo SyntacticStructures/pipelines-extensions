@@ -24,8 +24,6 @@ function DeployApplication() {
 
   SetupSSH($vmcluster_res_name)
 
-  # TODO: validate number of resources
-
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
   execute_command "mkdir $tardir"
 
@@ -40,7 +38,7 @@ function DeployApplication() {
   }
   elseif ($filespec_res_name -ne "") {
     $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-    throw "this should not happen"
+    execute_command "throw `"this should not happen`""
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
@@ -48,6 +46,12 @@ function DeployApplication() {
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   foreach ($vm_target in $vm_targets) {
+
+    if ($step_configuration_rolloutDelay -ne $null) {
+      execute_command "echo should delay"
+#      execute_command "Start-Sleep ${step_configuration_rolloutDelay}s"
+    }
+
     $ssh_base_cmd = "ssh $step_configuration_sshUser@2.tcp.ngrok.io -p 10081 -o StrictHostKeyChecking=no"
 
     # Command to upload app tarball to vm

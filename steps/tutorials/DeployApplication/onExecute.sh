@@ -31,7 +31,7 @@ DeployApplication() {
     local rt_url=res_"$buildinfo_res_name"_"$integration_alias"_url
     local rt_user=res_"$buildinfo_res_name"_"$integration_alias"_user
     local rt_apikey=res_"$buildinfo_res_name"_"$integration_alias"_apikey
-    retry_command jfrog rt config --insecure-tls="$no_verify_ssl" --url "${!rt_url}" --user "${!rt_user}" --apikey "${!rt_apikey}" --interactive=false
+    execute_command "retry_command jfrog rt config --insecure-tls=$no_verify_ssl --url ${!rt_url} --user ${!rt_user} --apikey ${!rt_apikey} --interactive=false"
     execute_command "jfrog rt dl \"*\" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
   elif [ -n "$filespec_res_name" ]; then
     # move the fileSpecs to tardir
