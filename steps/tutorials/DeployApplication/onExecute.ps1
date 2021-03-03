@@ -19,8 +19,7 @@ function DeployApplication() {
   $deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length })
 
   if(@($deployable_resources).Length -ne 1) {
-    execute_command "echo `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
-    exit 1
+    execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
   SetupSSH($vmcluster_res_name)
@@ -41,8 +40,7 @@ function DeployApplication() {
   }
   elseif ($filespec_res_name -ne "") {
     $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-    echo "this should not happen"
-    exit 1
+    throw "this should not happen"
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
