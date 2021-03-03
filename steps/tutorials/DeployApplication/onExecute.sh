@@ -91,7 +91,8 @@ DeployApplication() {
       local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
-      local status=$(getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}")
+      local resp_body_file="$step_tmp_dir/response.json"
+      getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file"
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
@@ -147,14 +148,17 @@ getDistributionExportStatus() {
   local release_bundle_version=$3
   local distribution_user=$4
   local distribution_apikey=$5
-  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' -u $distribution_user:$distribution_apikey"
+  local resp_body_file=$6
+
+  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output=$resp_body_file -u $distribution_user:$distribution_apikey"
 
   if [ "$no_verify_ssl" == "true" ]; then
     curl_options+=" --insecure"
   fi
 
-  execute_command "status=$(curl "$curl_options" "$distribution_url"/api/v1/export/release_bundle/"$release_bundle_name"/"$release_bundle_version"/status)"
-  echo "$status"
+  local comd="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
+  execute_command "$comd"
+  execute_command "cat $resp_body_file"
 }
 
 execute_command DeployApplication
