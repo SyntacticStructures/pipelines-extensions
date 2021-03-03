@@ -18,9 +18,10 @@ function DeployApplication() {
 
   $deployable_resources = @($buildinfo_res_name, $filespec_res_name, $releasebundle_res_name).Where({ $_.Length })
 
-  echo $deployable_resources
-  echo @($deployable_resources).Length
-
+  if(@($deployable_resources).Length -ne 1) {
+    echo ""
+    exit 1
+  }
 
   SetupSSH($vmcluster_res_name)
 
@@ -77,4 +78,4 @@ function DeployApplication() {
   }
 }
 
-execute_command DeployApplication
+DeployApplication
