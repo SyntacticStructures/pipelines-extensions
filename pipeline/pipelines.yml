@@ -55,8 +55,8 @@ pipelines:
 #          nodePool: w19Taylorl
           inputResources:
             - name: myVM
-            - name: myBuildInfo
-#            - name: myApp
+#            - name: myBuildInfo
+            - name: myApp
 #            - name: myApp2
 #            - name: myBuildInfo2
 #            - name: myReleaseBundle
