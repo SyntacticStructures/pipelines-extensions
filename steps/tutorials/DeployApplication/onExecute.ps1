@@ -27,22 +27,23 @@ function DeployApplication() {
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
   execute_command "mkdir $tardir"
 
-  if ($buildinfo_res_name -ne "") {
-    $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
-    $buildinfo_name = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildName").Value )
-    $buildinfo_rt_url = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_url").Value )
-    $buildinfo_rt_user = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_user").Value )
-    $buildinfo_rt_apiKey = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_apikey").Value )
+  pushd $tardir
+    if ($buildinfo_res_name -ne "") {
+      $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
+      $buildinfo_name = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildName").Value )
+      $buildinfo_rt_url = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_url").Value )
+      $buildinfo_rt_user = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_user").Value )
+      $buildinfo_rt_apiKey = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_apikey").Value )
 
-    execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
-  }
-  elseif ($filespec_res_name -ne "") {
-    $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-    execute_command "mv $filespec_res_path\* $tardir"
-  }
-
-  $tarball_name = "$pipeline_name-$run_id.tar.gz"
-  execute_command "tar -C . -czvf ./$tarball_name $tardir"
+      execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
+    }
+    elseif ($filespec_res_name -ne "") {
+      $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
+      execute_command "mv $filespec_res_path\* $tardir"
+    }
+    $tarball_name = "$pipeline_name-$run_id.tar.gz"
+    execute_command "tar -czvf ../$tarball_name ."
+  popd
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   for ($i = 0; $i -lt $vm_targets.Length; $i++) {
