@@ -55,8 +55,8 @@ pipelines:
 #          nodePool: w19Taylorl
           inputResources:
             - name: myVM
-            - name: myBuildInfo
-#            - name: myApp
+#            - name: myBuildInfo
+            - name: myApp
 #            - name: myReleaseBundle
           targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
