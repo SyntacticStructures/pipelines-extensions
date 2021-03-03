@@ -42,7 +42,7 @@ function DeployApplication() {
   }
 
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
-  execute_command "tar -czvf ./$tarball_name $tardir/*"
+  execute_command "tar -czvf -C ./$tarball_name $tardir"
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
   for ($i = 0; $i -lt $vm_targets.Length; $i++) {
