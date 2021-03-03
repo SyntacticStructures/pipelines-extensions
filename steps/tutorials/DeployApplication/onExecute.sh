@@ -162,4 +162,4 @@ getDistributionExportStatus() {
   echo "$status"
 }
 
-execute_command DeployApplication
+DeployApplication
