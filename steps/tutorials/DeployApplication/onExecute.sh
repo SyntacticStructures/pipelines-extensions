@@ -158,6 +158,8 @@ getDistributionExportStatus() {
 
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
   local status=$(execute_command "$request") || true
+  echo "hello"
+  echo $status
   execute_command "echo $status"
 }
 
