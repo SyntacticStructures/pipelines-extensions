@@ -236,4 +236,4 @@ exportReleaseBundle() {
   $request
 }
 
-DeployApplication
+execute_command DeployApplication
