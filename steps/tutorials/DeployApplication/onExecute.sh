@@ -95,7 +95,6 @@ DeployApplication() {
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
       execute_command "cat $resp_body_file"
       execute_command "echo $status_http_code"
-      exit 1
 
       # check status
       if [ $status_http_code -eq 404 ]; then
