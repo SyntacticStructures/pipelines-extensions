@@ -89,15 +89,6 @@ DeployApplication() {
       local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
-      # TODO: Check for ready status before exporting. It may already by exported.
-
-      execute_command "echo ${!distribution_url}"
-      execute_command "echo ${!release_bundle_version}"
-      execute_command "echo ${!release_bundle_name}"
-      execute_command "echo ${!distribution_url}"
-      execute_command "echo ${!distribution_user}"
-      execute_command "echo ${!distribution_apikey}"
-
       local resp_body_file="$step_tmp_dir/response.json"
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
@@ -217,15 +208,8 @@ getDistributionExportStatus() {
     curl_options+=" --insecure"
   fi
 
-  execute_command "echo : release_bundle_version $release_bundle_version"
-  execute_command "echo : release_bundle_name    $release_bundle_name"
-  execute_command "echo : distribution_url       $distribution_url"
-  execute_command "echo : distribution_user      $distribution_user"
-  execute_command "echo : distribution_apikey    $distribution_apikey"
-
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
-  execute_command "echo $request"
-  $request
+  execute_command "$request"
 }
 
 exportReleaseBundle() {
