@@ -94,7 +94,7 @@ DeployApplication() {
       local resp_body_file="$step_tmp_dir/response.json"
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
-      local status_http_code=$(getDistributionExportStatus "${distribution_request_args@}")
+      local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
       execute_command "cat $resp_body_file"
       # check status
       if [ "$status_http_code" -eq 404 ]; then
