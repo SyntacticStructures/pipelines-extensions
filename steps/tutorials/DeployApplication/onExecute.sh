@@ -95,6 +95,7 @@ DeployApplication() {
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args@}")
+      execute_command "cat $resp_body_file"
       # check status
       if [ "$status_http_code" -eq 404 ]; then
         execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found. Please check your Release Bundle details'"
@@ -125,7 +126,7 @@ DeployApplication() {
         execute_command "echo 'Triggering Release Bundle download for $release_bundle_name/$release_bundle_version'"
         local export_http_code=$(exportReleaseBundle "${distribution_request_args@}")
         if [ "$export_http_code" -gt 299 ]; then
-          execute_command "echo 'Triggering Release Bundle download failed $release_bundle_name/$release_bundle_version failed with status code $status'"
+          execute_command "echo 'Triggering Release Bundle download failed $release_bundle_name/$release_bundle_version failed with status code $export_http_code'"
           if [ "$export_http_code" -eq 404 ]; then
             execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found'"
           fi
@@ -133,7 +134,7 @@ DeployApplication() {
         elif [ "$export_http_code" -eq 202 ]; then
           execute_command "echo 'Successfully scheduled export of Release Bundle $release_bundle_name/$release_bundle_version'"
         else
-          execute_command "echo 'Exporting Release Bundle $release_bundle_name/$release_bundle_version finished with unexpected status code $status'"
+          execute_command "echo 'Exporting Release Bundle $release_bundle_name/$release_bundle_version finished with unexpected status code $export_http_code'"
           execute_command "exit 1"
         fi
         export_status="TRIGGERED"
@@ -226,4 +227,4 @@ exportReleaseBundle() {
   $request
 }
 
-DeployApplication
+execute_command DeployApplication
