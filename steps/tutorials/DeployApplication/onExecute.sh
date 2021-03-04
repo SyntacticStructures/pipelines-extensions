@@ -141,7 +141,7 @@ DeployApplication() {
         export_status="TRIGGERED"
       fi
     fi
-    echo "$export_status"
+    execute_command "echo $export_status"
     execute_command "echo killing the program"
     execute_command "exit 1"
     # create tarball from everything in the tardir
