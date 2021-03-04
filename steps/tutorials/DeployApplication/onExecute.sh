@@ -96,6 +96,7 @@ DeployApplication() {
       # Check if release bundle was already exported
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
       execute_command "cat $resp_body_file"
+      exit 1
       # check status
       if [ $status_http_code -eq 404 ]; then
         execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found. Please check your Release Bundle details'"
