@@ -231,12 +231,12 @@ exportReleaseBundle() {
   local resp_body_file=$6
   local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output $resp_body_file -u $distribution_user:$distribution_apikey"
 
-      execute_command "echo $distribution_url"
-      execute_command "echo $release_bundle_version"
-      execute_command "echo $release_bundle_name"
-      execute_command "echo $distribution_url"
-      execute_command "echo $distribution_user"
-      execute_command "echo $distribution_apikey"
+      execute_command "echo: distribution_url       $distribution_url"
+      execute_command "echo: release_bundle_version $release_bundle_version"
+      execute_command "echo: release_bundle_name    $release_bundle_name"
+      execute_command "echo: distribution_url       $distribution_url"
+      execute_command "echo: distribution_user      $distribution_user"
+      execute_command "echo: distribution_apikey    $distribution_apikey"
 
   if [ "$no_verify_ssl" == "true" ]; then
     curlOptions+=" --insecure"
