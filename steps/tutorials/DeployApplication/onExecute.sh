@@ -93,6 +93,7 @@ DeployApplication() {
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
+      status_http_code="$((status_http_code))"
       execute_command "cat $resp_body_file"
       execute_command "echo $status_http_code"
 
