@@ -124,7 +124,7 @@ DeployApplication() {
       if [ "$export_status" == "NOT_TRIGGERED" ] ||[ "$export_status" == "FAILED" ]; then
 
         execute_command "echo 'Triggering Release Bundle download for $release_bundle_name/$release_bundle_version'"
-        local export_http_code=$(exportReleaseBundle "${distribution_request_args@}")
+        local export_http_code=$(exportReleaseBundle "${distribution_request_args[@]}")
         if [ "$export_http_code" -gt 299 ]; then
           execute_command "echo 'Triggering Release Bundle download failed $release_bundle_name/$release_bundle_version failed with status code $export_http_code'"
           if [ "$export_http_code" -eq 404 ]; then
