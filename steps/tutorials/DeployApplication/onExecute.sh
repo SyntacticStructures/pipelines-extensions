@@ -91,6 +91,9 @@ DeployApplication() {
       local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
+
+      execute_command "echo ${!distribution_url}"
+
       local resp_body_file="$step_tmp_dir/response.json"
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
