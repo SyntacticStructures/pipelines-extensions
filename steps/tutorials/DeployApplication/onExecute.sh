@@ -217,6 +217,12 @@ getDistributionExportStatus() {
     curl_options+=" --insecure"
   fi
 
+  execute_command "echo: release_bundle_version $release_bundle_version"
+  execute_command "echo: release_bundle_name    $release_bundle_name"
+  execute_command "echo: distribution_url       $distribution_url"
+  execute_command "echo: distribution_user      $distribution_user"
+  execute_command "echo: distribution_apikey    $distribution_apikey"
+
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
   execute_command "echo $request"
   $request
