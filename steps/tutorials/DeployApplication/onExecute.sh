@@ -72,7 +72,8 @@ DeployApplication() {
       # download buildInfo artifacts to tardir
       local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
       local buildinfo_name=res_"$buildinfo_res_name"_buildName
-      local integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
+      local integration_alias
+      integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
       local rt_url=res_"$buildinfo_res_name"_"$integration_alias"_url
       local rt_user=res_"$buildinfo_res_name"_"$integration_alias"_user
       local rt_apikey=res_"$buildinfo_res_name"_"$integration_alias"_apikey
@@ -83,7 +84,8 @@ DeployApplication() {
       execute_command "mv ${!filespec_res_path}/* $tardir/"
     elif [ "$releasebundle_res_name" ]; then
       # Export and download release bundle
-      local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
+      local release_bundle_res_name
+      release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
       local release_bundle_version=res_"$release_bundle_res_name"_version
       local release_bundle_name=res_"$release_bundle_res_name"_name
       local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
@@ -92,7 +94,8 @@ DeployApplication() {
       local resp_body_file="$step_tmp_dir/response.json"
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
-      local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
+      local status_http_code
+      status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
       execute_command "cat $resp_body_file"
       execute_command "echo $status_http_code"
 
@@ -102,7 +105,8 @@ DeployApplication() {
         execute_command "exit 1"
       elif [ "$status_http_code" -eq 200 ]; then
         execute_command "echo 'got here'"
-        local export_status=$(cat "$resp_body_file" | jq -r .status)
+        local export_status
+        export_status=$(cat "$resp_body_file" | jq -r .status)
         if [ "$export_status" == "NOT_TRIGGERED" ]; then
           execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export was not triggered yet. We will trigger it now'"
         elif [ "$export_status" == "COMPLETED" ]; then
@@ -125,7 +129,8 @@ DeployApplication() {
       if [ "$export_status" == "NOT_TRIGGERED" ] ||[ "$export_status" == "FAILED" ]; then
 
         execute_command "echo 'Triggering Release Bundle download for ${!release_bundle_name}/${!release_bundle_version}'"
-        local export_http_code=$(exportReleaseBundle "${distribution_request_args[@]}")
+        local export_http_code
+        export_http_code=$(exportReleaseBundle "${distribution_request_args[@]}")
         if [ "$export_http_code" -gt 299 ]; then
           execute_command "echo 'Triggering Release Bundle download failed ${!release_bundle_name}/${!release_bundle_version} failed with status code $export_http_code'"
           if [ "$export_http_code" -eq 404 ]; then
@@ -145,7 +150,6 @@ DeployApplication() {
     execute_command "echo killing the program"
     execute_command "exit 1"
     # create tarball from everything in the tardir
-    execute_command "echo got past it"
     local tarball_name="$pipeline_name-$run_id.tar.gz"
     execute_command "tar -czvf ../$tarball_name ."
   popd
