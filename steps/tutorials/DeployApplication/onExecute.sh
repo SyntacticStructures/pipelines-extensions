@@ -58,7 +58,7 @@ DeployApplication() {
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
     execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
-    exit 1
+    execute_command "exit 1"
   fi
 
   # We put everything we want to upload to vms in a directory
@@ -92,9 +92,56 @@ DeployApplication() {
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
       local resp_body_file="$step_tmp_dir/response.json"
-      execute_command "local status=$(getDistributionExportStatus "${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")"
-      execute_command "echo $status"
+      local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
+      # Check if release bundle was already exported
+      local status_http_code=$(getDistributionExportStatus "${distribution_request_args@}")
+      # check status
+      if [ "$status_http_code" -eq 404 ]; then
+        execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found. Please check your Release Bundle details'"
+        execute_command "exit 1"
+      elif [ "$status_http_code" -eq 200 ]; then
+        export_status=$(cat "$resp_body_file" | jq -r .status)
+        if [ "$export_status" == "NOT_TRIGGERED" ]; then
+          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export was not triggered yet. We will trigger it now'"
+        elif [ "$export_status" == "COMPLETED" ]; then
+          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export was already created. We will download it now'"
+          deleteExportedBundleOnFinish="false"
+          export_status="COMPLETED"
+        elif [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ] ; then
+          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export is in progress. Will wait for it to be completed'"
+          deleteExportedBundleOnFinish="false"
+          export_status="IN_PROGRESS"
+        elif [ "$export_status" == "FAILED" ]; then
+          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export failed before. Trying to trigger an export again.'"
+          export_status="FAILED"
+        fi
+      else
+        execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version status=$export_status is unexpected. Aborting... '"
+        execute_command "exit 1"
+      fi
+      # export the Release Bundle if hasn't been exported yet
+      if [ "$export_status" == "NOT_TRIGGERED" ] ||[ "$export_status" == "FAILED" ]; then
+
+        execute_command "echo 'Triggering Release Bundle download for $release_bundle_name/$release_bundle_version'"
+        local export_http_code=$(exportReleaseBundle "${distribution_request_args@}")
+        if [ "$export_http_code" -gt 299 ]; then
+          execute_command "echo 'Triggering Release Bundle download failed $release_bundle_name/$release_bundle_version failed with status code $status'"
+          if [ "$export_http_code" -eq 404 ]; then
+            execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found'"
+          fi
+          execute_command "exit 1"
+        elif [ "$export_http_code" -eq 202 ]; then
+          execute_command "echo 'Successfully scheduled export of Release Bundle $release_bundle_name/$release_bundle_version'"
+        else
+          execute_command "echo 'Exporting Release Bundle $release_bundle_name/$release_bundle_version finished with unexpected status code $status'"
+          execute_command "exit 1"
+        fi
+        export_status="TRIGGERED"
+      fi
     fi
+    echo "$export_status"
+    execute_command "echo killing the program"
+    execute_command "exit 1"
     # create tarball from everything in the tardir
     execute_command "echo got past it"
     local tarball_name="$pipeline_name-$run_id.tar.gz"
@@ -159,6 +206,23 @@ getDistributionExportStatus() {
   fi
 
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
+  $request
+}
+
+exportReleaseBundle() {
+  local distribution_url=$1
+  local release_bundle_name=$2
+  local release_bundle_version=$3
+  local distribution_user=$4
+  local distribution_apikey=$5
+  local resp_body_file=$6
+  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output $resp_body_file -u $distribution_user:$distribution_apikey"
+
+  if [ "$no_verify_ssl" == "true" ]; then
+    curlOptions+=" --insecure"
+  fi
+  $export_status
+  local request="curl $curlOptions $distributionUrl/api/v1/export/release_bundle/$releaseBundleName/$releaseBundleVersion"
   $request
 }
 
