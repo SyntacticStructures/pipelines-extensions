@@ -102,7 +102,7 @@ DeployApplication() {
         execute_command "exit 1"
       elif [ "$status_http_code" -eq 200 ]; then
         execute_command "echo 'got here'"
-        execute_command "local export_status=$(cat "$resp_body_file" | jq -r .status)"
+        local export_status=$(cat "$resp_body_file" | jq -r .status)
         if [ "$export_status" == "NOT_TRIGGERED" ]; then
           execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export was not triggered yet. We will trigger it now'"
         elif [ "$export_status" == "COMPLETED" ]; then
