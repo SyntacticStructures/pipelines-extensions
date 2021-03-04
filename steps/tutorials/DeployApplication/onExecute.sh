@@ -89,10 +89,14 @@ DeployApplication() {
       local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
       local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
-      local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
       # TODO: Check for ready status before exporting. It may already by exported.
 
       execute_command "echo ${!distribution_url}"
+      execute_command "echo ${!release_bundle_version}"
+      execute_command "echo ${!release_bundle_name}"
+      execute_command "echo ${!distribution_url}"
+      execute_command "echo ${!distribution_user}"
+      execute_command "echo ${!distribution_apikey}"
 
       local resp_body_file="$step_tmp_dir/response.json"
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
