@@ -211,6 +211,7 @@ getDistributionExportStatus() {
   fi
 
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
+  execute_command "echo $request"
   $request
 }
 
