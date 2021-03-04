@@ -97,12 +97,12 @@ DeployApplication() {
       execute_command "echo $status_http_code"
 
       # check status
-      if [ $status_http_code -eq 404 ]; then
+      if [ "$status_http_code" -eq 404 ]; then
         execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} not found. Please check your Release Bundle details'"
         execute_command "exit 1"
-      elif [ $status_http_code -eq 200 ]; then
+      elif [ "$status_http_code" -eq 200 ]; then
         execute_command "echo 'got here'"
-        execute_command "local export_status=\$(cat "$resp_body_file" | jq -r .status)"
+        execute_command "local export_status=$(cat "$resp_body_file" | jq -r .status)"
         if [ "$export_status" == "NOT_TRIGGERED" ]; then
           execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export was not triggered yet. We will trigger it now'"
         elif [ "$export_status" == "COMPLETED" ]; then
