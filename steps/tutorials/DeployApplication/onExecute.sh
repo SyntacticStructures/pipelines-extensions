@@ -96,47 +96,49 @@ DeployApplication() {
       # Check if release bundle was already exported
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
       execute_command "cat $resp_body_file"
+      execute_command "echo $status_http_code"
       exit 1
+
       # check status
       if [ $status_http_code -eq 404 ]; then
-        execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found. Please check your Release Bundle details'"
+        execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} not found. Please check your Release Bundle details'"
         execute_command "exit 1"
       elif [ $status_http_code -eq 200 ]; then
         execute_command "echo 'got here'"
         execute_command "local export_status=\$(cat "$resp_body_file" | jq -r .status)"
         if [ "$export_status" == "NOT_TRIGGERED" ]; then
-          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export was not triggered yet. We will trigger it now'"
+          execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export was not triggered yet. We will trigger it now'"
         elif [ "$export_status" == "COMPLETED" ]; then
-          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export was already created. We will download it now'"
+          execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export was already created. We will download it now'"
           deleteExportedBundleOnFinish="false"
           export_status="COMPLETED"
         elif [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ] ; then
-          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export is in progress. Will wait for it to be completed'"
+          execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export is in progress. Will wait for it to be completed'"
           deleteExportedBundleOnFinish="false"
           export_status="IN_PROGRESS"
         elif [ "$export_status" == "FAILED" ]; then
-          execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version export failed before. Trying to trigger an export again.'"
+          execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} export failed before. Trying to trigger an export again.'"
           export_status="FAILED"
         fi
       else
-        execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version status=$export_status is unexpected. Aborting... '"
+        execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} status=$export_status is unexpected. Aborting... '"
         execute_command "exit 1"
       fi
       # export the Release Bundle if hasn't been exported yet
       if [ "$export_status" == "NOT_TRIGGERED" ] ||[ "$export_status" == "FAILED" ]; then
 
-        execute_command "echo 'Triggering Release Bundle download for $release_bundle_name/$release_bundle_version'"
+        execute_command "echo 'Triggering Release Bundle download for ${!release_bundle_name}/${!release_bundle_version}'"
         local export_http_code=$(exportReleaseBundle "${distribution_request_args[@]}")
         if [ "$export_http_code" -gt 299 ]; then
-          execute_command "echo 'Triggering Release Bundle download failed $release_bundle_name/$release_bundle_version failed with status code $export_http_code'"
+          execute_command "echo 'Triggering Release Bundle download failed ${!release_bundle_name}/${!release_bundle_version} failed with status code $export_http_code'"
           if [ "$export_http_code" -eq 404 ]; then
-            execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version not found'"
+            execute_command "echo 'Release Bundle ${!release_bundle_name}/${!release_bundle_version} not found'"
           fi
           execute_command "exit 1"
         elif [ "$export_http_code" -eq 202 ]; then
-          execute_command "echo 'Successfully scheduled export of Release Bundle $release_bundle_name/$release_bundle_version'"
+          execute_command "echo 'Successfully scheduled export of Release Bundle ${!release_bundle_name}/${!release_bundle_version}'"
         else
-          execute_command "echo 'Exporting Release Bundle $release_bundle_name/$release_bundle_version finished with unexpected status code $export_http_code'"
+          execute_command "echo 'Exporting Release Bundle ${!release_bundle_name}/${!release_bundle_version} finished with unexpected status code $export_http_code'"
           execute_command "exit 1"
         fi
         export_status="TRIGGERED"
@@ -208,7 +210,7 @@ getDistributionExportStatus() {
     curl_options+=" --insecure"
   fi
 
-  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
+  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
   $request
 }
 
