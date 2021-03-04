@@ -93,7 +93,6 @@ DeployApplication() {
       local distribution_request_args=("${!distribution_url}" "${!release_bundle_name}" "${!release_bundle_version}" "${!distribution_user}" "${!distribution_apikey}" "$resp_body_file")
       # Check if release bundle was already exported
       local status_http_code=$(getDistributionExportStatus "${distribution_request_args[@]}")
-      status_http_code="$((status_http_code))"
       execute_command "cat $resp_body_file"
       execute_command "echo $status_http_code"
 
@@ -202,7 +201,7 @@ getDistributionExportStatus() {
   local distribution_apikey=$5
   local resp_body_file=$6
 
-  local curl_options="-XGET --silent --retry 3 --write-out '%{http_code}\n' --output $resp_body_file -u $distribution_user:$distribution_apikey"
+  local curl_options="-XGET --silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
 
   if [ "$no_verify_ssl" == "true" ]; then
     curl_options+=" --insecure"
