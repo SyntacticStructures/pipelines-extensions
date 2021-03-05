@@ -51,6 +51,7 @@ __handleExportStatus() {
     execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
     local export_http_code
     export_http_code=$(__exportReleaseBundle)
+    execute_command "echo \"hello $export_http_code\""
     if [ "$export_http_code" -ne 202 ]; then
       execute_command "echo Failed to export release bundle -- status $export_http_code"
       execute_command "cat $resp_body_file"
