@@ -54,7 +54,7 @@ __handleExportStatus() {
   echo $should_cleanup_export
 }
 
-_isReleaseBundleExporting() {
+__isReleaseBundleExporting() {
   local status
   status=$(cat $resp_body_file | jq -r .status)
   if [ "$status" == "IN_PROGRESS" ] ||
