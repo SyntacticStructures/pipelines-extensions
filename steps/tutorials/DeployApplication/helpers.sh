@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euf -o pipefail
+set -e -o pipefail
 
 export resp_body_file="$step_tmp_dir/response.json"
 export release_bundle_version
