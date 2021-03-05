@@ -40,9 +40,10 @@ __downloadReleaseBundle() {
 __handleExportStatus() {
   export_status=$1
   should_cleanup_export=false
-  execute_command "echo I cant echo ahything this is bs"
+  echo "I cant echo ahything this is bs"
   # Trigger release bundle export if possible
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
+    echo "EXPORTING!!! GOSH DARN IT WHY CANT I READ THIS"
     execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
     execute_command "exit 1"
     local export_http_code
@@ -109,7 +110,8 @@ downloadReleaseBundle() {
   execute_command "echo release bundle export status: $export_status"
 
   # Export the Release Bundle if hasn't yet been
-  local should_cleanup_export=$(execute_command "__handleExportStatus $export_status")
+  echo "EXPORTING!!!"
+  local should_cleanup_export=$(__handleExportStatus $export_status)
 
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"

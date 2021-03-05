@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+# TODO: implement $DEPLOY_TARGETS_OVERRIDE
+
 function SetupSSH($key_name) {
   $ssh_key_path = Join-Path $env:USERPROFILE -ChildPath ".ssh" | Join-Path -ChildPath $key_name
   execute_command "Get-Service -Name ssh-agent | Set-Service -StartupType Manual"

@@ -3,6 +3,7 @@ set -e
 source "./helpers.sh"
 
 DeployApplication() {
+  echo "THIS SHOULD WORK"
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 
   local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
@@ -14,6 +15,11 @@ DeployApplication() {
   local res_targets=$(eval echo "$"res_"$vm_cluster_name"_targets)
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local vm_addrs=( $(echo "$res_targets" | jq --raw-output '.[]') )
+
+  if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
+    IFS=,
+    vm_addrs=($DEPLOY_TARGETS_OVERRIDE)
+  fi
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
@@ -84,4 +90,4 @@ DeployApplication() {
   done
 }
 
-DeployApplication
+execute_command DeployApplication
