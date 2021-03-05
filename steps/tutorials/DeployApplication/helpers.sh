@@ -11,6 +11,9 @@ export distribution_request_args
 export distribution_curl_options
 export should_cleanup_export=false
 
+execute_command "echo 'printenv1'"
+execute_command "printenv"
+
 __getDistributionExportStatus() {
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
