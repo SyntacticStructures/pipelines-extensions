@@ -167,7 +167,7 @@ DeployApplication() {
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
-    execute_command "tar -czvf ../$tarball_name ."
+    execute_command "tar -czvf $step_tmp_dir/$tarball_name ."
   popd
 
   for i in "${!vm_addrs[@]}"
@@ -183,7 +183,7 @@ DeployApplication() {
     # Command to upload app tarball to vm
     # TODO: ssh-add, not scp -i
     execute_command "ls"
-    local upload_command="scp -i $ssh_id ./$tarball_name $vm_addr:$step_configuration_targetDirectory"
+    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
     local untar="cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
