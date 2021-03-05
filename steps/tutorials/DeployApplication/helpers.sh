@@ -39,8 +39,8 @@ __downloadReleaseBundle() {
 }
 
 __handleExportStatus() {
-  export_status=$1
-  should_cleanup_export=false
+  local export_status=$1
+  local should_cleanup_export=false
   echo "I cant echo ahything this is bs"
   # Trigger release bundle export if possible
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
