@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -o pipefail
 
+export resp_body_file="$step_tmp_dir/response_body"
+
 source "./helpers.sh"
 
 DeployApplication() {
