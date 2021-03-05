@@ -81,6 +81,9 @@ downloadReleaseBundle() {
   # Check if release bundle was already exported
   local status_http_code=$(__getDistributionExportStatus)
 
+  execute_command "echo frick"
+  execute_command "echo $status_http_code"
+
 
   # exit on bad response codes
   if [ "$status_http_code" -ne 200 ]; then
