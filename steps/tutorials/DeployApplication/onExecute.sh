@@ -98,7 +98,7 @@ DeployApplication() {
       distribution_url=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_url)
       distribution_user=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_user)
       distribution_apikey=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_apikey)
-      distribution_curl_options="-XGET --silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
+      distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
       if [ "$no_verify_ssl" == "true" ]; then
         distribution_curl_options+=" --insecure"
       fi
@@ -217,17 +217,23 @@ DeployApplication() {
 }
 
 getDistributionExportStatus() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XGET"
   local request="curl $distribution_curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
   $request
 }
 
 exportReleaseBundle() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XPOST"
   local request="curl $distribution_curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version"
   execute_command "echo $request"
   $request
 }
 
 downloadReleaseBundle() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XGET"
   local request="curl $distribution_curl_options $download_url"
   $request
 }
