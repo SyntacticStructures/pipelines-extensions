@@ -3,9 +3,9 @@ set -e -o pipefail
 
 __getDistributionExportStatus() {
   execute_command "stat $resp_body_file"
-  exit 1
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
+  execute_command "echo $curl_options"
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
   $request
 }
