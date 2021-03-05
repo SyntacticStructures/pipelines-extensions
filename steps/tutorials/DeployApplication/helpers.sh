@@ -58,13 +58,14 @@ __handleExportStatus() {
 }
 
 __isReleaseBundleExporting() {
+  local is_exporting=false
   local status
   status=$(cat $resp_body_file | jq -r .status)
   if [ "$status" == "IN_PROGRESS" ] ||
    [ "$status" == "NOT_EXPORTED" ]; then
-    return
+    is_exporting=true
   fi
-  false
+  echo $is_exporting
 }
 
 downloadBuildInfo() {
