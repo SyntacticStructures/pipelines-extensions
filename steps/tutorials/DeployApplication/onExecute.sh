@@ -1,3 +1,7 @@
+#!/bin/bash
+
+source "./helpers.sh"
+
 DeployApplication() {
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 

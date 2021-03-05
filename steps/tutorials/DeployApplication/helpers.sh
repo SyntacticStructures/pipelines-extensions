@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export resp_body_file="$step_tmp_dir/response.json"
 export release_bundle_version
 export release_bundle_name
