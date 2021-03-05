@@ -240,7 +240,7 @@ handleExportStatus() {
     local export_http_code
     export_http_code=$(exportReleaseBundle)
     if [ "$export_http_code" -ne 202 ]; then
-      execute_command "Failed to export release bundle"
+      execute_command "echo Failed to export release bundle -- status $export_http_code"
       execute_command "exit 1"
     fi
     execute_command "echo 'Started export of Release Bundle $release_bundle_name}/$release_bundle_version}'"
