@@ -223,6 +223,7 @@ getDistributionExportStatus() {
 
 exportReleaseBundle() {
   local request="curl $distribution_curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version"
+  execute_command "echo $request"
   $request
 }
 
