@@ -72,7 +72,7 @@ DeployApplication() {
   # We put everything we want to upload to vms in a directory
   # We will create a tarball from all of it
   # TODO: put this in a tmp dir
-  local tardir="${PWD}/work"
+  local tardir="$step_tmp_dir/deploy-artifacts"
   mkdir "$tardir"
 
   pushd "$tardir"
@@ -224,10 +224,8 @@ exportReleaseBundle() {
 }
 
 downloadReleaseBundle() {
-  download_url=$1
-  local curl_options=$distribution_curl_options
-  curl_options+=
   local request="curl $distribution_curl_options $download_url"
+  $request
 }
 
 handleExportStatus() {
