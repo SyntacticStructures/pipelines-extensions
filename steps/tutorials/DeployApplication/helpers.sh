@@ -82,12 +82,6 @@ downloadReleaseBundle() {
     distribution_curl_options+=" --insecure"
   fi
 
-  execute_command "echo '$release_bundle_version'"
-  execute_command "echo '$release_bundle_name'"
-  execute_command "echo '$distribution_url'"
-  execute_command "echo '$distribution_user'"
-  execute_command "echo '$distribution_apikey'"
-  execute_command "echo '$distribution_curl_options'"
   # Check if release bundle was already exported
   local status_http_code=$(__getDistributionExportStatus)
 
