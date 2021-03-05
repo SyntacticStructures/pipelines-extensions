@@ -117,6 +117,7 @@ downloadReleaseBundle() {
   status_http_code=$(__getDistributionExportStatus)
   local sleeperCount=2
   export_status=$(cat $resp_body_file | jq -r .status)
+  execute_command "echo $export_status"
   while [ "$status_http_code" -lt 299 ] && {
     [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ];
   }; do
