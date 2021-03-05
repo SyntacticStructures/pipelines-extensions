@@ -162,7 +162,7 @@ DeployApplication() {
         fi
         execute_command "echo 'Downloaded Release Bundle $release_bundle_name/$release_bundle_version successfully'"
 
-        execute_command "unzip $resp_body"
+        execute_command "unzip $resp_body_file"
       fi
     fi
     # create tarball from everything in the tardir
