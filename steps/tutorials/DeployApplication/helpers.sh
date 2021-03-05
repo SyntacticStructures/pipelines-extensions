@@ -78,6 +78,8 @@ execute_command "printenv"
   execute_command "echo '$distribution_url'"
   execute_command "echo '$distribution_user'"
   execute_command "echo '$distribution_apikey'"
+  execute_command "echo $res_myReleaseBundle2_version"
+  execute_command "echo $release_bundle_res_name"
   if [ "$no_verify_ssl" == "true" ]; then
     distribution_curl_options+=" --insecure"
   fi

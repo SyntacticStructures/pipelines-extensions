@@ -4,7 +4,6 @@ set -e -o pipefail
 source "./helpers.sh"
 
 DeployApplication() {
-  execute_command "printenv"
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 
   local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
