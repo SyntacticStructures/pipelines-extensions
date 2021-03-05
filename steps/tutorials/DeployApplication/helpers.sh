@@ -46,7 +46,6 @@ __downloadReleaseBundle() {
 
 __handleExportStatus() {
   local export_status=$1
-  local should_cleanup_export=false
   # Trigger release bundle export if possible
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
@@ -58,9 +57,7 @@ __handleExportStatus() {
       execute_command "exit 1"
     fi
     execute_command "echo 'Started export of Release Bundle $release_bundle_name/$release_bundle_version'"
-    should_cleanup_export=true
   fi
-  echo $should_cleanup_export
 }
 
 downloadBuildInfo() {
@@ -104,8 +101,7 @@ downloadReleaseBundle() {
   execute_command "echo release bundle export status: $export_status"
 
   # Export the Release Bundle if hasn't yet been
-  local should_cleanup_export
-  execute_command "should_cleanup_export=$(__handleExportStatus $export_status)"
+  __handleExportStatus "$export_status"
   execute_command "echo made it here"
 
   if [ "$export_status" == "FAILED" ]; then
@@ -161,14 +157,14 @@ downloadReleaseBundle() {
 
   execute_command "unzip $resp_body_file"
 
-  if [ "$should_cleanup_export" = true ]; then
-    execute_command "echo 'Deleting Release Bundle export: $release_bundle_name/$release_bundle_version'"
-    delete_http_code="$(__deleteExportedBundle)"
-    # exit on bad response codes
-    if [ "$delete_http_code" -ne 200 ]; then
-      execute_command "echo 'Could not get Release Bundle export status'"
-      execute_command "echo http status: $delete_http_code"
-      execute_command "exit 1"
-    fi
-  fi
+#  if [ "$should_cleanup_export" = true ]; then
+#    execute_command "echo 'Deleting Release Bundle export: $release_bundle_name/$release_bundle_version'"
+#    delete_http_code="$(__deleteExportedBundle)"
+#    # exit on bad response codes
+#    if [ "$delete_http_code" -ne 200 ]; then
+#      execute_command "echo 'Could not get Release Bundle export status'"
+#      execute_command "echo http status: $delete_http_code"
+#      execute_command "exit 1"
+#    fi
+#  fi
 }
