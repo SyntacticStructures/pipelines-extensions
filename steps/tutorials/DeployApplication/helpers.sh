@@ -11,9 +11,6 @@ export distribution_request_args
 export distribution_curl_options
 export should_cleanup_export=false
 
-execute_command "echo 'printenv1'"
-execute_command "printenv"
-
 __getDistributionExportStatus() {
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
@@ -74,6 +71,8 @@ downloadBuildInfo() {
 
 downloadReleaseBundle() {
   # Export and download release bundle
+  execute_command "echo 'printenv1'"
+execute_command "printenv"
   local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
   release_bundle_version=$(eval echo "$"res_"$release_bundle_res_name"_version)
   release_bundle_name=$(eval echo "$"res_"$release_bundle_res_name"_name)
