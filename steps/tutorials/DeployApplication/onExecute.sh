@@ -35,13 +35,14 @@ DeployApplication() {
 
   pushd "$tardir"
     if [ -n "$buildinfo_res_name" ]; then
-      downloadBuildinfo
+      buildinfo_integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
+      downloadBuildinfo "$buildinfo_res_name" "$buildinfo_integration_alias"
     elif [ -n "$filespec_res_name" ]; then
       # move the fileSpecs to tardir
       # no need to download because filespecs are automatically downloaded already.
       execute_command "mv $filespec_res_path/* $tardir/"
     elif [ -n "$releasebundle_res_name" ]; then
-      downloadReleaseBundle
+      downloadReleaseBundle "$releasebundle_res_name"
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"

@@ -51,10 +51,10 @@ __handleExportStatus() {
 
 downloadBuildInfo() {
   # download buildInfo artifacts to tardir
-  local buildinfo_number=$(eval echo "$"res_"$buildinfo_res_name"_buildNumber)
+  local buildinfo_res_name=$1
+  local integration_alias=$2
+  local buildinfo_number=$(eval echo "$"res_"$"_buildNumber)
   local buildinfo_name=$(eval echo "$"res_"$buildinfo_res_name"_buildName)
-  local integration_alias
-  integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
   local rt_url=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_url)
   local rt_user=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_user)
   local rt_apikey=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_apikey)
@@ -65,8 +65,8 @@ downloadBuildInfo() {
 downloadReleaseBundle() {
   # Export and download release bundle
   execute_command "echo 'printenv1'"
-execute_command "printenv"
-  local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
+  execute_command "printenv"
+  local release_bundle_res_name=$1
   export release_bundle_version=$(eval echo "$"res_"$release_bundle_res_name"_version)
   export release_bundle_name=$(eval echo "$"res_"$release_bundle_res_name"_name)
   export distribution_url=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_url)
