@@ -46,7 +46,7 @@ resources:
       name: myReleaseTaylorl
       version: "1"
 
-- name: myReleaseBundle2
+  - name: myReleaseBundle2
     type: ReleaseBundle
     configuration:
       sourceDistribution: myDistro
