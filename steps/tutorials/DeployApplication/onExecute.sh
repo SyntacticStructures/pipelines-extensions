@@ -17,6 +17,7 @@ DeployApplication() {
   local vm_addrs=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
   if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
+    execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     IFS=,
     vm_addrs=($DEPLOY_TARGETS_OVERRIDE)
   fi
