@@ -71,7 +71,7 @@ downloadReleaseBundle() {
   export distribution_apikey=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_apikey)
   export resp_body_file="$step_tmp_dir/response_body"
   execute_command "touch $resp_body_file"
-  export distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
+  export distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n -u $distribution_user:$distribution_apikey"
   export should_cleanup_export=false
 
   if [ "$no_verify_ssl" == "true" ]; then
