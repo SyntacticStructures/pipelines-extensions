@@ -1,45 +1,51 @@
-#  local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
-#  local release_bundle_version=res_"$release_bundle_res_name"_version
-#  local release_bundle_name=res_"$release_bundle_res_name"_name
-#  local distribution_url=res_"$release_bundle_res_name"_sourceDistribution_url
-#  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
-#  local distribution_apikey=res_"$release_bundle_res_name"_sourceDistribution_apikey
-#  local distribution_user=res_"$release_bundle_res_name"_sourceDistribution_user
-#
-#  # We call this endpoint to make sure the release bundle is ready.
-#  # If it's ready it will return a download url.
-#  local release_bundle_status_url="${!distribution_url}/api/v1/export/release_bundle/${!release_bundle_name}/${!release_bundle_version}/status"
-#  local bundle_download_url=$(curl -XGET "$release_bundle_status_url" -u "${!distribution_user}:${!distribution_apikey}" | jq ."download_url")
-#
-#
-#  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
-#  local buildinfo_number=res_"$buildinfo_res_name"_buildNumber
-#  local buildinfo_name=res_"$buildinfo_res_name"_buildName
-#  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
-#  local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
-#  local res_targets=res_"$vm_cluster_name"_targets
-#  local filespec_res_path=res_"$filespec_res_name"_resourcePath
-#  local ssh_id="$HOME/.ssh/$vm_cluster_name"
-#  local vm_addrs=( $(echo "${!res_targets}" | jq --raw-output '.[]') )
-#
-#  # We put everything we want to upload to vms in a directory
-#  # We will create a tarball from all of it
-#  local tardir="${PWD}/work"
-#  mkdir "$tardir"
-#  pushd "$tardir"
-#    # download buildInfo artifacts to tardir
-#    execute_command "jfrog rt dl "*" $tardir/ --build=${!buildinfo_name}/${!buildinfo_number}"
-#    # move the fileSpec to tardir
-#    mv "${!filespec_res_path}"/* "$tardir"/
-#
-#    # download and unzip release bundle
-#    curl --remote-name -XGET "$bundle_download_url" -u "${!distribution_user}:${!distribution_apikey}"
-#    unzip "${!release_bundle_name}"-"${!release_bundle_version}".zip
-#
-#    # creat tarball from everything in the tardir
-#    local tarball_name="$pipeline_name-$run_id.tar.gz"
-#    execute_command "tar -czvf ../$tarball_name ."
-#  popd
+getDistributionExportStatus() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XGET"
+  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
+  $request
+}
+
+exportReleaseBundle() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XPOST"
+  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version"
+  $request
+}
+
+downloadReleaseBundle() {
+  local curl_options=$distribution_curl_options
+  curl_options+=" -XGET"
+  local request="curl $curl_options $download_url"
+  $request
+}
+
+handleExportStatus() {
+  export_status=$1
+
+  # Trigger release bundle export if possible
+  if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
+    execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
+    local export_http_code
+    export_http_code=$(exportReleaseBundle)
+    if [ "$export_http_code" -ne 202 ]; then
+      execute_command "echo Failed to export release bundle -- status $export_http_code"
+      execute_command "cat $resp_body_file"
+      execute_command "exit 1"
+    fi
+    execute_command "echo 'Started export of Release Bundle $release_bundle_name}/$release_bundle_version}'"
+  fi
+}
+
+isReleaseBundleExporting() {
+  local status
+  status=$(cat $resp_body_file | jq -r .status)
+  if [ "$status" == "IN_PROGRESS" ] ||
+   [ "$status" == "NOT_EXPORTED" ]; then
+    return
+  fi
+  false
+}
+
 export resp_body_file="$step_tmp_dir/response.json"
 export release_bundle_version
 export release_bundle_name
@@ -48,7 +54,7 @@ export distribution_user
 export distribution_apikey
 export distribution_request_args
 export distribution_curl_options
-
+export delete_exported_bundle_on_finish=false
 
 DeployApplication() {
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
@@ -90,7 +96,7 @@ DeployApplication() {
     elif [ -n "$filespec_res_name" ]; then
       # move the fileSpecs to tardir
       execute_command "mv $filespec_res_path/* $tardir/"
-    elif [ "$releasebundle_res_name" ]; then
+    elif [ -n "$releasebundle_res_name" ]; then
       # Export and download release bundle
       local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
       release_bundle_version=$(eval echo "$"res_"$release_bundle_res_name"_version)
@@ -127,7 +133,7 @@ DeployApplication() {
       # Wait for export to finish
       status_http_code=$(getDistributionExportStatus)
       local sleeperCount=2
-      while [ "$status_http_code" -lt 299 ] && isReleaseBundleExporting; do
+      while [ "$status_http_code" -lt 299 ] && [ "$(isReleaseBundleExporting)" = true ]; do
         execute_command "sleep $sleeperCount"
         sleeperCount+="$sleeperCount"
         if [ $sleeperCount -gt 64 ]; then
@@ -184,7 +190,6 @@ DeployApplication() {
 
     # Command to upload app tarball to vm
     # TODO: ssh-add, not scp -i
-    execute_command "ls"
     local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$step_configuration_targetDirectory"
 
     # Command to run the deploy command from within the uploaded dir
@@ -214,54 +219,6 @@ DeployApplication() {
     fi
 
   done
-}
-
-getDistributionExportStatus() {
-  local curl_options=$distribution_curl_options
-  curl_options+=" -XGET"
-  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
-  $request
-}
-
-exportReleaseBundle() {
-  local curl_options=$distribution_curl_options
-  curl_options+=" -XPOST"
-  local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version"
-  $request
-}
-
-downloadReleaseBundle() {
-  local curl_options=$distribution_curl_options
-  curl_options+=" -XGET"
-  local request="curl $curl_options $download_url"
-  $request
-}
-
-handleExportStatus() {
-  export_status=$1
-
-  # Trigger release bundle export if possible
-  if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
-    execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
-    local export_http_code
-    export_http_code=$(exportReleaseBundle)
-    if [ "$export_http_code" -ne 202 ]; then
-      execute_command "echo Failed to export release bundle -- status $export_http_code"
-      execute_command "cat $resp_body_file"
-      execute_command "exit 1"
-    fi
-    execute_command "echo 'Started export of Release Bundle $release_bundle_name}/$release_bundle_version}'"
-  fi
-}
-
-isReleaseBundleExporting() {
-  local status
-  status=$(cat $resp_body_file | jq -r .status)
-  if [ "$status" == "IN_PROGRESS" ] ||
-   [ "$status" == "NOT_EXPORTED" ]; then
-    return
-  fi
-  false
 }
 
 execute_command DeployApplication
