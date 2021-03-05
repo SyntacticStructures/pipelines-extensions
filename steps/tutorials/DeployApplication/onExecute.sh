@@ -5,6 +5,14 @@ source "./helpers.sh"
 
 DeployApplication() {
   execute_command "printenv"
+
+  if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
+    for i in {0.."$step_configuration_vmEnvironmentVariables_len"}; do
+      echo "hello"
+    done
+  fi
+
+
   exit 1
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 
