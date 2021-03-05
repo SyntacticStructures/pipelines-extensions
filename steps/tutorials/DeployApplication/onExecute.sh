@@ -7,7 +7,8 @@ DeployApplication() {
   local vm_env_file="$step_tmp_dir/vmEnv"
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
     for i in "${!step_configuration_vmEnvironmentVariables[@]}"; do
-      execute_command "echo 'export ${env_var[$i]}\n' >> $vm_env_file"
+      execute_command "echo 'export ${env_var[$i]}' >> $vm_env_file"
+      execute_command "echo 'export ${env_var[$i]}' >> $vm_env_file"
     done
     execute_command "cat $step_tmp_dir/vmEnv"
   fi
