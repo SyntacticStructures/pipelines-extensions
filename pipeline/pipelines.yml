@@ -60,7 +60,8 @@ pipelines:
         type: tutorials/DeployApplication
         configuration:
           environmentVariables:
-            DEPLOY_TARGETS_OVERRIDE: "192.158.50.3,192.168.50.3"
+            readonly:
+              DEPLOY_TARGETS_OVERRIDE: "192.158.50.3,192.168.50.3"
 #          nodePool: w19Taylorl
           inputResources:
             - name: myVM
