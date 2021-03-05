@@ -71,6 +71,4 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'; ls"
           sshUser: root
           rolloutDelay: 3
-          environmentVariables:
-            DEPLOY_TARGETS_OVERRIDE: "192.168.50.3,192.168.50.3"
 #          fastFail: true
