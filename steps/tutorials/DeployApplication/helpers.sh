@@ -144,7 +144,8 @@ downloadReleaseBundle() {
 
   # exit on bad export status
   if [ "$export_status" != "COMPLETED" ]; then
-    execute_command "echo 'Failed to export release bundle with status: $export_status'"
+    execute_command "echo 'Failed to export release bundle with export status: $export_status'"
+    execute_command "exit 1"
   fi
 
   execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version is exported'"
