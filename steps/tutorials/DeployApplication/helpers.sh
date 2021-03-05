@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e -o pipefail
 
-export resp_body_file="$step_tmp_dir/response.json"
+export resp_body_file="$step_tmp_dir/response_body"
 export release_bundle_version
 export release_bundle_name
 export distribution_url
@@ -53,7 +53,6 @@ __handleExportStatus() {
     local export_http_code
     should_cleanup_export=true
     export_http_code=$(__exportReleaseBundle)
-    execute_command "echo \"hello $export_http_code\""
     if [ "$export_http_code" -ne 202 ]; then
       execute_command "echo Failed to export release bundle -- status $export_http_code"
       execute_command "cat $resp_body_file"
@@ -105,7 +104,6 @@ downloadReleaseBundle() {
 
   # Export the Release Bundle if hasn't yet been
   __handleExportStatus "$export_status"
-  execute_command "echo made it here"
 
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"
