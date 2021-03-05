@@ -19,7 +19,7 @@ DeployApplication() {
   if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     IFS=,
-    vm_addrs=($DEPLOY_TARGETS_OVERRIDE)
+    vm_addrs=("$DEPLOY_TARGETS_OVERRIDE")
   fi
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
