@@ -49,7 +49,7 @@ resources:
   - name: myReleaseBundle2
     type: ReleaseBundle
     configuration:
-      sourceDistribution: myDistro
+      sourceDistribution: myDistro2
       name: myReleaseTaylorl
       version: "2"
 
