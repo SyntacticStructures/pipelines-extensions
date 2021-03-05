@@ -6,10 +6,10 @@ source "./helpers.sh"
 DeployApplication() {
   local vm_env_file="$step_tmp_dir/vmEnv"
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
-    for env_var in $step_configuration_vmEnvironmentVariables; do
+    for env_var in "${!step_configuration_vmEnvironmentVariables[@]}"; do
       execute_command "echo 'export $env_var\n' >> $vm_env_file"
     done
-    execute_command "$step_tmp_dir/vmEnv"
+    execute_command "cat $step_tmp_dir/vmEnv"
   fi
 
 
