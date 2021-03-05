@@ -44,7 +44,7 @@ __handleExportStatus() {
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
     local export_http_code
-    export_http_code=$(exportReleaseBundle)
+    export_http_code=$(__exportReleaseBundle)
     if [ "$export_http_code" -ne 202 ]; then
       execute_command "echo Failed to export release bundle -- status $export_http_code"
       execute_command "cat $resp_body_file"
