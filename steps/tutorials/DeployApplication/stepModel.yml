@@ -15,6 +15,6 @@ configuration:
   sshUser:
     type: String
     validate:
-      isRegex: "true"
+      notEmpty: true
   vmEnvironmentVariables:
     type: String[]
