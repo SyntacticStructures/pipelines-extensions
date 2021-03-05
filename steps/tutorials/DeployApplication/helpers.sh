@@ -10,6 +10,12 @@ export distribution_apikey
 export distribution_request_args
 export distribution_curl_options
 
+export EXPORT_STATUS_NOT_TRIGGERED="NOT_TRIGGERED"
+export EXPORT_STATUS_
+export EXPORT_STATUS_
+export EXPORT_STATUS_
+export EXPORT_STATUS_
+
 __getDistributionExportStatus() {
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
@@ -55,17 +61,6 @@ __handleExportStatus() {
     should_cleanup_export=true
   fi
   echo $should_cleanup_export
-}
-
-__isReleaseBundleExporting() {
-  local is_exporting=false
-  local status
-  status=$(cat $resp_body_file | jq -r .status)
-  if [ "$status" == "IN_PROGRESS" ] ||
-   [ "$status" == "NOT_EXPORTED" ]; then
-    is_exporting=true
-  fi
-  echo $is_exporting
 }
 
 downloadBuildInfo() {
@@ -121,7 +116,10 @@ downloadReleaseBundle() {
   # Wait for export to finish
   status_http_code=$(__getDistributionExportStatus)
   local sleeperCount=2
-  while [ "$status_http_code" -lt 299 ] && [ "$(__isReleaseBundleExporting)" = true ]; do
+  export_status=$(cat $resp_body_file | jq -r .status)
+  while [ "$status_http_code" -lt 299 ] && {
+    [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ];
+  }; do
     execute_command "sleep $sleeperCount"
     sleeperCount+="$sleeperCount"
     if [ $sleeperCount -gt 64 ]; then
