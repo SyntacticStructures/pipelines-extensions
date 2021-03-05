@@ -113,57 +113,59 @@ DeployApplication() {
         execute_command "exit 1"
       fi
 
-      # possible values: IN_PROGRESS|FAILED|NOT_TRIGGERED|NOT_EXPORTED|COMPLETED
+      # Possible values: IN_PROGRESS|FAILED|NOT_TRIGGERED|NOT_EXPORTED|COMPLETED
       local export_status=$(cat "$resp_body_file" | jq -r .status)
 
-      # export the Release Bundle if hasn't been exported yet
+      # Export the Release Bundle if hasn't yet been
       handleExportStatus "$export_status"
 
-      # wait for Release Bundle to be exported and check its status
-      # we include COMPLETED job status here because we need the bundle archive download URL
-      if [ "$export_status" != "FAILED" ]; then
-        status_http_code=$(getDistributionExportStatus)
-        local sleeperCount=2
-        while [ "$status_http_code" -lt 299 ] && isReleaseBundleExporting; do
-          execute_command "sleep $sleeperCount"
-          sleeperCount+="$sleeperCount"
-          if [ $sleeperCount -gt 64 ]; then
-            # Keep checking for 128 seconds if export status hasn't reached COMPLETED yet
-            break
-          fi
-          status_http_code=$(getDistributionExportStatus)
-        done
-
-        # exit on bad response codes
-        if [ "$status_http_code" -ne 200 ]; then
-          execute_command "echo 'Could not get Release Bundle export status'"
-          execute_command "echo http status: $status_http_code"
-          execute_command "exit 1"
-        fi
-
-        local resp_body=$(cat "$resp_body_file")
-        export_status=$(echo "$resp_body" | jq -r .status)
-
-        # exit on bad export status
-        if [ "$export_status" != "COMPLETED" ]; then
-          execute_command "echo 'Failed to export release bundle with status: $export_status'"
-        fi
-
-        execute_command "echo 'Exported Release Bundle $release_bundle_name/$release_bundle_version successfully'"
-        # download release bundle
-        local download_url=$(echo "$resp_body" | jq -r .download_url)
-        status_http_code=$(downloadReleaseBundle "$download_url")
-
-        # exit on bad response codes
-        if [ "$status_http_code" -ne 200 ]; then
-          execute_command "echo 'Could not get Release Bundle export status'"
-          execute_command "echo http status: $status_http_code"
-          execute_command "exit 1"
-        fi
-        execute_command "echo 'Downloaded Release Bundle $release_bundle_name/$release_bundle_version successfully'"
-
-        execute_command "unzip $resp_body_file"
+      if [ "$export_status" == "FAILED" ]; then
+        execute_command "echo 'Release bundle export Failed'"
+        execute_command "exit 1"
       fi
+
+      # Wait for export to finish
+      status_http_code=$(getDistributionExportStatus)
+      local sleeperCount=2
+      while [ "$status_http_code" -lt 299 ] && isReleaseBundleExporting; do
+        execute_command "sleep $sleeperCount"
+        sleeperCount+="$sleeperCount"
+        if [ $sleeperCount -gt 64 ]; then
+          # Keep checking for 128 seconds if export status hasn't reached COMPLETED yet
+          break
+        fi
+        status_http_code=$(getDistributionExportStatus)
+      done
+
+      # exit on bad response codes
+      if [ "$status_http_code" -ne 200 ]; then
+        execute_command "echo 'Could not get Release Bundle export status'"
+        execute_command "echo http status: $status_http_code"
+        execute_command "exit 1"
+      fi
+
+      local resp_body=$(cat "$resp_body_file")
+      export_status=$(echo "$resp_body" | jq -r .status)
+
+      # exit on bad export status
+      if [ "$export_status" != "COMPLETED" ]; then
+        execute_command "echo 'Failed to export release bundle with status: $export_status'"
+      fi
+
+      execute_command "echo 'Exported Release Bundle $release_bundle_name/$release_bundle_version successfully'"
+      # download release bundle
+      local download_url=$(echo "$resp_body" | jq -r .download_url)
+      status_http_code=$(downloadReleaseBundle "$download_url")
+
+      # exit on bad response codes
+      if [ "$status_http_code" -ne 200 ]; then
+        execute_command "echo 'Could not get Release Bundle export status'"
+        execute_command "echo http status: $status_http_code"
+        execute_command "exit 1"
+      fi
+      execute_command "echo 'Downloaded Release Bundle $release_bundle_name/$release_bundle_version successfully'"
+
+      execute_command "unzip $resp_body_file"
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
