@@ -7,9 +7,8 @@ DeployApplication() {
   execute_command "printenv"
 
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
-    for i in {0.."$step_configuration_vmEnvironmentVariables_len"}; do
-
-      execute_command "echo $(eval echo "$"res_"$step_configuration_vmEnvironmentVariables"_"$i")"
+    for env_var in $step_configuration_vmEnvironmentVariables; do
+      execute_command "echo $env_var"
     done
   fi
 
