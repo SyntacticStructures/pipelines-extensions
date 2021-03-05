@@ -9,6 +9,7 @@ export distribution_user
 export distribution_apikey
 export distribution_request_args
 export distribution_curl_options
+export should_cleanup_export=false
 
 export EXPORT_STATUS_NOT_TRIGGERED="NOT_TRIGGERED"
 export EXPORT_STATUS_
@@ -50,6 +51,7 @@ __handleExportStatus() {
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Exporting Release Bundle: $release_bundle_name/$release_bundle_version'"
     local export_http_code
+    should_cleanup_export=true
     export_http_code=$(__exportReleaseBundle)
     execute_command "echo \"hello $export_http_code\""
     if [ "$export_http_code" -ne 202 ]; then
@@ -114,10 +116,10 @@ downloadReleaseBundle() {
   status_http_code=$(__getDistributionExportStatus)
   local sleeperCount=2
   export_status=$(cat $resp_body_file | jq -r .status)
-  execute_command "echo $export_status"
   while [ "$status_http_code" -lt 299 ] && {
     [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ];
   }; do
+    execute_command "echo 'Waiting for release bundle export to complete'"
     execute_command "sleep $sleeperCount"
     sleeperCount+="$sleeperCount"
     if [ $sleeperCount -gt 64 ]; then
@@ -158,14 +160,14 @@ downloadReleaseBundle() {
 
   execute_command "unzip $resp_body_file"
 
-#  if [ "$should_cleanup_export" = true ]; then
-#    execute_command "echo 'Deleting Release Bundle export: $release_bundle_name/$release_bundle_version'"
-#    delete_http_code="$(__deleteExportedBundle)"
-#    # exit on bad response codes
-#    if [ "$delete_http_code" -ne 200 ]; then
-#      execute_command "echo 'Could not get Release Bundle export status'"
-#      execute_command "echo http status: $delete_http_code"
-#      execute_command "exit 1"
-#    fi
-#  fi
+  if [ "$should_cleanup_export" = true ]; then
+    execute_command "echo 'Deleting Release Bundle export: $release_bundle_name/$release_bundle_version'"
+    delete_http_code="$(__deleteExportedBundle)"
+    # exit on bad response codes
+    if [ "$delete_http_code" -ne 200 ]; then
+      execute_command "echo 'Could not get Release Bundle export status'"
+      execute_command "echo http status: $delete_http_code"
+      execute_command "exit 1"
+    fi
+  fi
 }
