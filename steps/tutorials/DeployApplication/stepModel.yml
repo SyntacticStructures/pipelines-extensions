@@ -14,3 +14,7 @@ configuration:
     type: Int
   sshUser:
     type: String
+    validate:
+      notNull: true
+  vmEnvironmentVariables:
+    type: String[]
