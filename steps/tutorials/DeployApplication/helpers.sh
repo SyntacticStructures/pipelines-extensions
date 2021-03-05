@@ -11,12 +11,6 @@ export distribution_request_args
 export distribution_curl_options
 export should_cleanup_export=false
 
-export EXPORT_STATUS_NOT_TRIGGERED="NOT_TRIGGERED"
-export EXPORT_STATUS_
-export EXPORT_STATUS_
-export EXPORT_STATUS_
-export EXPORT_STATUS_
-
 __getDistributionExportStatus() {
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
