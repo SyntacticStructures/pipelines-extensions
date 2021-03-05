@@ -104,6 +104,7 @@ downloadReleaseBundle() {
 
   # Possible values: IN_PROGRESS|FAILED|NOT_TRIGGERED|NOT_EXPORTED|COMPLETED
   local export_status=$(cat "$resp_body_file" | jq -r .status)
+  execute_command "echo release bundle export status: $export_status"
 
   # Export the Release Bundle if hasn't yet been
   local should_cleanup_export=$(__handleExportStatus "$export_status")
