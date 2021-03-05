@@ -2,10 +2,8 @@
 set -e -o pipefail
 
 __getDistributionExportStatus() {
-  execute_command "stat $resp_body_file"
   local curl_options=$distribution_curl_options
   curl_options+=" -XGET"
-  execute_command "echo $curl_options"
   local request="curl $curl_options $distribution_url/api/v1/export/release_bundle/$release_bundle_name/$release_bundle_version/status"
   $request
 }
@@ -69,10 +67,9 @@ downloadReleaseBundle() {
   export distribution_url=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_url)
   export distribution_user=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_user)
   export distribution_apikey=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_apikey)
-  export resp_body_file="$step_tmp_dir/response_body"
-  execute_command "touch $resp_body_file"
-  export distribution_curl_options=" -u $distribution_user:$distribution_apikey"
   export should_cleanup_export=false
+  export resp_body_file="$step_tmp_dir/response_body"
+  export distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
 
   if [ "$no_verify_ssl" == "true" ]; then
     distribution_curl_options+=" --insecure"
@@ -80,10 +77,6 @@ downloadReleaseBundle() {
 
   # Check if release bundle was already exported
   local status_http_code=$(__getDistributionExportStatus)
-
-  execute_command "echo frick"
-  execute_command "echo $status_http_code"
-
 
   # exit on bad response codes
   if [ "$status_http_code" -ne 200 ]; then
@@ -98,7 +91,7 @@ downloadReleaseBundle() {
 
   # Export the Release Bundle if hasn't yet been
   __handleExportStatus "$export_status"
-  execute_command "echo made it here"
+
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"
     execute_command "exit 1"

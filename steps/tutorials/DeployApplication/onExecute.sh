@@ -16,12 +16,11 @@ DeployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local vm_addrs=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
-  IFS=,
-
   if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     IFS=,
     vm_addrs=("$DEPLOY_TARGETS_OVERRIDE")
+    unset IFS
   fi
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
