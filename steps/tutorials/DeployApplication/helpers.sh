@@ -39,9 +39,10 @@ __downloadReleaseBundle() {
 }
 
 __handleExportStatus() {
+  echo "I cant echo ahything this is bs"
+  execute_command "echo WHYYYY"
   local export_status=$1
   local should_cleanup_export=false
-  echo "I cant echo ahything this is bs"
   # Trigger release bundle export if possible
   if [ "$export_status" == "NOT_TRIGGERED" ] || [ "$export_status" == "FAILED" ]; then
     echo "EXPORTING!!! GOSH DARN IT WHY CANT I READ THIS"
