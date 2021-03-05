@@ -82,15 +82,15 @@ downloadReleaseBundle() {
     distribution_curl_options+=" --insecure"
   fi
 
-  # Check if release bundle was already exported
-  local status_http_code=$(__getDistributionExportStatus)
-
   execute_command "echo '$release_bundle_version'"
   execute_command "echo '$release_bundle_name'"
   execute_command "echo '$distribution_url'"
   execute_command "echo '$distribution_user'"
   execute_command "echo '$distribution_apikey'"
   execute_command "echo '$distribution_curl_options'"
+  # Check if release bundle was already exported
+  local status_http_code=$(__getDistributionExportStatus)
+
 
   # exit on bad response codes
   if [ "$status_http_code" -ne 200 ]; then
