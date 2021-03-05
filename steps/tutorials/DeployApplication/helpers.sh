@@ -110,6 +110,7 @@ downloadReleaseBundle() {
   # Export the Release Bundle if hasn't yet been
   local should_cleanup_export
   execute_command "should_cleanup_export=$(__handleExportStatus $export_status)"
+  execute_command "echo made it here"
 
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"
