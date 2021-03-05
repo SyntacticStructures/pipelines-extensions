@@ -113,7 +113,8 @@ downloadReleaseBundle() {
 
   # Export the Release Bundle if hasn't yet been
   echo "EXPORTING!!!"
-  __handleExportStatus "$export_status"
+  local should_cleanup_export
+  should_cleanup_export=$(__handleExportStatus "$export_status")
 
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"
