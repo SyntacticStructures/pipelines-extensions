@@ -8,7 +8,8 @@ DeployApplication() {
 
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
     for i in {0.."$step_configuration_vmEnvironmentVariables_len"}; do
-      execute_command "echo hello"
+
+      execute_command "echo $(eval echo "$"res_"$step_configuration_vmEnvironmentVariables"_"$i")"
     done
   fi
 
