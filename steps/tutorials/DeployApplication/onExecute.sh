@@ -150,9 +150,9 @@ DeployApplication() {
         fi
 
         execute_command "echo 'Exported Release Bundle $release_bundle_name/$release_bundle_version successfully'"
-
+        exit 1
         # download release bundle
-        local download_url="$(echo resp_body | jq -r .download_url)"
+        local download_url=$(echo "$resp_body" | jq -r .download_url)
         status_http_code=$(downloadReleaseBundle "$download_url")
 
         # exit on bad response codes
@@ -165,8 +165,6 @@ DeployApplication() {
 
         execute_command "unzip $resp_body"
       fi
-
-
     fi
     # create tarball from everything in the tardir
     local tarball_name="$pipeline_name-$run_id.tar.gz"
