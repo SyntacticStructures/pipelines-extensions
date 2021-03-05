@@ -141,7 +141,7 @@ downloadReleaseBundle() {
     execute_command "echo 'Failed to export release bundle with status: $export_status'"
   fi
 
-  execute_command "echo 'Exported Release Bundle $release_bundle_name/$release_bundle_version successfully'"
+  execute_command "echo 'Release Bundle $release_bundle_name/$release_bundle_version is exported'"
   # download release bundle
   local download_url=$(echo "$resp_body" | jq -r .download_url)
   status_http_code=$(__downloadReleaseBundle "$download_url")
@@ -152,7 +152,7 @@ downloadReleaseBundle() {
     execute_command "echo http status: $status_http_code"
     execute_command "exit 1"
   fi
-  execute_command "echo 'Downloaded Release Bundle $release_bundle_name/$release_bundle_version successfully'"
+  execute_command "echo 'Downloaded Release Bundle $release_bundle_name/$release_bundle_version'"
 
   execute_command "unzip $resp_body_file"
 
