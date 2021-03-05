@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euf -o pipefail
+set -e -o pipefail
 
 source "./helpers.sh"
 
