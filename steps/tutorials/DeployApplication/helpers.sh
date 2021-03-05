@@ -2,13 +2,6 @@
 set -e -o pipefail
 
 export resp_body_file="$step_tmp_dir/response_body"
-export release_bundle_version
-export release_bundle_name
-export distribution_url
-export distribution_user
-export distribution_apikey
-export distribution_request_args
-export distribution_curl_options
 export should_cleanup_export=false
 
 __getDistributionExportStatus() {
@@ -74,12 +67,17 @@ downloadReleaseBundle() {
   execute_command "echo 'printenv1'"
 execute_command "printenv"
   local release_bundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
-  release_bundle_version=$(eval echo "$"res_"$release_bundle_res_name"_version)
-  release_bundle_name=$(eval echo "$"res_"$release_bundle_res_name"_name)
-  distribution_url=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_url)
-  distribution_user=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_user)
-  distribution_apikey=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_apikey)
-  distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
+  export release_bundle_version=$(eval echo "$"res_"$release_bundle_res_name"_version)
+  export release_bundle_name=$(eval echo "$"res_"$release_bundle_res_name"_name)
+  export distribution_url=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_url)
+  export distribution_user=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_user)
+  export distribution_apikey=$(eval echo "$"res_"$release_bundle_res_name"_sourceDistribution_apikey)
+  export distribution_curl_options="--silent --retry 3 --write-out %{http_code}\n --output $resp_body_file -u $distribution_user:$distribution_apikey"
+  execute_command "echo '$release_bundle_version'"
+  execute_command "echo '$release_bundle_name'"
+  execute_command "echo '$distribution_url'"
+  execute_command "echo '$distribution_user'"
+  execute_command "echo '$distribution_apikey'"
   if [ "$no_verify_ssl" == "true" ]; then
     distribution_curl_options+=" --insecure"
   fi
