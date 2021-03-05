@@ -150,7 +150,6 @@ DeployApplication() {
         fi
 
         execute_command "echo 'Exported Release Bundle $release_bundle_name/$release_bundle_version successfully'"
-        exit 1
         # download release bundle
         local download_url=$(echo "$resp_body" | jq -r .download_url)
         status_http_code=$(downloadReleaseBundle "$download_url")
