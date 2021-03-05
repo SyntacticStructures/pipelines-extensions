@@ -46,6 +46,13 @@ resources:
       name: myReleaseTaylorl
       version: "1"
 
+- name: myReleaseBundle2
+    type: ReleaseBundle
+    configuration:
+      sourceDistribution: myDistro
+      name: myReleaseTaylorl
+      version: "2"
+
 pipelines:
   - name: DeployToVM
     steps:
@@ -57,7 +64,7 @@ pipelines:
             - name: myVM
 #            - name: myBuildInfo
 #            - name: myApp
-            - name: myReleaseBundle
+            - name: myReleaseBundle2
           targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
