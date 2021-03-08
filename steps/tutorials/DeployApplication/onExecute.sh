@@ -88,7 +88,7 @@ DeployApplication() {
     # Command to run after the deploy command from within the uploaded dir
     local post_deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
-    \"cd $step_configuration_targetDirectory; $source_env_file; $step_configuration_postDeployCommand\""
+    \"cd $step_configuration_targetDirectory; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
