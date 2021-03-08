@@ -71,12 +71,16 @@ DeployApplication() {
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
-    # Command to upload app tarball to vm
     # TODO: ssh-add, not scp -i
+    local ssh_base_command="ssh -i $ssh_id -n $vm_addr"
+
     local target_dir="~/$pipeline_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
       target_dir=$step_configuration_targetDirectory
     fi
+    local make_target_dir_command="$ssh_base_command \"mkdir -p $target_dir\""
+
+    # Command to upload app tarball to vm
     local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$target_dir"
 
     # Command to run the deploy command from within the uploaded dir
@@ -87,16 +91,16 @@ DeployApplication() {
     if [ -n "$step_configuration_vmEnvironmentVariables_len" ]; then
       source_env_file="source ./$vm_env_filename;"
     fi
-    local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $source_env_file $step_configuration_deployCommand\""
+    local deploy_command="$ssh_base_command \"$untar $source_env_file $step_configuration_deployCommand\""
 
     # Command to run after the deploy command from within the uploaded dir
-    local post_deploy_command="ssh -i $ssh_id \
-    -n $vm_addr \
+    local post_deploy_command="$ssh_base_command \
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       ignore_failure_suffix=" || continue"
+      make_target_dir_command+="$ignore_failure_suffix"
       upload_command+="$ignore_failure_suffix"
       deploy_command+="$ignore_failure_suffix"
       if [ -n "$step_configuration_postDeployCommand" ]; then
@@ -104,6 +108,7 @@ DeployApplication() {
       fi
     fi
 
+    execute_command "$make_target_dir_command"
     execute_command "$upload_command"
     execute_command "$deploy_command"
 
