@@ -81,14 +81,14 @@ DeployApplication() {
     # Command to source the file with vmEnvironmentVariables
     local source_env_file
     if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
-      source_env_file="source ./$vm_env_filename"
+      source_env_file="source ./$vm_env_filename;"
     fi
     local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $source_env_file $step_configuration_deployCommand\""
 
     # Command to run after the deploy command from within the uploaded dir
     local post_deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
-    \"cd $step_configuration_targetDirectory; $step_configuration_postDeployCommand\""
+    \"cd $step_configuration_targetDirectory; $source_env_file; $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
