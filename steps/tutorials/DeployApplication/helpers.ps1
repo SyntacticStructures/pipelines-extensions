@@ -6,4 +6,3 @@ function setupSSH($key_name) {
   execute_command "ssh-add $ssh_key_path"
 }
 
-function donwloadReleaseBundle
