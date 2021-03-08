@@ -100,6 +100,7 @@ DeployApplication() {
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     on_failure="failed_vms+=('abcd'); break"
+    failed_vms+=("whatever")
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
