@@ -129,7 +129,8 @@ DeployApplication() {
   done
 
   execute_command "echo 'break worked'"
-  execute_command "echo \"${failed_vms[@]}\""
+  echo "TRYING BARE ECHO"
+  echo "${failed_vms[@]}"
 
   # Handle rollback
   if [ -n "$step_configuration_rollBackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
@@ -142,4 +143,4 @@ DeployApplication() {
   fi
 }
 
-DeployApplication
+execute_command DeployApplication
