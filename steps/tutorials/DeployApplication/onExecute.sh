@@ -102,7 +102,6 @@ DeployApplication() {
     # Don't exit on failed commands if fastFail is specified as false
     on_failure="break"
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-       TODO: handle slowFail with rollback
       on_failure='continue'
     fi
 
