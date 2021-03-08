@@ -77,8 +77,10 @@ function DeployApplication() {
     try {
       execute_command "echo Creating target dir on vm"
       execute_command $make_target_dir_command
+
       execute_command "echo Uploading artifacts to vm"
       execute_command $upload_command
+
       execute_command "echo Running deploy command"
       execute_command $deploy_command
       if ($step_configuration_postDeployCommand -ne $null) {

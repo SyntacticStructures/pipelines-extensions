@@ -70,7 +70,7 @@ pipelines:
             - name: myBuildInfo
 #            - name: myApp
 #            - name: myReleaseBundle2
-#          targetDirectory: "/opt/hello"
+          targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
