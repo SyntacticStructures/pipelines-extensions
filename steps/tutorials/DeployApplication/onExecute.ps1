@@ -84,7 +84,7 @@ function DeployApplication() {
 
     # Command to source the file with vmEnvironmentVariables
     if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
-      source_env_file="source $target_dir/$vm_env_filename;"
+      $source_env_file="source $target_dir/$vm_env_filename;"
     }
 
     # Command to run the deploy command from within the uploaded dir
