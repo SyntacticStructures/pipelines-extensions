@@ -6,9 +6,9 @@ source "./helpers.sh"
 DeployApplication() {
   local vm_env_file="$step_tmp_dir/vmEnv"
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
-    execute_command "echo \"${step_configuration_vmEnvironmentVariables[0]}\""
-    execute_command "echo \"${#step_configuration_vmEnvironmentVariables[@]}\""
-    for i in "${!step_configuration_vmEnvironmentVariables[@]}"; do
+    for i in 0..$step_configuration_vmEnvironmentVariables_len; do
+      env_var=$(eval echo "$"step_configuration_vmEnvironmentVariables_"$i")
+      execute_command "echo $env_var"
       execute_command "echo 'export ${step_configuration_vmEnvironmentVariables[$i]}' >> $vm_env_file"
       execute_command "echo 'export ${step_configuration_vmEnvironmentVariables[$i]}' >> $vm_env_file"
     done
@@ -31,7 +31,6 @@ DeployApplication() {
   if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     IFS=,
-    execute_command "echo $DEPLOY_TARGETS_OVERRIDE"
     vm_addrs=($DEPLOY_TARGETS_OVERRIDE)
     unset IFS
   fi
