@@ -119,11 +119,11 @@ DeployApplication() {
     execute_command "$make_target_dir_command"
     execute_command "echo Uploading artifacts to vm"
     execute_command "$upload_command"
-    execute_command "echo Uploading running deploy command"
+    execute_command "echo Running deploy command"
     execute_command "$deploy_command"
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
-      execute_command "echo Uploading running post-deploy command"
+      execute_command "echo Running post-deploy command"
       execute_command "$post_deploy_command"
     fi
 
