@@ -40,7 +40,7 @@ DeployApplication() {
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
     for ((i=0; i<step_configuration_vmEnvironmentVariables_len; i++)); do
       env_var=$(eval echo "$"step_configuration_vmEnvironmentVariables_"$i")
-      execute_command "echo $(echo "$env_var") >> $vm_env_file_path"
+      execute_command "echo 'export $(echo "$env_var")' >> $vm_env_file_path"
     done
     execute_command "cat $vm_env_file_path"
   fi
