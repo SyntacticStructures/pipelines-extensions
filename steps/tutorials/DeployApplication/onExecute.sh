@@ -133,6 +133,8 @@ DeployApplication() {
 
   done
 
+  execute_command "echo 'break worked'"
+
   # Handle rollback
   if [ -n "$step_configuration_rollBackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
     for vm_addr in "${vm_addrs[@]}"; do
