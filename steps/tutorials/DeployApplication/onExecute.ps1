@@ -59,11 +59,10 @@ function DeployApplication() {
     $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
 
     $target_dir="~/$step_name/$run_id"
-
     if ($step_configuration_targetDirectory -ne $null) {
-      execute_command "echo $step_configuration_targetDirectory"
       $target_dir=$step_configuration_targetDirectory
     }
+    $make_target_dir_command = "$ssh_base_cmd `"mkdir -p $target_dir`""
 
     # Command to upload app tarball to vm
     $upload_command = "scp -P 12061 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@4.tcp.ngrok.io`:$target_dir"
@@ -76,9 +75,14 @@ function DeployApplication() {
     $post_deploy_command = "$ssh_base_cmd `"cd $target_dir; $step_configuration_postDeployCommand`""
 
     try {
+      execute_command "echo Creating target dir on vm"
+      execute_command $make_target_dir_command
+      execute_command "echo Uploading artifacts to vm"
       execute_command $upload_command
+      execute_command "echo Running deploy command"
       execute_command $deploy_command
       if ($step_configuration_postDeployCommand -ne $null) {
+        execute_command "echo Running post-deploy command"
         execute_command $post_deploy_command
       }
     }
