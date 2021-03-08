@@ -73,7 +73,7 @@ pipelines:
           targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
-          postDeployCommand: "echo 'this is the postDeploy command'; ls"
+          postDeployCommand: "echo 'this is the postDeploy command'; printenv"
           sshUser: root
           rolloutDelay: 3
 #          fastFail: true
