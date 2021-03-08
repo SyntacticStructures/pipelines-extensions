@@ -50,8 +50,8 @@ downloadBuildInfo() {
   # download buildInfo artifacts to tardir
   local buildinfo_res_name=$1
   local integration_alias=$2
-  local buildinfo_number=$(eval echo "$"res_"$"_buildNumber)
   local buildinfo_name=$(eval echo "$"res_"$buildinfo_res_name"_buildName)
+  local buildinfo_number=$(eval echo "$"res_"$buildinfo_res_name"_buildNumber)
   local rt_url=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_url)
   local rt_user=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_user)
   local rt_apikey=$(eval echo "$"res_"$buildinfo_res_name"_"$integration_alias"_apikey)
