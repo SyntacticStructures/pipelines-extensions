@@ -35,7 +35,7 @@ DeployApplication() {
   mkdir "$tardir"
 
   # Create a file with env vars to source on the target vms
-  local vm_env_filename="$pipeline_name-$run_id.env"
+  local vm_env_filename="$step_name-$run_id.env"
   local vm_env_file_path="$tardir/$vm_env_filename"
   if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
     for ((i=0; i<step_configuration_vmEnvironmentVariables_len; i++)); do
@@ -57,7 +57,7 @@ DeployApplication() {
       downloadReleaseBundle "$releasebundle_res_name"
     fi
     # create tarball from everything in the tardir
-    local tarball_name="$pipeline_name-$run_id.tar.gz"
+    local tarball_name="$step_name-$run_id.tar.gz"
     execute_command "tar -czvf $step_tmp_dir/$tarball_name ."
   popd
 
@@ -76,7 +76,7 @@ DeployApplication() {
     # TODO: ssh-add, not scp -i
     local ssh_base_command="ssh -i $ssh_id -n $vm_addr"
 
-    local target_dir="~/$pipeline_name/$run_id"
+    local target_dir="~/$step_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
       target_dir=$step_configuration_targetDirectory
     fi
@@ -129,7 +129,7 @@ DeployApplication() {
 
     # Deploy was successful.
 
-    local rollback_dir="~/$pipeline_name/rollback"
+    local rollback_dir="~/$step_name/rollback"
     # Command to copy artifacts into rollback dir.
     create_rollback_artifacts="$ssh_base_command \"mkdir -p $rollback_dir; rm -rf $rollback_dir/*; cp -r $target_dir/* $rollback_dir\""
     execute_command "echo 'Archiving successful deploy for rollback'"

@@ -23,7 +23,7 @@ resources:
       sshKey: u16ssh
       targets:
         - 192.168.50.3
-        - 192.168.50.3
+        - 192.168.50.2
 
   - name: myBuildInfo
     type: BuildInfo
@@ -76,5 +76,5 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
           sshUser: root
           rolloutDelay: 3
-          rollbackCommand: "ls"
+          rollbackCommand: "echo 'this is the rollback command' "
 #          fastFail: true
