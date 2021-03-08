@@ -27,7 +27,7 @@ function DeployApplication() {
   $vm_env_filename="$step_name-$run_id.env"
   $vm_env_file_path="$tardir\$vm_env_filename"
   if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
-    execute_command "we have env vars"
+    execute_command "echo we have env vars"
     for ($i=0; $i -le $step_configuration_vmEnvironmentVariables_len; $i++) {
       $env_var = $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
       execute_command "$env_var"
