@@ -4,17 +4,6 @@ set -e -o pipefail
 source "./helpers.sh"
 
 DeployApplication() {
-  local vm_env_file="$step_tmp_dir/vmEnv"
-  if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
-    for ((i=0; i<step_configuration_vmEnvironmentVariables_len; i++)); do
-      env_var=$(eval echo "$"step_configuration_vmEnvironmentVariables_"$i")
-      execute_command "echo $(echo "$env_var") >> $vm_env_file"
-#      execute_command "echo 'export $env_var' >> $vm_env_file"
-    done
-    execute_command "cat $step_tmp_dir/vmEnv"
-  fi
-
-  exit 1
   local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 
   local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
@@ -44,6 +33,17 @@ DeployApplication() {
   # We will create a tarball from all of it
   local tardir="$step_tmp_dir/deploy-artifacts"
   mkdir "$tardir"
+
+  # Create a file with env vars to source on the target vms
+  local vm_env_filename="$pipeline_name-$run_id.env"
+  local vm_env_file_path="$tardir/$vm_env_filename"
+  if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
+    for ((i=0; i<step_configuration_vmEnvironmentVariables_len; i++)); do
+      env_var=$(eval echo "$"step_configuration_vmEnvironmentVariables_"$i")
+      execute_command "echo $(echo "$env_var") >> $vm_env_file_path"
+    done
+    execute_command "cat $vm_env_file_path"
+  fi
 
   pushd "$tardir"
     if [ -n "$buildinfo_res_name" ]; then
