@@ -61,6 +61,8 @@ DeployApplication() {
     execute_command "tar -czvf $step_tmp_dir/$tarball_name ."
   popd
 
+  local failed_vms=()
+
   for i in "${!vm_addrs[@]}"
   do
 
@@ -98,16 +100,20 @@ DeployApplication() {
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
+    failure_suffix="|| failed_vms+=($vm_addr);"
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      # TODO: handle slowFail with rollback
-      ignore_failure_suffix=" || continue"
-      make_target_dir_command+="$ignore_failure_suffix"
-      upload_command+="$ignore_failure_suffix"
-      deploy_command+="$ignore_failure_suffix"
-      if [ -n "$step_configuration_postDeployCommand" ]; then
-        post_deploy_command+="$ignore_failure_suffix"
-      fi
+      failure_suffix+=" continue"
+    else
+      failure_suffix+=" break"
     fi
+
+    if [ -n "$step_configuration_postDeployCommand" ]; then
+      post_deploy_command+="$failure_suffix"
+    fi
+
+    make_target_dir_command+="$failure_suffix"
+    upload_command+="$failure_suffix"
+    deploy_command+="$failure_suffix"
 
     execute_command "echo Creating target dir on vm"
     execute_command "$make_target_dir_command"
@@ -130,6 +136,13 @@ DeployApplication() {
     execute_command "$create_rollback_artifacts"
 
   done
+
+  # Handle rollback
+  if [ -n "$step_configuration_rollBackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
+    for failed_vm in "${failed_vms[@]}"; do
+      execute_command "$ssh_base_command \"$step_configuration_rollBackCommand\" || continue"
+    done
+  fi
 }
 
 DeployApplication
