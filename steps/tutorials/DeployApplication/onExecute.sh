@@ -100,7 +100,7 @@ DeployApplication() {
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
-    failure_suffix="|| failed_vms+=($vm_addr);"
+    failure_suffix=" || failed_vms+=($vm_addr);"
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       failure_suffix+=" continue"
     else
