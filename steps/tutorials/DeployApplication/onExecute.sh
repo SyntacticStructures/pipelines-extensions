@@ -126,7 +126,7 @@ DeployApplication() {
     local rollback_dir="~/$pipeline_name/rollback"
     # Command to copy artifacts into rollback dir.
     create_rollback_artifacts="$ssh_base_command \"mkdir -p $rollback_dir; rm -rf $rollback_dir/*; cp -r $target_dir $rollback_dir\""
-    execute_command "Archiving successful deploy for rollback"
+    execute_command "echo 'Archiving successful deploy for rollback'"
     execute_command "$create_rollback_artifacts"
 
   done
