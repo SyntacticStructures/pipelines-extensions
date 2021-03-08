@@ -26,7 +26,7 @@ function DeployApplication() {
   # Create a file with env vars to source on the target vms
   $vm_env_filename="$step_name-$run_id.env"
   $vm_env_file_path="$tardir\$vm_env_filename"
-  excecute_command "echo $step_configuration_vmEnvironmentVariables"
+  execute_command "echo $step_configuration_vmEnvironmentVariables"
   exit 1
   pushd $tardir
     if ($buildinfo_res_name -ne "") {
