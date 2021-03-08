@@ -112,15 +112,15 @@ DeployApplication() {
     deploy_command+="$failure_suffix"
 
     execute_command "echo Creating target dir on vm"
-    execute_command "$make_target_dir_command" || execute_command "$on_failure"
+    execute_command "$make_target_dir_command" || eval "$on_failure"
     execute_command "echo Uploading artifacts to vm"
-    execute_command "$upload_command" || execute_command "$on_failure"
+    execute_command "$upload_command" || eval "$on_failure"
     execute_command "echo Running deploy command"
-    execute_command "$deploy_command" || execute_command "$on_failure"
+    execute_command "$deploy_command" || eval "$on_failure"
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "echo Running post-deploy command"
-      execute_command "$post_deploy_command" || execute_command "$on_failure"
+      execute_command "$post_deploy_command" || eval "$on_failure"
     fi
 
     # Deploy was successful.
