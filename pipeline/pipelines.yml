@@ -67,9 +67,9 @@ pipelines:
             - "var2=${run_id}"
           inputResources:
             - name: myVM
-#            - name: myBuildInfo
+            - name: myBuildInfo
 #            - name: myApp
-            - name: myReleaseBundle2
+#            - name: myReleaseBundle2
           targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
