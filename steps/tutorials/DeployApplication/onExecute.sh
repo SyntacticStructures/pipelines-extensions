@@ -100,7 +100,6 @@ DeployApplication() {
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     on_failure='break'
-
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
       on_failure='continue'
@@ -130,6 +129,9 @@ DeployApplication() {
 
   execute_command "echo 'break worked'"
   execute_command echo "${failed_vms[@]}"
+  if [ "${#failed_vms[@]}" -gt 0 ]; then
+    execute_command "echo we are here"
+  fi
 
   # Handle rollback
   if [ -n "$step_configuration_rollBackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
