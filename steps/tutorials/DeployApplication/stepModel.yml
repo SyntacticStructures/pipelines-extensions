@@ -12,6 +12,8 @@ configuration:
     type: String
   rolloutDelay:
     type: Int
+  rollbackCommand:
+    type: String
   sshUser:
     type: String
     validate:

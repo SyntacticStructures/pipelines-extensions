@@ -73,14 +73,18 @@ DeployApplication() {
 
     # Command to upload app tarball to vm
     # TODO: ssh-add, not scp -i
-    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$step_configuration_targetDirectory"
+    local target_dir="~/$pipeline_name/$run_id"
+    if [ -n "$step_configuration_targetDirectory" ]; then
+      target_dir=$step_configuration_targetDirectory
+    fi
+    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$target_dir"
 
     # Command to run the deploy command from within the uploaded dir
-    local untar="cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
+    local untar="cd $target_dir/; tar -xvf $tarball_name; rm -f $tarball_name;"
 
     # Command to source the file with vmEnvironmentVariables
     local source_env_file
-    if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
+    if [ -n "$step_configuration_vmEnvironmentVariables_len" ]; then
       source_env_file="source ./$vm_env_filename;"
     fi
     local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $source_env_file $step_configuration_deployCommand\""
@@ -88,7 +92,7 @@ DeployApplication() {
     # Command to run after the deploy command from within the uploaded dir
     local post_deploy_command="ssh -i $ssh_id \
     -n $vm_addr \
-    \"cd $step_configuration_targetDirectory; $source_env_file $step_configuration_postDeployCommand\""
+    \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
