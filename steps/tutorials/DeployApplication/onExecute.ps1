@@ -29,7 +29,7 @@ function DeployApplication() {
   if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
     execute_command "echo we have env vars"
     for ($i=0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
-      $env_var =  $ExecutionContext.InvokeCommand.ExpandString(
+      $env_var = $ExecutionContext.InvokeCommand.ExpandString(
         $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
       )
       execute_command "echo $env_var"
@@ -37,7 +37,7 @@ function DeployApplication() {
     }
     execute_command "cat $vm_env_file_path"
   }
-  exit 1
+
   pushd $tardir
     if ($buildinfo_res_name -ne "") {
       $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
@@ -82,12 +82,17 @@ function DeployApplication() {
     # Command to upload app tarball to vm
     $upload_command = "scp -P 12061 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@4.tcp.ngrok.io`:$target_dir"
 
+    # Command to source the file with vmEnvironmentVariables
+    if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
+      source_env_file="source $target_dir/$vm_env_filename;"
+    }
+
     # Command to run the deploy command from within the uploaded dir
     $untar = "cd $target_dir/; tar -xvf $tarball_name; rm -f $tarball_name;"
-    $deploy_command = "$ssh_base_cmd `"$untar $step_configuration_deployCommand`""
+    $deploy_command = "$ssh_base_cmd `"$untar $source_env_file $step_configuration_deployCommand`""
 
     # Command to run after the deploy command from within the uploaded dir
-    $post_deploy_command = "$ssh_base_cmd `"cd $target_dir; $step_configuration_postDeployCommand`""
+    $post_deploy_command = "$ssh_base_cmd `"cd $target_dir; $source_env_file $step_configuration_postDeployCommand`""
 
     try {
       execute_command "echo Creating target dir on vm"
