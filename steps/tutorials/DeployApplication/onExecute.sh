@@ -99,6 +99,7 @@ DeployApplication() {
 
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
+      # TODO: handle slowFail with rollback
       ignore_failure_suffix=" || continue"
       make_target_dir_command+="$ignore_failure_suffix"
       upload_command+="$ignore_failure_suffix"
@@ -119,6 +120,14 @@ DeployApplication() {
       execute_command "echo Uploading running post-deploy command"
       execute_command "$post_deploy_command"
     fi
+
+    # Deploy was successful.
+
+    local rollback_dir="~/$pipeline_name/rollback"
+    # Command to copy artifacts into rollback dir.
+    create_rollback_artifacts="$ssh_base_command \"mkdir -p $rollback_dir; rm -rf $rollback_dir/*; cp -r $target_dir $rollback_dir\""
+    execute_command "Archiving successful deploy for rollback"
+    execute_command "$create_rollback_artifacts"
 
   done
 }
