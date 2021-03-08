@@ -30,7 +30,7 @@ function DeployApplication() {
     execute_command "echo we have env vars"
     for ($i=0; $i -le $step_configuration_vmEnvironmentVariables_len; $i++) {
       $env_var = $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
-      execute_command "$env_var"
+      execute_command "echo $env_var"
     }
   }
   exit 1
