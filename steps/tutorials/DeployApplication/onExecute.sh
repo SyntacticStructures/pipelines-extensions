@@ -77,7 +77,13 @@ DeployApplication() {
 
     # Command to run the deploy command from within the uploaded dir
     local untar="cd $step_configuration_targetDirectory/; tar -xvf $tarball_name; rm -f $tarball_name;"
-    local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $step_configuration_deployCommand\""
+
+    # Command to source the file with vmEnvironmentVariables
+    local source_env_file
+    if [ -n "$step_configuration_vmEnvironmentVariables_len" ];then
+      source_env_file="source ./$vm_env_filename"
+    fi
+    local deploy_command="ssh -i $ssh_id -n $vm_addr \"$untar $source_env_file $step_configuration_deployCommand\""
 
     # Command to run after the deploy command from within the uploaded dir
     local post_deploy_command="ssh -i $ssh_id \
