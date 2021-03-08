@@ -60,7 +60,8 @@ function DeployApplication() {
 
     $target_dir="~/$step_name/$run_id"
 
-    if ("$step_configuration_targetDirectory" -ne $null) {
+    if ($step_configuration_targetDirectory -ne $null) {
+      execute_command "echo $step_configuration_targetDirectory"
       $target_dir=$step_configuration_targetDirectory
     }
 

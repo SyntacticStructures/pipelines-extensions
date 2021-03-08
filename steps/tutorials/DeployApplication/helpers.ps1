@@ -5,4 +5,3 @@ function setupSSH($key_name) {
   execute_command "Start-Service ssh-agent"
   execute_command "ssh-add $ssh_key_path"
 }
-
