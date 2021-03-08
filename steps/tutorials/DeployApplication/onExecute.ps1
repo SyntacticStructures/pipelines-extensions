@@ -31,7 +31,7 @@ function DeployApplication() {
     for ($i=0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
       $env_var = $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
       execute_command "echo $env_var"
-      Add-Content -Path $vm_env_file_path -Value $env_var
+      Add-Content -Path $vm_env_file_path -Value "export $( $env_var )"
     }
     execute_command "cat $vm_env_file_path"
   }
