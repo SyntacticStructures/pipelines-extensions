@@ -100,27 +100,27 @@ DeployApplication() {
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
     # Don't exit on failed commands if fastFail is specified as false
-    on_failure="failed_vms+=($vm_addr);"
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      on_failure+=" continue"
-    else
-      on_failure+=" break"
+      # TODO: handle slowFail with rollback
+      ignore_failure_suffix=" || continue"
+      make_target_dir_command+="$ignore_failure_suffix"
+      upload_command+="$ignore_failure_suffix"
+      deploy_command+="$ignore_failure_suffix"
+      if [ -n "$step_configuration_postDeployCommand" ]; then
+        post_deploy_command+="$ignore_failure_suffix"
+      fi
     fi
 
-    make_target_dir_command+="$failure_suffix"
-    upload_command+="$failure_suffix"
-    deploy_command+="$failure_suffix"
-
     execute_command "echo Creating target dir on vm"
-    execute_command "$make_target_dir_command" || eval "$on_failure"
+    execute_command "$make_target_dir_command"
     execute_command "echo Uploading artifacts to vm"
-    execute_command "$upload_command" || eval "$on_failure"
+    execute_command "$upload_command"
     execute_command "echo Running deploy command"
-    execute_command "$deploy_command" || eval "$on_failure"
+    execute_command "$deploy_command"
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "echo Running post-deploy command"
-      execute_command "$post_deploy_command" || eval "$on_failure"
+      execute_command "$post_deploy_command"
     fi
 
     # Deploy was successful.
