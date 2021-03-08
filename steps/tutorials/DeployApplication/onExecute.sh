@@ -127,13 +127,7 @@ DeployApplication() {
 
   done
 
-  execute_command "echo 'break worked'"
-  execute_command echo "${failed_vms[@]}"
-  if [ "${#failed_vms[@]}" -gt 0 ]; then
-    execute_command "echo we are here"
-  fi
-
-  # Handle rollback
+  # Do rollback
   if [ -n "$step_configuration_rollbackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
     for vm_addr in "${vm_addrs[@]}"; do
       execute_command "echo 'Executing rollback command on vm: $vm_addr'"
