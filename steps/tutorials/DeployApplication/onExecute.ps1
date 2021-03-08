@@ -18,7 +18,7 @@ function DeployApplication() {
     execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
-  SetupSSH($vmcluster_res_name)
+  setupSSH($vmcluster_res_name)
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
   execute_command "mkdir $tardir"
@@ -57,6 +57,12 @@ function DeployApplication() {
     }
 
     $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
+
+    $target_dir="~/$step_name/$run_id"
+
+    if ("$step_configuration_targetDirectory" -ne $null) {
+      $target_dir=$step_configuration_targetDirectory
+    }
 
     # Command to upload app tarball to vm
     $upload_command = "scp -P 12061 -o StrictHostKeyChecking=no .\$tarball_name $step_configuration_sshUser@4.tcp.ngrok.io`:$step_configuration_targetDirectory"
