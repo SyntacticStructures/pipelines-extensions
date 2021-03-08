@@ -48,7 +48,7 @@ DeployApplication() {
   pushd "$tardir"
     if [ -n "$buildinfo_res_name" ]; then
       buildinfo_integration_alias=$(find_resource_variable "$buildinfo_res_name" integrationAlias)
-      downloadBuildinfo "$buildinfo_res_name" "$buildinfo_integration_alias"
+      downloadBuildInfo "$buildinfo_res_name" "$buildinfo_integration_alias"
     elif [ -n "$filespec_res_name" ]; then
       # move the fileSpecs to tardir
       # no need to download because filespecs are automatically downloaded already.
