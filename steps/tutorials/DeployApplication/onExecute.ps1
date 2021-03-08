@@ -26,7 +26,13 @@ function DeployApplication() {
   # Create a file with env vars to source on the target vms
   $vm_env_filename="$step_name-$run_id.env"
   $vm_env_file_path="$tardir\$vm_env_filename"
-  execute_command "echo $step_configuration_vmEnvironmentVariables"
+  if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
+    execute_command "we have env vars"
+    for ($i=0; $i -le $step_configuration_vmEnvironmentVariables_len; $i++) {
+      $env_var = $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
+      execute_command "$env_var"
+    }
+  }
   exit 1
   pushd $tardir
     if ($buildinfo_res_name -ne "") {
