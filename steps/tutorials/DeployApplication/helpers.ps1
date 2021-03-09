@@ -10,7 +10,7 @@ class ReleaseBundleDownloader {
   [string]$BundleName
   [string]$Url
   [string]$ResponseBodyFile
-  [string]$AuthHeaders
+  [hashtable]$AuthHeaders
   [bool]$ShouldCleanupExport
   [string]$CommonRequestParams
 
@@ -30,9 +30,9 @@ class ReleaseBundleDownloader {
   Download() {
     # Release bundle must be exported before it can be downloaded
     execute_command "echo 'starting download'"
-#    $downloadUrl = $this._ensureExport()
-#    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
-#    $this._download($downloadUrl)
+    $downloadUrl = $this._ensureExport()
+    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
+    $this._download($downloadUrl)
   }
 
   _download($downloadUrl) {
