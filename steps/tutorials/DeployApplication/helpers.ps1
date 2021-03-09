@@ -5,9 +5,16 @@ function setupSSH($key_name) {
   execute_command "ssh-add $ssh_key_path"
 }
 
+function DownloadReleaseBundle() {
+  $r = _inner
+}
 
+function _inner() {
+  execute_command "echo 'hello'"
+  return "value"
+}
 
-function DownloadReleaseBundle($resourceName) {
+function DDownloadReleaseBundle($resourceName) {
   $script:BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
   $script:BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
   $script:Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
