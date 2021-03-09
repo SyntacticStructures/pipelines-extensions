@@ -58,7 +58,13 @@ function DeployApplication() {
     execute_command "echo 'we are here'"
     $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
     execute_command "echo 'we are there'"
-    $releaseBundleDownloader.Download()
+    try {
+      $releaseBundleDownloader.Download()
+    } catch {
+      execute_command "echo error"
+      execute_command "echo $_"
+    }
+
     execute_command "echo 'we are done'"
   }
   $tarballName = "${pipeline_name-$run_id}.tar.gz"
