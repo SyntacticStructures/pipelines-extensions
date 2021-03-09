@@ -35,6 +35,7 @@ class ReleaseBundleDownloader {
   }
 
   _download($downloadUrl) {
+    throw "${downloadUrl}"
     $authHeaders = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get $($this.CommonRequestParams) -Headers `$authHeaders"
