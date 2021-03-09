@@ -31,7 +31,7 @@ class ReleaseBundleDownloader {
 
   Download() {
     # Release bundle must be exported before it can be downloaded
-    $downloadUrl = $this._ensureExport
+    $downloadUrl = $this._ensureExport()
     execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
     $this._download($downloadUrl)
   }
@@ -45,10 +45,10 @@ class ReleaseBundleDownloader {
   # Returns a download url once export is done
   [string]
   _ensureExport() {
-    $exportStatus = $this._getDistributionExportStatus
+    $exportStatus = $this._getDistributionExportStatus()
     if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
       $this.ShouldCleanupExport = $true
-      $exportStatus = $this._exportReleaseBundle
+      $exportStatus = $this._exportReleaseBundle()
       if ($exportStatus -eq "FAILED") {
         execute_command "throw `"Release Bundle export failed"`"
       }
@@ -62,7 +62,7 @@ class ReleaseBundleDownloader {
         # 128s timeout
         break
       }
-      $exportStatus = $this._getDistributionExportStatus
+      $exportStatus = $this._getDistributionExportStatus()
     }
 
     if ($exportStatus -ne "COMPLETED") {
