@@ -39,7 +39,6 @@ __handleExportStatus() {
     export_http_code=$(__exportReleaseBundle)
     if [ "$export_http_code" -ne 202 ]; then
       execute_command "echo Failed to export release bundle -- status $export_http_code"
-      execute_command "cat $resp_body_file"
       execute_command "exit 1"
     fi
     execute_command "echo 'Started export of Release Bundle $release_bundle_name/$release_bundle_version'"
@@ -92,15 +91,16 @@ downloadReleaseBundle() {
   # Export the Release Bundle if hasn't yet been
   __handleExportStatus "$export_status"
 
+  # Wait for export to finish
+  status_http_code=$(__getDistributionExportStatus)
+  local sleeperCount=2
+  export_status=$(cat $resp_body_file | jq -r .status)
+
   if [ "$export_status" == "FAILED" ]; then
     execute_command "echo 'Release bundle export Failed'"
     execute_command "exit 1"
   fi
 
-  # Wait for export to finish
-  status_http_code=$(__getDistributionExportStatus)
-  local sleeperCount=2
-  export_status=$(cat $resp_body_file | jq -r .status)
   while [ "$status_http_code" -lt 299 ] && {
     [ "$export_status" == "IN_PROGRESS" ] || [ "$export_status" == "NOT_EXPORTED" ];
   }; do

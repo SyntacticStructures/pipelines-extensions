@@ -58,11 +58,12 @@ function DeployApplication() {
     execute_command "mv $filespec_res_path\* $tardir"
   }
   elseif ($releasebundle_res_name -ne "") {
-    $release_bundle_version = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
-    $release_bundle_name = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
-    $distribution_url = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
-    $distribution_user = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
-    $distribution_apikey = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
+    downloadReleaseBundle($releasebundle_res_name)
+#    $release_bundle_version = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
+#    $release_bundle_name = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
+#    $distribution_url = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
+#    $distribution_user = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
+#    $distribution_apikey = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
   }
   $tarball_name = "$pipeline_name-$run_id.tar.gz"
   execute_command "tar -czvf ../$tarball_name ."
@@ -150,4 +151,24 @@ function DeployApplication() {
   }
 }
 
+function check_no_verify_ssl() {
+  if ($no_verify_ssl -eq "true") {
+    if (-not ([System.Management.Automation.PSTypeName]"TrustEverything").Type) {
+      Add-Type -TypeDefinition  @"
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+public static class TrustEverything
+{
+  private static bool ValidationCallback(object sender, X509Certificate certificate, X509Chain chain,
+    SslPolicyErrors sslPolicyErrors) { return true; }
+  public static void SetCallback() { System.Net.ServicePointManager.ServerCertificateValidationCallback = ValidationCallback; }
+  public static void UnsetCallback() { System.Net.ServicePointManager.ServerCertificateValidationCallback = null; }
+}
+"@
+    }
+    [TrustEverything]::SetCallback()
+  }
+}
+
+check_no_verify_ssl
 DeployApplication
