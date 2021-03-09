@@ -22,10 +22,12 @@ function DeployApplication() {
     $vmTargets = $DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
 
+  execute_command "echo 'before ssh'"
   setupSSH($vmClusterResName)
+  execute_command "echo 'after ssh'"
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
-  execute_command "mkdir $tardir"
+  execute_command "mkdir ${tardir}"
 
   # Create a file with env vars to source on the target vms
   $vmEnvFilename = "${step_name}-${run_id}.env"
