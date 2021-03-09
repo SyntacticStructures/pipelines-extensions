@@ -56,15 +56,7 @@ function DeployApplication() {
     execute_command "mv $filespecResPath\* $tardir"
   }
   elseif ($releasebundle_res_name -ne "") {
-    execute_command "echo 'we are here'"
-    try {
-      DownloadReleaseBundle($releasebundle_res_name)
-    } catch {
-      execute_command "echo error"
-      execute_command "echo $_"
-    }
-
-    execute_command "echo 'we are done'"
+    DownloadReleaseBundle($releasebundle_res_name)
   }
   $tarballName = "${pipeline_name-$run_id}.tar.gz"
   execute_command "tar -czvf ../${tarballName} ."

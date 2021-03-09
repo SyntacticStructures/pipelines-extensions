@@ -21,10 +21,7 @@ function DownloadReleaseBundle($resourceName) {
 
 function _downloadReleaseBundle() {
   # Release bundle must be exported before it can be downloaded
-  execute_command "echo 'starting download'"
-  execute_command "echo $BundleVersion"
   _ensureExport
-  execute_command "echo 'why does this not work'"
   execute_command "echo 'Release Bundle ${BundleName}/${BundleVersion} is exported'"
   $headers = @{ Authorization = "Basic ${EncodedAuth}" }
   execute_command "echo 'Downloading Release Bundle ${BundleName}/${BundleVersion}'"
@@ -33,10 +30,8 @@ function _downloadReleaseBundle() {
 }
 
 function _ensureExport() {
-  execute_command "echo 'ensureExport'"
   _getDistributionExportStatus
   $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
-  execute_command "echo 'got export status'"
   if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
     $ShouldCleanupExport = $true
     _exportReleaseBundle
