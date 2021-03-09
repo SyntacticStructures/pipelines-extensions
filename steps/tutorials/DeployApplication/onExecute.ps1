@@ -29,17 +29,17 @@ function DeployApplication() {
   execute_command "mkdir $tardir"
 
   # Create a file with env vars to source on the target vms
-  $vmEnvFilename = "$step_name-$run_id.env"
-  $vmEnvFilePath = "$tardir\$vmEnvFilename"
+  $vmEnvFilename = "${step_name}-${run_id}.env"
+  $vmEnvFilePath = "${tardir}\${vmEnvFilename}"
   if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
     execute_command "echo we have env vars"
     for ($i = 0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
       $envVar = $ExecutionContext.InvokeCommand.ExpandString(
           $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
       )
-      execute_command "echo $envVar"
-      Add-Content -Path $vmEnvFilePath -Value "export $envVar"
+      Add-Content -Path $vmEnvFilePath -Value "export ${envVar}"
     }
+    # TODO delete this cat
     execute_command "cat $vmEnvFilePath"
   }
 
@@ -50,18 +50,24 @@ function DeployApplication() {
     $buildinfoURL = $( (Get-Variable -Name "res_$( $buildinfoResName )_sourceArtifactory_url").Value )
     $buildinfoUser = $( (Get-Variable -Name "res_$( $buildinfoResName )_sourceArtifactory_user").Value )
     $buildinfoApikey = $( (Get-Variable -Name "res_$( $buildinfoResName )_sourceArtifactory_apikey").Value )
-    execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfoName/$buildinfoNumber --url=$buildinfoURL --user=$buildinfoUser --password=$buildinfoApikey  --insecure-tls"
+    execute_command "retry_command jfrog rt dl `"*`" ${tardir}\ --build=${buildinfoName}/${buildinfoNumber} --url=${buildinfoURL} --user=${buildinfoUser} --password=${buildinfoApikey} --insecure-tls"
   }
   elseif ($filespecResName -ne "") {
     $filespecResPath = $( (Get-Variable -Name "res_$( $filespecResName )_resourcePath").Value )
     execute_command "mv $filespecResPath\* $tardir"
   }
   elseif ($releasebundle_res_name -ne "") {
-    $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
-    $releaseBundleDownloader.Download()
+    execute_command "echo we are here"
+    try{
+
+      $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
+      $releaseBundleDownloader.Download()
+    } catch {
+      execute_command "throw $_"
+    }
   }
-  $tarballName = "$pipeline_name-$run_id.tar.gz"
-  execute_command "tar -czvf ../$tarballName ."
+  $tarballName = "${pipeline_name-$run_id}.tar.gz"
+  execute_command "tar -czvf ../${tarballName} ."
   popd
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
@@ -73,28 +79,28 @@ function DeployApplication() {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
-    $sshBaseCmd = "ssh $step_configuration_sshUser@0.tcp.ngrok.io -p 19176 -o StrictHostKeyChecking=no"
+    $sshBaseCmd = "ssh ${step_configuration_sshUser}@0.tcp.ngrok.io -p 19176 -o StrictHostKeyChecking=no"
 
-    $targetDir = "~/$step_name/$run_id"
+    $targetDir = "~/${step_name}/${run_id}"
     if ($step_configuration_targetDirectory -ne $null) {
       $targetDir = $step_configuration_targetDirectory
     }
-    $makeTargetDirCommand = "$sshBaseCmd `"mkdir -p $targetDir`""
+    $makeTargetDirCommand = "${sshBaseCmd} `"mkdir -p ${targetDir}`""
 
     # Command to upload app tarball to vm
-    $uploadCommand = "scp -P 19176 -o StrictHostKeyChecking=no .\$tarballName $step_configuration_sshUser@0.tcp.ngrok.io`:$targetDir"
+    $uploadCommand = "scp -P 19176 -o StrictHostKeyChecking=no .\${tarballName} ${step_configuration_sshUser}@0.tcp.ngrok.io`:${targetDir}"
 
     # Command to source the file with vmEnvironmentVariables
     if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
-      $sourceEnvFile = "source $targetDir/$vmEnvFilename;"
+      $sourceEnvFile = "source ${targetDir}/${vmEnvFilename};"
     }
 
     # Command to run the deploy command from within the uploaded dir
-    $untar = "cd $targetDir/; tar -xvf $tarballName; rm -f $tarballName;"
-    $deployCommand = "$sshBaseCmd `"$untar $sourceEnvFile $step_configuration_deployCommand`""
+    $untar = "cd ${targetDir}/; tar -xvf ${tarballName}; rm -f ${tarballName};"
+    $deployCommand = "${sshBaseCmd} `"${untar} ${sourceEnvFile} ${step_configuration_deployCommand}`""
 
     # Command to run after the deploy command from within the uploaded dir
-    $posDeployCommand = "$sshBaseCmd `"cd $targetDir; $sourceEnvFile $step_configuration_postDeployCommand`""
+    $posDeployCommand = "${sshBaseCmd} `"cd ${targetDir}; ${sourceEnvFile} ${step_configuration_postDeployCommand}`""
 
     try {
       execute_command "echo Creating target dir on vm"
@@ -122,21 +128,21 @@ function DeployApplication() {
 
     # Deploy was successful.
 
-    $rollbackDir = "~/$step_name/rollback"
+    $rollbackDir = "~/${step_name}/rollback"
     # Command to copy artifacts into rollback dir.
-    $createRollbackArtifacts = "$sshBaseCommand `"mkdir -p $rollbackDir; rm -rf $rollbackDir/*; cp -r $targetDir/* $rollbackDir`""
+    $createRollbackArtifacts = "${sshBaseCommand} `"mkdir -p ${rollbackDir}; rm -rf ${rollbackDir}/*; cp -r ${targetDir}/* ${rollbackDir}`""
     execute_command "echo 'Archiving successful deploy for rollback'"
-    execute_command "$createRollbackArtifacts"
+    execute_command "${createRollbackArtifacts}"
   }
 
   # Do rollback
   if (($step_configuration_rollbackCommand -ne $null) -and ($failedVMs.count -gt 0)) {
     Foreach ($vmTarget IN $vmTargets) {
-      execute_command "echo 'Executing rollback command on vm: $vmTarget'"
+      execute_command "echo 'Executing rollback command on vm: ${vmTarget}'"
       # TODO -- IMPORTANT: do not hard-code vm addrs
-      $sshBaseCmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
+      $sshBaseCmd = "ssh ${step_configuration_sshUser}@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
       try {
-        execute_command "$sshBaseCommand `"$step_configuration_rollbackCommand`""
+        execute_command "${sshBaseCommand} `"${step_configuration_rollbackCommand}`""
       }
       catch {
         # Ignore failures and try to rollback the next vm
@@ -148,7 +154,7 @@ function DeployApplication() {
 
 function check_no_verify_ssl() {
   if ($no_verify_ssl -eq "true") {
-    if (-not ([System.Management.Automation.PSTypeName]"TrustEverything").Type) {
+    if (-not([System.Management.Automation.PSTypeName]"TrustEverything").Type) {
       Add-Type -TypeDefinition  @"
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -166,4 +172,4 @@ public static class TrustEverything
 }
 
 check_no_verify_ssl
-DeployApplication
+execute_command DeployApplication
