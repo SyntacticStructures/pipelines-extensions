@@ -23,9 +23,9 @@ function DownloadReleaseBundle($resourceName) {
 
 function _downloadReleaseBundle() {
   # Release bundle must be exported before it can be downloaded
-  execute_command "echo 'starting download'"
-  execute_command "echo $BundleVersion"
-  $downloadUrl = _ensureExport
+#  execute_command "echo 'starting download'"
+#  execute_command "echo $BundleVersion"
+  execute_command "`$downloadUrl = _ensureExport"
 #  execute_command "echo 'why does this not work'"
 #  execute_command "echo 'Release Bundle ${BundleName}/${BundleVersion} is exported'"
 #  $headers = @{ Authorization = "Basic ${EncodedAuth}" }
