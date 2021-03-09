@@ -5,97 +5,72 @@ function setupSSH($key_name) {
   execute_command "ssh-add $ssh_key_path"
 }
 
-class ReleaseBundleDownloader {
-  [string]$Url
-  ReleaseBundleDownloader() {
-    echo 'why does this not work?'
-    execute_command "echo 'why does this not work?'"
-  }
+
+
+function DownloadReleaseBundle($resourceName) {
+  $script:BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
+  $script:BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
+  $script:Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
+  $script:user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
+  $script:apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
+  $script:EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
+  $script:ShouldCleanupExport = $false
+  $script:ResponseBodyFile = "${env:step_tmp_dir}\response"
+  $script:ZipResponseBodyFile = "${env:step_tmp_dir}\response.zip"
+  $script:CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -PassThru"
+  _downloadReleaseBundle
 }
 
-class RReleaseBundleDownloader {
-  [string]$BundleVersion
-  [string]$BundleName
-  [string]$Url
-  [string]$ResponseBodyFile
-  [string]$ZipResponseBodyFile
-  [bool]$ShouldCleanupExport
-  [string]$EncodedAuth
-  [string]$CommonRequestParams
+function _downloadReleaseBundle() {
+  # Release bundle must be exported before it can be downloaded
+  execute_command "echo 'starting download'"
+  $downloadUrl = _ensureExport
+  execute_command "echo 'Release Bundle ${BundleName}/${BundleVersion} is exported'"
+  $headers = @{ Authorization = "Basic ${EncodedAuth}" }
+  execute_command "echo 'Downloading Release Bundle ${BundleName}/${BundleVersion}'"
+  execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers ${CommonRequestParams} -OutFile ${ZipResponseBodyFile}"
+  Expand-Archive -LiteralPath $ZipResponseBodyFile -DestinationPath $PWD
+}
 
-  RReleaseBundleDownloader([string]$resourceName) {
-    $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
-    $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
-    $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
-    $user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
-    $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
-    $this.EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
-    $this.ShouldCleanupExport = $false
-    $this.ResponseBodyFile = "${env:step_tmp_dir}\response"
-    $this.ZipResponseBodyFile = "${env:step_tmp_dir}\response.zip"
-    $this.CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -PassThru"
-  }
-
-  Download() {
-    # Release bundle must be exported before it can be downloaded
-    execute_command "echo 'starting download'"
-    $downloadUrl = $this._ensureExport()
-    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
-    $this._download($downloadUrl)
-  }
-
-  _download($downloadUrl) {
-    $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
-    execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
-    execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams) -OutFile $($this.ZipResponseBodyFile)"
-    Expand-Archive -LiteralPath $this.ZipResponseBodyFile -DestinationPath $PWD
-  }
-
-  # Returns a download url once export is done
-  [string]
-  _ensureExport() {
-    $this._getDistributionExportStatus()
-    $exportStatus = $this._getDistributionExportStatus()
-    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
-      $this.ShouldCleanupExport = $true
-      $exportStatus = $this._exportReleaseBundle()
-      if ($exportStatus -eq "FAILED") {
-        execute_command "throw 'Release Bundle export failed'"
-      }
+function _ensureExport() {
+  $exportStatus = _getDistributionExportStatus
+  if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
+    $ShouldCleanupExport = $true
+    $exportStatus = _exportReleaseBundle
+    if ($exportStatus -eq "FAILED") {
+      execute_command "throw 'Release Bundle export failed'"
     }
+  }
 
-    $sleepSeconds = 2
-    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
-      execute_command "echo 'Waiting for release bundle export to complete'"
-      execute_command "Start-Sleep -Seconds ${sleepSeconds}"
-      if ($sleepSeconds -gt 64) {
-        # 128s timeout
-        break
-      }
-      $exportStatus = $this._getDistributionExportStatus()
+  $sleepSeconds = 2
+  while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
+    execute_command "echo 'Waiting for release bundle export to complete'"
+    execute_command "Start-Sleep -Seconds ${sleepSeconds}"
+    if ($sleepSeconds -gt 64) {
+      # 128s timeout
+      break
     }
-
-    if ($exportStatus -ne "COMPLETED") {
-      execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
-    }
-
-    return (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
+    $exportStatus = _getDistributionExportStatus
   }
 
-  [string]
-  _exportReleaseBundle() {
-    $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
-    execute_command "Write-Output 'Exporting Release Bundle: $($this.BundleName)/$($this.BundleVersion)'"
-    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)`" -Method Post -Headers `$headers -ContentType 'application/json' -OutFile $($this.ResponseBodyFile) $($this.CommonRequestParams)"
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
-    return $exportStatus
+  if ($exportStatus -ne "COMPLETED") {
+    execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
   }
 
-  [string]
-  _getDistributionExportStatus() {
-    $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
-    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$headers -OutFile $($this.ResponseBodyFile) $($this.CommonRequestParams)"
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
-    return $exportStatus
-  }
+  return (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).download_url
+}
+
+function _exportReleaseBundle() {
+  $headers = @{ Authorization = "Basic ${EncodedAuth}" }
+  execute_command "Write-Output 'Exporting Release Bundle: ${BundleName}/${BundleVersion}'"
+  execute_command "retry_command Invoke-WebRequest `"${Url}/api/v1/export/release_bundle/${BundleName}/${BundleVersion}`" -Method Post -Headers `$headers -ContentType 'application/json' -OutFile ${ResponseBodyFile} ${CommonRequestParams}"
+  $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
+  return $exportStatus
+}
+
+function _getDistributionExportStatus() {
+  $headers = @{ Authorization = "Basic ${EncodedAuth}" }
+  execute_command "retry_command Invoke-WebRequest `"$Url/api/v1/export/release_bundle/${BundleName}/${BundleVersion}/status`" -Method Get -Headers `$headers -OutFile ${ResponseBodyFile} ${CommonRequestParams}"
+  $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
+  return $exportStatus
 }
