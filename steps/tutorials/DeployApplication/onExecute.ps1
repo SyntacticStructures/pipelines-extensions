@@ -73,7 +73,7 @@ function DeployApplication() {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
-    $sshBaseCmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12062 -o StrictHostKeyChecking=no"
+    $sshBaseCmd = "ssh $step_configuration_sshUser@0.tcp.ngrok.io -p 19176 -o StrictHostKeyChecking=no"
 
     $targetDir = "~/$step_name/$run_id"
     if ($step_configuration_targetDirectory -ne $null) {
@@ -82,7 +82,7 @@ function DeployApplication() {
     $makeTargetDirCommand = "$sshBaseCmd `"mkdir -p $targetDir`""
 
     # Command to upload app tarball to vm
-    $uploadCommand = "scp -P 12061 -o StrictHostKeyChecking=no .\$tarballName $step_configuration_sshUser@4.tcp.ngrok.io`:$targetDir"
+    $uploadCommand = "scp -P 19176 -o StrictHostKeyChecking=no .\$tarballName $step_configuration_sshUser@0.tcp.ngrok.io`:$targetDir"
 
     # Command to source the file with vmEnvironmentVariables
     if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
