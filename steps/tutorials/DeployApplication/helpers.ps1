@@ -8,18 +8,6 @@ function setupSSH($key_name) {
 
 
 function DownloadReleaseBundle($resourceName) {
-  $script:BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
-  $script:BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
-  $script:Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
-  $script:user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
-  $script:apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
-  $script:EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
-  $script:ShouldCleanupExport = $false
-  $script:ResponseBodyFile = "${env:step_tmp_dir}\response"
-  $script:ZipResponseBodyFile = "${env:step_tmp_dir}\response.zip"
-  $script:CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -PassThru"
-  _downloadReleaseBundle
-
   function _downloadReleaseBundle() {
     # Release bundle must be exported before it can be downloaded
     execute_command "echo 'starting download'"
@@ -78,4 +66,15 @@ function DownloadReleaseBundle($resourceName) {
     return $exportStatus
   }
 
+  $script:BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
+  $script:BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
+  $script:Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
+  $script:user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
+  $script:apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
+  $script:EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
+  $script:ShouldCleanupExport = $false
+  $script:ResponseBodyFile = "${env:step_tmp_dir}\response"
+  $script:ZipResponseBodyFile = "${env:step_tmp_dir}\response.zip"
+  $script:CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -PassThru"
+  _downloadReleaseBundle
 }
