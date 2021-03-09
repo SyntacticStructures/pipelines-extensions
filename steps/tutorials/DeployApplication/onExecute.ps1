@@ -2,10 +2,6 @@ $ErrorActionPreference = "Stop"
 
 execute_command ". .\helpers.ps1"
 
-function testfunc() {
-  execute_command "echo 'hello'"
-}
-
 . .\helpers.ps1
 function DeployApplication() {
   #  gci env:* | sort-object name
