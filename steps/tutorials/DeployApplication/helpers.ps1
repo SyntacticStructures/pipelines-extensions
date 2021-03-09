@@ -18,9 +18,9 @@ class ReleaseBundleDownloader {
     execute_command "echo 'starting init'"
     $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
     $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
-    $this.Url = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_url").Value )
-    $user = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_user").Value )
-    $apikey = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_apikey").Value )
+    $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
+    $user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
+    $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
     $encodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${global:distribution_user}:${global:distribution_apikey}"))
     $this.AuthHeaders = @{ Authorization = "Basic $encodedAuth" }
     $this.ShouldCleanupExport = $false
