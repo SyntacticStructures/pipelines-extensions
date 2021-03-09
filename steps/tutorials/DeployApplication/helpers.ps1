@@ -75,8 +75,9 @@ class ReleaseBundleDownloader {
 
   [string]
   _exportReleaseBundle() {
+    $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "Write-Output 'Exporting Release Bundle: $($this.BundleName)/$($this.BundleVersion)'"
-    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)`" -Method Post -Headers `$authHeaders -ContentType 'application/json' $($this.CommonRequestParams)"
+    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)`" -Method Post -Headers `$headers -ContentType 'application/json' $($this.CommonRequestParams)"
     $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
   }
@@ -84,7 +85,7 @@ class ReleaseBundleDownloader {
   [string]
   _getDistributionExportStatus() {
     execute_command "echo '_getDistributionExportStatus'"
-    $authHeaders = @{ Authorization = "Basic $($this.EncodedAuth)" }
+    $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$headers $($this.CommonRequestParams)"
     $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
