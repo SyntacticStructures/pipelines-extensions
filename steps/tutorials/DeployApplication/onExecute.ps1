@@ -60,8 +60,6 @@ function DeployApplication() {
   elseif ($releasebundle_res_name -ne "") {
     execute_command "echo 'we are here'"
     $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
-    execute_command "echo 'we are there'"
-    execute_command "Get-Member -InputObject $releaseBundleDownloader"
     execute_cmmand "$($releaseBundleDownloader.Download())"
   }
   $tarballName = "${pipeline_name-$run_id}.tar.gz"
