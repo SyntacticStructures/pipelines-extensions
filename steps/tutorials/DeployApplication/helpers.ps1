@@ -10,7 +10,6 @@ class ReleaseBundleDownloader {
   [string]$BundleName
   [string]$Url
   [string]$ResponseBodyFile
-  [string]$ZipResponseBodyFile
   [bool]$ShouldCleanupExport
   [string]$EncodedAuth
   [string]$CommonRequestParams
@@ -40,7 +39,7 @@ class ReleaseBundleDownloader {
     execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
     $responseBodyFile = $this.ResponseBodyFile + ".zip"
     execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams) -OutFile $responseBodyFile"
-    Expand-Archive -LiteralPath $responseBodyFile -DestinationPath $env:PWD
+    Expand-Archive -LiteralPath $responseBodyFile -DestinationPath $PWD
   }
 
   # Returns a download url once export is done
