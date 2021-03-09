@@ -20,9 +20,9 @@ class ReleaseBundleDownloader {
     $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
     $user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
     $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
-    $this.EncodedAuth = "${env:distribution_user}:${env:distribution_apikey}"
+    $this.EncodedAuth = "${user}:${apikey}"
     $this.ShouldCleanupExport = $false
-    $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
+    $this.ResponseBodyFile = "${env:step_tmp_dir}/response"
     $this.CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -OutFile `"`$(`$this.ResponseBodyFile)`" -PassThru"
   }
 
@@ -77,7 +77,7 @@ class ReleaseBundleDownloader {
     $authHeaders = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "Write-Output 'Exporting Release Bundle: $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "retry_command Invoke-WebRequest `"$(this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)`" -Method Post -Headers `$authHeaders -ContentType 'application/json' $($this.CommonRequestParams)"
-    $exportStatus = (ConvertFrom-JSON (Get-Content "${global:step_tmp_dir}/response")).status
+    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
   }
 
@@ -87,7 +87,7 @@ class ReleaseBundleDownloader {
     $headers = @{}
     $headers['Authorization'] = "Basic $($this.EncodedAuth)"
     execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$authHeaders $($this.CommonRequestParams)"
-    $exportStatus = (ConvertFrom-JSON (Get-Content "$($this.ResponseBodyFilePath)")).status
+    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
   }
 }
