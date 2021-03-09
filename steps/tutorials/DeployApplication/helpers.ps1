@@ -16,6 +16,7 @@ class ReleaseBundleDownloader {
 
   ReleaseBundleDownloader([string]$resourceName) {
     execute_command "echo 'starting init'"
+    exit 1
     $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
     $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
     $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
