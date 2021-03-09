@@ -87,7 +87,8 @@ class ReleaseBundleDownloader {
   _getDistributionExportStatus() {
     execute_command "echo '_getDistributionExportStatus'"
     $headers = @{}
-    $headers['Authorization'] = "Basic admin:AP5jdSYSHshRSiMgopNWVSq3C5a"
+    $t = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
+    $headers['Authorization'] = "Basic ${t}"
     execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$headers $($this.CommonRequestParams)"
     $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
