@@ -61,7 +61,7 @@ function DeployApplication() {
   }
   elseif ($releasebundle_res_name -ne "") {
     execute_command "echo 'we are here'"
-    $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
+    DownloadReleaseBundle($releasebundle_res_name)
     execute_command "echo 'we are there'"
     try {
       $releaseBundleDownloader.Download()
