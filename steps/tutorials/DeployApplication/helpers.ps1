@@ -85,6 +85,7 @@ class ReleaseBundleDownloader {
   _getDistributionExportStatus() {
     execute_command "echo '_getDistributionExportStatus'"
     Write-Error "get dist stats"
+    execute_command "Write-Error `"get dist stats`""
     Write-Error "$($this.EncodedAuth)"
     $headers = @{}
     $headers['Authorization'] = "Basic $($this.EncodedAuth)"
