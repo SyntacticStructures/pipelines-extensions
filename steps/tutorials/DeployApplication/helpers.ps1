@@ -36,7 +36,6 @@ function _downloadReleaseBundle() {
 
 function _ensureExport() {
   execute_command "echo 'ensureExport'"
-  throw "wt heck"
   $exportStatus = _getDistributionExportStatus
   if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
     $ShouldCleanupExport = $true
@@ -74,6 +73,7 @@ function _exportReleaseBundle() {
 
 function _getDistributionExportStatus() {
   $headers = @{ Authorization = "Basic ${EncodedAuth}" }
+  throw "wt heck"
   execute_command "retry_command Invoke-WebRequest `"$Url/api/v1/export/release_bundle/${BundleName}/${BundleVersion}/status`" -Method Get -Headers `$headers -OutFile ${ResponseBodyFile} ${CommonRequestParams}"
   $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
   return $exportStatus
