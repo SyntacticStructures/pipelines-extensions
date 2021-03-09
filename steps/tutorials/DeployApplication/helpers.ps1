@@ -22,7 +22,7 @@ class ReleaseBundleDownloader {
     $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
     $this.EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
     $this.ShouldCleanupExport = $false
-    $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
+    $this.ResponseBodyFile = "${env:step_tmp_dir}/response"
     $this.CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -OutFile `"`$(`$this.ResponseBodyFile)`" -PassThru"
   }
 
