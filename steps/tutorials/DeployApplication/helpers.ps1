@@ -27,6 +27,7 @@ class ReleaseBundleDownloader {
   }
 
   Download() {
+    throw "what the frick"
     # Release bundle must be exported before it can be downloaded
     execute_command "echo 'starting download'"
     $downloadUrl = $this._ensureExport()
