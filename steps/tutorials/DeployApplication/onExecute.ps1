@@ -20,8 +20,7 @@ function DeployApplication() {
 
   if ("$DEPLOY_TARGETS_OVERRIDE" -ne $null) {
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
-    $vm_targets=$( $DEPLOY_TARGETS_OVERRIDE | ConvertFrom-Json )
-    execute_command "echo $vm_targets"
+    $vm_targets=$DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
 
   exit 1
