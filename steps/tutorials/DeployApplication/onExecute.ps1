@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-#. .\helpers.ps1
+. .\helpers.ps1
 
 function DeployApplication() {
   #  gci env:* | sort-object name
@@ -168,4 +168,4 @@ public static class TrustEverything
 }
 
 #check_no_verify_ssl
-execute_command DeployApplication
+DeployApplication
