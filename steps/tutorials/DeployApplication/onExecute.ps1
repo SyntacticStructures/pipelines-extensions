@@ -10,6 +10,7 @@ function testfunc() {
 function DeployApplication() {
   #  gci env:* | sort-object name
   execute_command "(get-command execute_command).definition"
+  echo "hello?"
   $releaseBundleDownloader = [ReleaseBundleDownloader]::new()
 #  $vmClusterResName = $( get_resource_name -type VmCluster -operation "IN" )
 #  $vmTargets = $( (Get-Variable -Name "res_$( $vmClusterResName )_targets").Value | ConvertFrom-Json )
