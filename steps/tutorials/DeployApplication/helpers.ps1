@@ -8,7 +8,7 @@ function setupSSH($key_name) {
 class ReleaseBundleDownloader {
   [string]$Url
   ReleaseBundleDownloader() {
-    execute_command "echo 'why does this not work?'"
+    echo 'why does this not work?'
   }
 }
 
