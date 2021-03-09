@@ -1,6 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-# TODO: implement $DEPLOY_TARGETS_OVERRIDE
 . .\helpers.ps1
 
 function DeployApplication() {
@@ -168,4 +167,4 @@ public static class TrustEverything
 }
 
 #check_no_verify_ssl
-DeployApplication
+execute_command DeployApplication
