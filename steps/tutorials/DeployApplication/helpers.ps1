@@ -36,8 +36,8 @@ class ReleaseBundleDownloader {
   }
 
   _download($downloadUrl) {
+    execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get $($this.CommonRequestParams) -Headers `$(`$this.AuthHeaders)"
-    execute_command "echo 'Downloaded Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "unzip $($this.ResponseBodyFile)"
   }
 
@@ -81,7 +81,7 @@ class ReleaseBundleDownloader {
 
   [string]
   _getDistributionExportStatus() {
-    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get $($this.CommonRequestParams) -Headers `$(`$this.AuthHeaders)"
+    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get $($this.CommonRequestParams) -Headers $($this.AuthHeaders)"
     $exportStatus = (ConvertFrom-JSON (Get-Content "$($this.ResponseBodyFilePath)")).status
     return $exportStatus
   }
