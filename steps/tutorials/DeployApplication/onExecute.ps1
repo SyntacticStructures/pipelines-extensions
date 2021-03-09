@@ -31,7 +31,6 @@ function DeployApplication() {
   $vmEnvFilename = "${step_name}-${run_id}.env"
   $vmEnvFilePath = "${tardir}\${vmEnvFilename}"
   if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
-    execute_command "echo we have env vars"
     for ($i = 0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
       $envVar = $ExecutionContext.InvokeCommand.ExpandString(
           $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
@@ -59,8 +58,7 @@ function DeployApplication() {
     execute_command "echo 'we are here'"
     $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
     execute_command "echo 'we are there'"
-    execute_command "echo `"$($releaseBundleDownloader.EncodedAuth)`""
-    $releaseBundleDownloader.Download()
+    execute_command "$($releaseBundleDownloader.Download())"
     execute_command "echo 'we are there'"
   }
   $tarballName = "${pipeline_name-$run_id}.tar.gz"
@@ -97,7 +95,7 @@ function DeployApplication() {
     $deployCommand = "${sshBaseCmd} `"${untar} ${sourceEnvFile} ${step_configuration_deployCommand}`""
 
     # Command to run after the deploy command from within the uploaded dir
-    $posDeployCommand = "${sshBaseCmd} `"cd ${targetDir}; ${sourceEnvFile} ${step_configuration_postDeployCommand}`""
+    $postDeployCommand = "${sshBaseCmd} `"cd ${targetDir}; ${sourceEnvFile} ${step_configuration_postDeployCommand}`""
 
     try {
       execute_command "echo Creating target dir on vm"
@@ -110,7 +108,7 @@ function DeployApplication() {
       execute_command $deployCommand
       if ($step_configuration_postDeployCommand -ne $null) {
         execute_command "echo Running post-deploy command"
-        execute_command $posDeployCommand
+        execute_command $postDeployCommand
       }
     }
     catch {
