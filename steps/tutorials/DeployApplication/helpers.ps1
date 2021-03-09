@@ -6,7 +6,7 @@ function setupSSH($key_name) {
 }
 
 function DownloadReleaseBundle() {
-  $r = _inner
+  $r = _inner | Out-Host
 }
 
 function _inner() {
