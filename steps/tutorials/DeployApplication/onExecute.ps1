@@ -23,8 +23,6 @@ function DeployApplication() {
     $vm_targets=$DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
 
-  exit 1
-
   setupSSH($vmcluster_res_name)
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
