@@ -7,6 +7,7 @@ function setupSSH($key_name) {
 
 function DownloadReleaseBundle() {
   $r = _inner | Out-Host
+  execute_command "echo $r"
 }
 
 function _inner() {
