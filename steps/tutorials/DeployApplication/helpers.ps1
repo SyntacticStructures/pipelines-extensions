@@ -24,7 +24,7 @@ class ReleaseBundleDownloader {
     $this.AuthHeaders = @{ Authorization = "Basic $encodedAuth" }
     $this.ShouldCleanupExport = $false
     $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
-#    $this.CommonRequestParams = "$($this.AuthHeaders) -TimeoutSec 60 -UseBasicParsing -OutFile `"$($this.ResponseBodyFile)`" -PassThru"
+    $this.CommonRequestParams = "`$($this.AuthHeaders) -TimeoutSec 60 -UseBasicParsing -OutFile `"$($this.ResponseBodyFile)`" -PassThru"
   }
 
   Download() {
