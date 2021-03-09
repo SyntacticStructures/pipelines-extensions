@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-. .\helpers.ps1
+#. .\helpers.ps1
 
 function DeployApplication() {
   #  gci env:* | sort-object name
