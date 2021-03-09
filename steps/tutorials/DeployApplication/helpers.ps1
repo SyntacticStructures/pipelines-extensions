@@ -45,13 +45,13 @@ class ReleaseBundleDownloader {
   }
 
   # Returns a download url once export is done
-  [string]
   _ensureExport() {
     $this._getDistributionExportStatus()
     $exportStatus = $this._getDistributionExportStatus()
     if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
       $this.ShouldCleanupExport = $true
-      $exportStatus = $this._exportReleaseBundle()
+      $this._exportReleaseBundle()
+      $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
       if ($exportStatus -eq "FAILED") {
         execute_command "throw 'Release Bundle export failed'"
       }
@@ -75,13 +75,10 @@ class ReleaseBundleDownloader {
     $this.DownloadURL = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
   }
 
-  [string]
   _exportReleaseBundle() {
     $headers = @{ Authorization = "Basic $( $this.EncodedAuth )" }
     execute_command "Write-Output 'Exporting Release Bundle: $( $this.BundleName )/$( $this.BundleVersion )'"
     execute_command "retry_command Invoke-WebRequest `"$( $this.Url )/api/v1/export/release_bundle/$( $this.BundleName )/$( $this.BundleVersion )`" -Method Post -Headers `$headers -ContentType 'application/json' -OutFile $( $this.ResponseBodyFile ) $( $this.CommonRequestParams )"
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
-    return $exportStatus
   }
 
   [string]

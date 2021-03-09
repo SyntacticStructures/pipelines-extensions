@@ -3,6 +3,7 @@ $ErrorActionPreference = "Stop"
 execute_command ". .\helpers.ps1"
 
 . .\helpers.ps1
+
 function DeployApplication() {
   #  gci env:* | sort-object name
   $vmClusterResName = $( get_resource_name -type VmCluster -operation "IN" )
