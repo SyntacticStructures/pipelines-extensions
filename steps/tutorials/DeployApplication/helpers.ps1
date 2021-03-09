@@ -20,7 +20,7 @@ class ReleaseBundleDownloader {
     $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
     $user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
     $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
-    $this.EncodedAuth = "${global:distribution_user}:${global:distribution_apikey}"
+    $this.EncodedAuth = "${env:distribution_user}:${env:distribution_apikey}"
     $this.ShouldCleanupExport = $false
     $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
     $this.CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -OutFile `"`$(`$this.ResponseBodyFile)`" -PassThru"
