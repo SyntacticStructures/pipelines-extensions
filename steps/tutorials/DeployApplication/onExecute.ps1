@@ -20,7 +20,7 @@ function DeployApplication() {
 
   if ("$DEPLOY_TARGETS_OVERRIDE" -ne $null) {
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
-    $vm_targets=$DEPLOY_TARGETS_OVERRIDE.Split(",")
+    $vm_targets = $DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
 
   setupSSH($vmcluster_res_name)
@@ -29,13 +29,13 @@ function DeployApplication() {
   execute_command "mkdir $tardir"
 
   # Create a file with env vars to source on the target vms
-  $vm_env_filename="$step_name-$run_id.env"
-  $vm_env_file_path="$tardir\$vm_env_filename"
+  $vm_env_filename = "$step_name-$run_id.env"
+  $vm_env_file_path = "$tardir\$vm_env_filename"
   if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
     execute_command "echo we have env vars"
-    for ($i=0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
+    for ($i = 0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
       $env_var = $ExecutionContext.InvokeCommand.ExpandString(
-        $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
+          $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
       )
       execute_command "echo $env_var"
       Add-Content -Path $vm_env_file_path -Value "export $env_var"
@@ -44,31 +44,32 @@ function DeployApplication() {
   }
 
   pushd $tardir
-    if ($buildinfo_res_name -ne "") {
-      $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
-      $buildinfo_name = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildName").Value )
-      $buildinfo_rt_url = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_url").Value )
-      $buildinfo_rt_user = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_user").Value )
-      $buildinfo_rt_apiKey = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_apikey").Value )
+  if ($buildinfo_res_name -ne "") {
+    $buildinfo_number = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildNumber").Value )
+    $buildinfo_name = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_buildName").Value )
+    $buildinfo_rt_url = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_url").Value )
+    $buildinfo_rt_user = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_user").Value )
+    $buildinfo_rt_apiKey = $( (Get-Variable -Name "res_$( $buildinfo_res_name )_sourceArtifactory_apikey").Value )
 
-      execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
-    }
-    elseif ($filespec_res_name -ne "") {
-      $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
-      execute_command "mv $filespec_res_path\* $tardir"
-    }
-    elseif ($releasebundle_res_name -ne "") {
-      $release_bundle_version=$( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
-      $release_bundle_name=$( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
-      $distribution_url=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
-      $distribution_user=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
-      $distribution_apikey=$( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
-    }
-    $tarball_name = "$pipeline_name-$run_id.tar.gz"
-    execute_command "tar -czvf ../$tarball_name ."
+    execute_command "retry_command jfrog rt dl `"*`" $tardir\ --build=$buildinfo_name/$buildinfo_number --url=$buildinfo_rt_url --user=$buildinfo_rt_user --password=$buildinfo_rt_apikey  --insecure-tls"
+  }
+  elseif ($filespec_res_name -ne "") {
+    $filespec_res_path = $( (Get-Variable -Name "res_$( $filespec_res_name )_resourcePath").Value )
+    execute_command "mv $filespec_res_path\* $tardir"
+  }
+  elseif ($releasebundle_res_name -ne "") {
+    $release_bundle_version = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
+    $release_bundle_name = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
+    $distribution_url = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
+    $distribution_user = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
+    $distribution_apikey = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
+  }
+  $tarball_name = "$pipeline_name-$run_id.tar.gz"
+  execute_command "tar -czvf ../$tarball_name ."
   popd
 
   # TODO -- IMPORTANT: do not hard-code vm addrs
+  $failed_vms = @()
   for ($i = 0; $i -lt $vm_targets.Length; $i++) {
     $vm_target = $vm_targets[$i]
 
@@ -78,9 +79,9 @@ function DeployApplication() {
 
     $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
 
-    $target_dir="~/$step_name/$run_id"
+    $target_dir = "~/$step_name/$run_id"
     if ($step_configuration_targetDirectory -ne $null) {
-      $target_dir=$step_configuration_targetDirectory
+      $target_dir = $step_configuration_targetDirectory
     }
     $make_target_dir_command = "$ssh_base_cmd `"mkdir -p $target_dir`""
 
@@ -89,7 +90,7 @@ function DeployApplication() {
 
     # Command to source the file with vmEnvironmentVariables
     if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
-      $source_env_file="source $target_dir/$vm_env_filename;"
+      $source_env_file = "source $target_dir/$vm_env_filename;"
     }
 
     # Command to run the deploy command from within the uploaded dir
@@ -114,11 +115,37 @@ function DeployApplication() {
       }
     }
     catch {
+      $failed_vms += $vm_target
+
       # Don't exit on failed commands if fastFail is specified as false
       if ($step_configuration_fastFail -eq $false) {
         continue
       }
-      throw
+      break
+    }
+
+    # Deploy was successful.
+
+    $rollback_dir = "~/$step_name/rollback"
+    # Command to copy artifacts into rollback dir.
+    $create_rollback_artifacts = "$ssh_base_command `"mkdir -p $rollback_dir; rm -rf $rollback_dir/*; cp -r $target_dir/* $rollback_dir`""
+    execute_command "echo 'Archiving successful deploy for rollback'"
+    execute_command "$create_rollback_artifacts"
+  }
+
+  # Do rollback
+  if (($step_configuration_rollbackCommand -ne $null) -and ($failed_vms.count -gt 0)) {
+    Foreach ($vm_target IN $vm_targets) {
+      execute_command "echo 'Executing rollback command on vm: $vm_target'"
+      # TODO -- IMPORTANT: do not hard-code vm addrs
+      $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
+      try {
+        execute_command "$ssh_base_command `"$step_configuration_rollbackCommand`""
+      }
+      catch {
+        # Ignore failures and try to rollback the next vm
+        continue
+      }
     }
   }
 }
