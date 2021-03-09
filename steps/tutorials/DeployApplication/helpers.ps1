@@ -46,32 +46,31 @@ class ReleaseBundleDownloader {
   [string]
   _ensureExport() {
     $this._getDistributionExportStatus()
-#    $exportStatus = $this._getDistributionExportStatus()
-    return "hello"
-#    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
-#      $this.ShouldCleanupExport = $true
-#      $exportStatus = $this._exportReleaseBundle()
-#      if ($exportStatus -eq "FAILED") {
-#        execute_command "throw `"Release Bundle export failed"`"
-#      }
-#    }
-#
-#    $sleepSeconds = 2
-#    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
-#      execute_command "echo 'Waiting for release bundle export to complete'"
-#      execute_command "Start-Sleep -Seconds ${sleepSeconds}"
-#      if ($sleepSeconds -gt 64) {
-#        # 128s timeout
-#        break
-#      }
-#      $exportStatus = $this._getDistributionExportStatus()
-#    }
-#
-#    if ($exportStatus -ne "COMPLETED") {
-#      execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
-#    }
-#
-#    return (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
+    $exportStatus = $this._getDistributionExportStatus()
+    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
+      $this.ShouldCleanupExport = $true
+      $exportStatus = $this._exportReleaseBundle()
+      if ($exportStatus -eq "FAILED") {
+        execute_command "throw `"Release Bundle export failed"`"
+      }
+    }
+
+    $sleepSeconds = 2
+    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
+      execute_command "echo 'Waiting for release bundle export to complete'"
+      execute_command "Start-Sleep -Seconds ${sleepSeconds}"
+      if ($sleepSeconds -gt 64) {
+        # 128s timeout
+        break
+      }
+      $exportStatus = $this._getDistributionExportStatus()
+    }
+
+    if ($exportStatus -ne "COMPLETED") {
+      execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
+    }
+
+    return (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
   }
 
   [string]
