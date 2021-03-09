@@ -28,10 +28,11 @@ class ReleaseBundleDownloader {
 
   Download() {
     # Release bundle must be exported before it can be downloaded
-    echo 'starting download'
-    $downloadUrl = $this._ensureExport()
-    echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'
-    $this._download($downloadUrl)
+    execute_command "echo 'starting download'"
+#    $downloadUrl = $this._ensureExport()
+    $this._ensureExport()
+#    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
+#    $this._download($downloadUrl)
   }
 
   _download($downloadUrl) {
@@ -44,31 +45,33 @@ class ReleaseBundleDownloader {
   # Returns a download url once export is done
   [string]
   _ensureExport() {
-    $exportStatus = $this._getDistributionExportStatus()
-    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
-      $this.ShouldCleanupExport = $true
-      $exportStatus = $this._exportReleaseBundle()
-      if ($exportStatus -eq "FAILED") {
-        execute_command "throw `"Release Bundle export failed"`"
-      }
-    }
-
-    $sleepSeconds = 2
-    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
-      execute_command "echo 'Waiting for release bundle export to complete'"
-      execute_command "Start-Sleep -Seconds ${sleepSeconds}"
-      if ($sleepSeconds -gt 64) {
-        # 128s timeout
-        break
-      }
-      $exportStatus = $this._getDistributionExportStatus()
-    }
-
-    if ($exportStatus -ne "COMPLETED") {
-      execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
-    }
-
-    return (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
+    $this._getDistributionExportStatus()
+#    $exportStatus = $this._getDistributionExportStatus()
+    return "hello"
+#    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
+#      $this.ShouldCleanupExport = $true
+#      $exportStatus = $this._exportReleaseBundle()
+#      if ($exportStatus -eq "FAILED") {
+#        execute_command "throw `"Release Bundle export failed"`"
+#      }
+#    }
+#
+#    $sleepSeconds = 2
+#    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
+#      execute_command "echo 'Waiting for release bundle export to complete'"
+#      execute_command "Start-Sleep -Seconds ${sleepSeconds}"
+#      if ($sleepSeconds -gt 64) {
+#        # 128s timeout
+#        break
+#      }
+#      $exportStatus = $this._getDistributionExportStatus()
+#    }
+#
+#    if ($exportStatus -ne "COMPLETED") {
+#      execute_command "throw 'Failed to export release bundle with export status: ${exportStatus}'"
+#    }
+#
+#    return (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).download_url
   }
 
   [string]
@@ -82,11 +85,11 @@ class ReleaseBundleDownloader {
 
   [string]
   _getDistributionExportStatus() {
-#    execute_command "echo '_getDistributionExportStatus'"
-#    $headers = @{}
-#    $headers['Authorization'] = "Basic $($this.EncodedAuth)"
-#    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$headers $($this.CommonRequestParams)"
-#    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
+    execute_command "echo '_getDistributionExportStatus'"
+    $headers = @{}
+    $headers['Authorization'] = "Basic admin:AP5jdSYSHshRSiMgopNWVSq3C5a"
+    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get -Headers `$headers $($this.CommonRequestParams)"
+    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     return $exportStatus
   }
 }
