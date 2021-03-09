@@ -65,7 +65,7 @@ class ReleaseBundleDownloader {
       $exportStatus = $this._getDistributionExportStatus
     }
 
-    if ($exportStatus ! = "COMPLETED") {
+    if ($exportStatus -ne "COMPLETED") {
       execute_command "throw 'Failed to export release bundle with export status: $export_status'"
     }
 
