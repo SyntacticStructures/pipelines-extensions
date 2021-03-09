@@ -1,7 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-execute_command ". .\helpers.ps1"
-execute_command ". .\helpers2.ps1"
+. .\helpers.ps1
 
 function DeployApplication() {
   #  gci env:* | sort-object name
