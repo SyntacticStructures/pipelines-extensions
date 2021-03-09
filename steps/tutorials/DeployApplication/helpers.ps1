@@ -6,6 +6,13 @@ function setupSSH($key_name) {
 }
 
 class ReleaseBundleDownloader {
+  [string]$Url
+  ReleaseBundleDownloader() {
+    execute_command "echo 'why does this not work?'"
+  }
+}
+
+class RReleaseBundleDownloader {
   [string]$BundleVersion
   [string]$BundleName
   [string]$Url
@@ -15,7 +22,7 @@ class ReleaseBundleDownloader {
   [string]$EncodedAuth
   [string]$CommonRequestParams
 
-  ReleaseBundleDownloader([string]$resourceName) {
+  RReleaseBundleDownloader([string]$resourceName) {
     $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
     $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
     $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
