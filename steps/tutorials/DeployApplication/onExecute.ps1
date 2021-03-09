@@ -3,7 +3,6 @@ $ErrorActionPreference = "Stop"
 execute_command ". .\helpers.ps1"
 
 . .\helpers.ps1
-
 function DeployApplication() {
   #  gci env:* | sort-object name
   $vmClusterResName = $( get_resource_name -type VmCluster -operation "IN" )
@@ -58,11 +57,10 @@ function DeployApplication() {
   }
   elseif ($releasebundle_res_name -ne "") {
     execute_command "echo 'we are here'"
-    $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
-    execute_command "echo 'we are there'"
     try {
-      $releaseBundleDownloader.Download()
+      DownloadReleaseBundle($releasebundle_res_name)
     } catch {
+      execute_command "echo error"
       execute_command "echo $_"
     }
 
