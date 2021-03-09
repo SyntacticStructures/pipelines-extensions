@@ -35,12 +35,12 @@ function _downloadReleaseBundle() {
 function _ensureExport() {
   execute_command "echo 'ensureExport'"
   _getDistributionExportStatus
-  $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
-
+  $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
+  execute_command "echo 'got export status'"
   if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
     $ShouldCleanupExport = $true
     _exportReleaseBundle
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
+    $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
 
     if ($exportStatus -eq "FAILED") {
       execute_command "throw 'Release Bundle export failed'"
@@ -56,7 +56,7 @@ function _ensureExport() {
       break
     }
     _getDistributionExportStatus
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
+    $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
   }
 
   if ($exportStatus -ne "COMPLETED") {
@@ -70,7 +70,6 @@ function _exportReleaseBundle() {
   $headers = @{ Authorization = "Basic ${EncodedAuth}" }
   execute_command "Write-Output 'Exporting Release Bundle: ${BundleName}/${BundleVersion}'"
   execute_command "retry_command Invoke-WebRequest `"${Url}/api/v1/export/release_bundle/${BundleName}/${BundleVersion}`" -Method Post -Headers `$headers -ContentType 'application/json' -OutFile ${ResponseBodyFile} ${CommonRequestParams}"
-  $exportStatus = (ConvertFrom-JSON (Get-Content $ResponseBodyFile)).status
 }
 
 function _getDistributionExportStatus() {
