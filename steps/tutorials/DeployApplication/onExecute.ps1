@@ -167,4 +167,4 @@ public static class TrustEverything
 }
 
 check_no_verify_ssl
-execute_command DeployApplication
+DeployApplication
