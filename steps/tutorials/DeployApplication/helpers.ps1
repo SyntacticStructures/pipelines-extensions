@@ -9,82 +9,79 @@ class ReleaseBundleDownloader {
   [string]$BundleVersion
   [string]$BundleName
   [string]$Url
-  [string]$ResponseFilePath
+  [string]$ResponseFile
   [string]$AuthHeaders
-  [bool]$SouldCleanupExport
+  [bool]$ShouldCleanupExport
+  [string]$CommonRequestParams
 
-  ReleaseBundleDownloader([string]$resource_name) {
-    $this.BundleVersion = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
-    $this.BundleName = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
-    $this.Url = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
-    $user = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
-    $apikey = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
+  ReleaseBundleDownloader([string]$resourceName) {
+    $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
+    $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
+    $this.Url = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_url").Value )
+    $user = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_user").Value )
+    $apikey = $( (Get-Variable -Name "res_$( $resourceName )__sourceDistribution_apikey").Value )
     $encodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${distribution_user}:${distribution_apikey}"))
     $this.AuthHeaders = @{ Authorization = "Basic $encodedAuth" }
-    $this.SouldCleanupExport = $false
-    $this.ResponseFilePath = "${step_tmp_dir}/response"
+    $this.ShouldCleanupExport = $false
+    $this.ResponseBodyFile = "${step_tmp_dir}/response"
+    $this.CommonRequestParams = "`$this.AuthHeaders -TimeoutSec 60 -UseBasicParsing -OutFile `"`${this.ResponseBodyFile}`" -PassThru"
   }
 
   Download() {
-    $exportStatus = $this.getDistributionExportStatus
+    # Release bundle must be exported before it can be downloaded
+    $this._ensureExport
+    execute_command "echo 'Release Bundle ${this.BundleName}/${this.BundleVersion} is exported'"
+    $this._download
+  }
+
+  _download($downloadUrl) {
+    execute_command "retry_command Invoke-WebRequest ${downloadURL} -Method Get ${this.CommonRequestParams}"
+    execute_command "echo 'Downloaded Release Bundle ${this.BundleName}/${this.BundleVersion}'"
+    execute_command "unzip ${this.ResponseFile}"
+  }
+
+  # Returns a download url once export is done
+  [string]
+  _ensureExport() {
+    $exportStatus = $this._getDistributionExportStatus
     if ($status -eq "NOT_TRIGGERED" -or $status -eq "FAILED") {
-      $this.SouldCleanupExport = $true
-      $exportStatus = $this.exportReleaseBundle
+      $this.ShouldCleanupExport = $true
+      $exportStatus = $this._exportReleaseBundle
       if ($exportStatus -eq "FAILED") {
         execute_command "throw `"Release Bundle export failed"`"
       }
     }
 
     sleepSeconds = 2
-    while ("$jobStatus" -eq "NOT_EXPORTED" -or "$jobStatus" -eq "IN_PROGRESS") {
+    while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
       execute_command "echo 'Waiting for release bundle export to complete'"
-      execute_command "Start-Sleep -Seconds $sleeperCount"
+      execute_command "Start-Sleep -Seconds $sleepSeconds"
       if ($sleepSeconds -gt 64) {
         # 128s timeout
         break
       }
+      $exportStatus = $this._getDistributionExportStatus
     }
 
+    if ($exportStatus ! = "COMPLETED") {
+      execute_command "throw 'Failed to export release bundle with export status: $export_status'"
+    }
+
+    return (ConvertFrom-JSON (Get-Content $this.ResponseFile)).download_url
   }
 
   [string]
-  exportReleaseBundle() {
+  _exportReleaseBundle() {
     execute_command "Write-Output 'Exporting Release Bundle: ${this.BundleName}/${this.BundleVersion}'"
-    execute_command "retry_command Invoke-WebRequest `"${this.Url}/api/v1/export/release_bundle/${this.BundleName}/${this.BundleVersion}`" -Method Post -Headers `$this.AuthHeaders -TimeoutSec 60 -ContentType 'application/json' -UseBasicParsing -OutFile `"`${this.ResponseFilePath}`" -PassThru"
-    try {
-      $exportStatus = (ConvertFrom-JSON (Get-Content "${step_tmp_dir}/response")).status
-    }
-    catch {
-      execute_command "throw `"Failed to parse export Release Bundle status with error: $_`""
-    }
+    execute_command "retry_command Invoke-WebRequest `"${this.Url}/api/v1/export/release_bundle/${this.BundleName}/${this.BundleVersion}`" -Method Post -Headers -ContentType 'application/json' ${this.CommonRequestParams}"
+    $exportStatus = (ConvertFrom-JSON (Get-Content "${step_tmp_dir}/response")).status
     return $exportStatus
   }
 
   [string]
-  getDistributionExportStatus() {
-    execute_command "retry_command Invoke-WebRequest `"${this.Url}/api/v1/export/release_bundle/${this.BundleName}/${this.BundleVersion}/status`" -Method Get -Headers `$this.AuthHeaders -TimeoutSec 60 -UseBasicParsing -OutFile `"`${this.ResponseFilePath}`" -PassThru"
-    try {
-      $exportStatus = (ConvertFrom-JSON (Get-Content "${this.ResponseFilePath}")).status
-    }
-    catch {
-      execute_command "throw `"Failed to parse export Release Bundle status with error: $_`""
-    }
+  _getDistributionExportStatus() {
+    execute_command "retry_command Invoke-WebRequest `"${this.Url}/api/v1/export/release_bundle/${this.BundleName}/${this.BundleVersion}/status`" -Method Get ${this.CommonRequestParams}"
+    $exportStatus = (ConvertFrom-JSON (Get-Content "${this.ResponseFilePath}")).status
     return $exportStatus
   }
-}
-
-function downloadReleaseBundle($release_bundle_res_name) {
-  $release_bundle_version = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_version").Value )
-  $release_bundle_name = $( (Get-Variable -Name "res_$( $releasebundle_res_name )_name").Value )
-  $distribution_url = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_url").Value )
-  $distribution_user = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_user").Value )
-  $distribution_apikey = $( (Get-Variable -Name "res_$( $releasebundle_res_name )__sourceDistribution_apikey").Value )
-  $should_cleanup_export = $false
-
-  $encoded_auth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${distribution_user}:${distribution_apikey}"))
-  $headers = @{ }
-  $headers['Authorization'] = "Basic $encoded_auth"
-
-  $response = Invoke-WebRequest -URI
-
 }
