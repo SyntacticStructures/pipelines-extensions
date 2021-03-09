@@ -14,19 +14,19 @@ DeployApplication() {
   local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
   local res_targets=$(eval echo "$"res_"$vm_cluster_name"_targets)
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
-  local vm_addrs=( $(echo "$res_targets" | jq --raw-output '.[]') )
-
-  if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
-    execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
-    IFS=,
-    vm_addrs=($DEPLOY_TARGETS_OVERRIDE)
-    unset IFS
-  fi
+  local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
     execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
     execute_command "exit 1"
+  fi
+
+  if [ -n "$DEPLOY_TARGETS_OVERRIDE" ]; then
+    execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
+    IFS=,
+    vm_targets=($DEPLOY_TARGETS_OVERRIDE)
+    unset IFS
   fi
 
   # We put everything we want to upload to vms in a directory
@@ -63,10 +63,10 @@ DeployApplication() {
 
   local failed_vms=()
 
-  for i in "${!vm_addrs[@]}"
+  for i in "${!vm_targets[@]}"
   do
 
-    local vm_addr="${vm_addrs[$i]}"
+    local vm_target="${vm_targets[$i]}"
 
     # Wait between deploys if delay was specified
     if [ -n "$step_configuration_rolloutDelay" ] && [ "$i" != 0 ]; then
@@ -74,7 +74,7 @@ DeployApplication() {
     fi
 
     # TODO: ssh-add, not scp -i
-    local ssh_base_command="ssh -i $ssh_id -n $vm_addr"
+    local ssh_base_command="ssh -i $ssh_id -n $vm_target"
 
     local target_dir="~/$step_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
@@ -83,7 +83,7 @@ DeployApplication() {
     local make_target_dir_command="$ssh_base_command \"mkdir -p $target_dir\""
 
     # Command to upload app tarball to vm
-    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_addr:$target_dir"
+    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_target:$target_dir"
 
     # Command to run the deploy command from within the uploaded dir
     local untar="cd $target_dir/; tar -xvf $tarball_name; rm -f $tarball_name;"
@@ -106,11 +106,11 @@ DeployApplication() {
     fi
 
     execute_command "echo Creating target dir on vm"
-    execute_command "$make_target_dir_command" || failed_vms+=("$vm_addr"); eval "$on_failure"
+    execute_command "$make_target_dir_command" || failed_vms+=("$vm_target"); eval "$on_failure"
     execute_command "echo Uploading artifacts to vm"
-    execute_command "$upload_command" || failed_vms+=("$vm_addr"); eval "$on_failure"
+    execute_command "$upload_command" || failed_vms+=("$vm_target"); eval "$on_failure"
     execute_command "echo Running deploy command"
-    execute_command "$deploy_command" || failed_vms+=("$vm_addr"); eval "$on_failure"
+    execute_command "$deploy_command" || failed_vms+=("$vm_target"); eval "$on_failure"
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "echo Running post-deploy command"
@@ -129,9 +129,9 @@ DeployApplication() {
 
   # Do rollback
   if [ -n "$step_configuration_rollbackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
-    for vm_addr in "${vm_addrs[@]}"; do
-      execute_command "echo 'Executing rollback command on vm: $vm_addr'"
-      local ssh_base_command="ssh -i $ssh_id -n $vm_addr"
+    for vm_target in "${vm_targets[@]}"; do
+      execute_command "echo 'Executing rollback command on vm: $vm_target'"
+      local ssh_base_command="ssh -i $ssh_id -n $vm_target"
       # If rollback fails, keep trying to roll back other vms
       execute_command "$ssh_base_command \"$step_configuration_rollbackCommand\" || continue"
     done

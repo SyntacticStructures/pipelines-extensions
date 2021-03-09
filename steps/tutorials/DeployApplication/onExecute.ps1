@@ -18,6 +18,14 @@ function DeployApplication() {
     execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
+  if ("$DEPLOY_TARGETS_OVERRIDE" -ne $null) {
+    execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
+    $vm_targets=$( $DEPLOY_TARGETS_OVERRIDE | ConvertFrom-Json )
+    execute_command "echo $vm_targets"
+  }
+
+  exit 1
+
   setupSSH($vmcluster_res_name)
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
