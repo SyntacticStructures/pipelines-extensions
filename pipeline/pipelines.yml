@@ -76,5 +76,5 @@ pipelines:
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
           sshUser: root
           rolloutDelay: 3
-          rollbackCommand: "echo 'this is the rollback command' ls"
+          rollbackCommand: "echo 'this is the rollback command'; ls /opt"
 #          fastFail: false
