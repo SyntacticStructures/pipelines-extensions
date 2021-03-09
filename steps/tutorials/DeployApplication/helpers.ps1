@@ -31,8 +31,8 @@ class ReleaseBundleDownloader {
     # Release bundle must be exported before it can be downloaded
     execute_command "echo 'starting download'"
     $downloadUrl = $this._ensureExport()
-    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
-    $this._download($downloadUrl)
+#    execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
+#    $this._download($downloadUrl)
   }
 
   _download($downloadUrl) {
