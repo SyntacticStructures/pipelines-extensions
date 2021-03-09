@@ -58,13 +58,8 @@ function DeployApplication() {
   }
   elseif ($releasebundle_res_name -ne "") {
     execute_command "echo we are here"
-    try{
-
-      $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
-      $releaseBundleDownloader.Download()
-    } catch {
-      execute_command "throw $_"
-    }
+    $releaseBundleDownloader = [ReleaseBundleDownloader]::new($releasebundle_res_name)
+    $releaseBundleDownloader.Download()
   }
   $tarballName = "${pipeline_name-$run_id}.tar.gz"
   execute_command "tar -czvf ../${tarballName} ."
@@ -172,4 +167,4 @@ public static class TrustEverything
 }
 
 check_no_verify_ssl
-DeployApplication
+execute_command DeployApplication
