@@ -36,6 +36,7 @@ function _downloadReleaseBundle() {
 
 function _ensureExport() {
   execute_command "echo 'ensureExport'"
+  throw "wt heck"
   $exportStatus = _getDistributionExportStatus
   if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
     $ShouldCleanupExport = $true

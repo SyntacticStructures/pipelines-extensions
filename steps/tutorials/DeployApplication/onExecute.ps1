@@ -57,10 +57,8 @@ function DeployApplication() {
   }
   elseif ($releasebundle_res_name -ne "") {
     execute_command "echo 'we are here'"
-    DownloadReleaseBundle($releasebundle_res_name)
-    execute_command "echo 'we are there'"
     try {
-      $releaseBundleDownloader.Download()
+      DownloadReleaseBundle($releasebundle_res_name)
     } catch {
       execute_command "echo error"
       execute_command "echo $_"
