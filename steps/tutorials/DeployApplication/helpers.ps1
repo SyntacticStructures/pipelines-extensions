@@ -9,6 +9,7 @@ class ReleaseBundleDownloader {
   [string]$Url
   ReleaseBundleDownloader() {
     echo 'why does this not work?'
+    execute_command "echo 'why does this not work?'"
   }
 }
 
