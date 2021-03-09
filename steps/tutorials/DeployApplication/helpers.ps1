@@ -11,7 +11,7 @@ class ReleaseBundleDownloader {
   [string]$Url
   [string]$ResponseBodyFile
   [bool]$ShouldCleanupExport
-  [hashtable]$AuthHeaders
+  [dictionary]$AuthHeaders
   [string]$CommonRequestParams
 
   ReleaseBundleDownloader([string]$resourceName) {
