@@ -38,9 +38,7 @@ class ReleaseBundleDownloader {
     $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams)"
-    unzip $this.ResponseBodyFile
-
-    throw "trying to unzip"
+    Expand-Archive -LiteralPath $this.ResponseBodyFile -DestinationPath $PWD
   }
 
   # Returns a download url once export is done
@@ -52,7 +50,7 @@ class ReleaseBundleDownloader {
       $this.ShouldCleanupExport = $true
       $exportStatus = $this._exportReleaseBundle()
       if ($exportStatus -eq "FAILED") {
-        execute_command "throw `"Release Bundle export failed"`"
+        execute_command "throw 'Release Bundle export failed'"
       }
     }
 
