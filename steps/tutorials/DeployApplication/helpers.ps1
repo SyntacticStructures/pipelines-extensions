@@ -44,7 +44,7 @@ class ReleaseBundleDownloader {
   [string]
   _ensureExport() {
     $exportStatus = $this._getDistributionExportStatus
-    if ($status -eq "NOT_TRIGGERED" -or $status -eq "FAILED") {
+    if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
       $this.ShouldCleanupExport = $true
       $exportStatus = $this._exportReleaseBundle
       if ($exportStatus -eq "FAILED") {
@@ -52,7 +52,7 @@ class ReleaseBundleDownloader {
       }
     }
 
-    sleepSeconds = 2
+    $sleepSeconds = 2
     while ("$exportStatus" -eq "NOT_EXPORTED" -or "$exportStatus" -eq "IN_PROGRESS") {
       execute_command "echo 'Waiting for release bundle export to complete'"
       execute_command "Start-Sleep -Seconds $sleepSeconds"
@@ -74,13 +74,13 @@ class ReleaseBundleDownloader {
   _exportReleaseBundle() {
     execute_command "Write-Output 'Exporting Release Bundle: $($this.BundleName)/$($this.BundleVersion)'"
     execute_command "retry_command Invoke-WebRequest `"$(this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)`" -Method Post -Headers -ContentType 'application/json' $($this.CommonRequestParams)"
-    $exportStatus = (ConvertFrom-JSON (Get-Content "${step_tmp_dir}/response")).status
+    $exportStatus = (ConvertFrom-JSON (Get-Content "${global:step_tmp_dir}/response")).status
     return $exportStatus
   }
 
   [string]
   _getDistributionExportStatus() {
-    execute_command "retry_command Invoke-WebRequest `"${this.Url}/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get $($this.CommonRequestParams)"
+    execute_command "retry_command Invoke-WebRequest `"$($this.Url)/api/v1/export/release_bundle/$($this.BundleName)/$($this.BundleVersion)/status`" -Method Get $($this.CommonRequestParams)"
     $exportStatus = (ConvertFrom-JSON (Get-Content "$($this.ResponseFilePath)")).status
     return $exportStatus
   }
