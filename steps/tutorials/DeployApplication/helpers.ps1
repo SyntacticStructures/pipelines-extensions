@@ -15,8 +15,6 @@ class ReleaseBundleDownloader {
   [string]$CommonRequestParams
 
   ReleaseBundleDownloader([string]$resourceName) {
-    execute_command "echo 'starting init'"
-    exit 1
     $this.BundleVersion = $( (Get-Variable -Name "res_$( $resourceName )_version").Value )
     $this.BundleName = $( (Get-Variable -Name "res_$( $resourceName )_name").Value )
     $this.Url = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_url").Value )
@@ -27,11 +25,11 @@ class ReleaseBundleDownloader {
     $this.ShouldCleanupExport = $false
     $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
     $this.CommonRequestParams = "$($this.AuthHeaders) -TimeoutSec 60 -UseBasicParsing -OutFile `"$($this.ResponseBodyFile)`" -PassThru"
-    execute_command "echo 'finish init'"
   }
 
   Download() {
     # Release bundle must be exported before it can be downloaded
+    execute_command "echo 'starting download'"
     $downloadUrl = $this._ensureExport()
     execute_command "echo 'Release Bundle $($this.BundleName)/$($this.BundleVersion) is exported'"
     $this._download($downloadUrl)
