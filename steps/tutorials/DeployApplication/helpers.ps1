@@ -37,7 +37,7 @@ class ReleaseBundleDownloader {
   _download($downloadUrl) {
     $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
-    $responseBodyFile = $this.ResponseBodyFile + ".zip"
+    $responseBodyFile = '$this.ResponseBodyFile' + ".zip"
     execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams) -OutFile $responseBodyFile"
     Expand-Archive -LiteralPath $responseBodyFile -DestinationPath $PWD
   }
