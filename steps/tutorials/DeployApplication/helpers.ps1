@@ -47,7 +47,7 @@ class ReleaseBundleDownloader {
   # Returns a download url once export is done
   _ensureExport() {
     $this._getDistributionExportStatus()
-    $exportStatus = $this._getDistributionExportStatus()
+    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     if ($exportStatus -eq "NOT_TRIGGERED" -or $exportStatus -eq "FAILED") {
       $this.ShouldCleanupExport = $true
       $this._exportReleaseBundle()
@@ -65,7 +65,8 @@ class ReleaseBundleDownloader {
         # 128s timeout
         break
       }
-      $exportStatus = $this._getDistributionExportStatus()
+      $this._getDistributionExportStatus()
+      $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
     }
 
     if ($exportStatus -ne "COMPLETED") {
@@ -81,11 +82,8 @@ class ReleaseBundleDownloader {
     execute_command "retry_command Invoke-WebRequest `"$( $this.Url )/api/v1/export/release_bundle/$( $this.BundleName )/$( $this.BundleVersion )`" -Method Post -Headers `$headers -ContentType 'application/json' -OutFile $( $this.ResponseBodyFile ) $( $this.CommonRequestParams )"
   }
 
-  [string]
   _getDistributionExportStatus() {
     $headers = @{ Authorization = "Basic $( $this.EncodedAuth )" }
     execute_command "retry_command Invoke-WebRequest `"$( $this.Url )/api/v1/export/release_bundle/$( $this.BundleName )/$( $this.BundleVersion )/status`" -Method Get -Headers `$headers -OutFile $( $this.ResponseBodyFile ) $( $this.CommonRequestParams )"
-    $exportStatus = (ConvertFrom-JSON (Get-Content $this.ResponseBodyFile)).status
-    return $exportStatus
   }
 }
