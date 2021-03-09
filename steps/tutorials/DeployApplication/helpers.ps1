@@ -10,6 +10,7 @@ class ReleaseBundleDownloader {
   [string]$BundleName
   [string]$Url
   [string]$ResponseBodyFile
+  [string]$ZipResponseBodyFile
   [bool]$ShouldCleanupExport
   [string]$EncodedAuth
   [string]$CommonRequestParams
@@ -23,6 +24,7 @@ class ReleaseBundleDownloader {
     $this.EncodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${user}:${apikey}"))
     $this.ShouldCleanupExport = $false
     $this.ResponseBodyFile = "${env:step_tmp_dir}\response"
+    $this.ZipResponseBodyFile = "${env:step_tmp_dir}\response.zip"
     $this.CommonRequestParams = "-TimeoutSec 60 -UseBasicParsing -PassThru"
   }
 
@@ -37,9 +39,8 @@ class ReleaseBundleDownloader {
   _download($downloadUrl) {
     $headers = @{ Authorization = "Basic $($this.EncodedAuth)" }
     execute_command "echo 'Downloading Release Bundle $($this.BundleName)/$($this.BundleVersion)'"
-    $responseBodyFile = '$this.ResponseBodyFile' + ".zip"
-    execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams) -OutFile $responseBodyFile"
-    Expand-Archive -LiteralPath $responseBodyFile -DestinationPath $PWD
+    execute_command "retry_command Invoke-WebRequest `"${downloadURL}`" -Method Get -Headers `$headers $($this.CommonRequestParams) -OutFile $($this.ZipResponseBodyFile)"
+    Expand-Archive -LiteralPath $this.ZipResponseBodyFile -DestinationPath $PWD
   }
 
   # Returns a download url once export is done
