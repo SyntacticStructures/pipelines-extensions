@@ -77,7 +77,7 @@ function DeployApplication() {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
-    $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12061 -o StrictHostKeyChecking=no"
+    $ssh_base_cmd = "ssh $step_configuration_sshUser@4.tcp.ngrok.io -p 12062 -o StrictHostKeyChecking=no"
 
     $target_dir = "~/$step_name/$run_id"
     if ($step_configuration_targetDirectory -ne $null) {
