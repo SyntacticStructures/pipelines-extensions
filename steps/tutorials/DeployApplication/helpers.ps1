@@ -10,7 +10,6 @@ class ReleaseBundleDownloader {
   [string]$BundleName
   [string]$Url
   [string]$ResponseBodyFile
-  [hashtable]$AuthHeaders
   [bool]$ShouldCleanupExport
   [string]$CommonRequestParams
 
@@ -21,10 +20,10 @@ class ReleaseBundleDownloader {
     $user = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_user").Value )
     $apikey = $( (Get-Variable -Name "res_$( $resourceName )_sourceDistribution_apikey").Value )
     $encodedAuth = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${global:distribution_user}:${global:distribution_apikey}"))
-    $this.AuthHeaders = @{ Authorization = "Basic $encodedAuth" }
+    $authHeaders = @{ Authorization = "Basic $encodedAuth" }
     $this.ShouldCleanupExport = $false
     $this.ResponseBodyFile = "${global:step_tmp_dir}/response"
-    $this.CommonRequestParams = "`$(`$this.AuthHeaders) -TimeoutSec 60 -UseBasicParsing -OutFile `"`$(`$this.ResponseBodyFile)`" -PassThru"
+    $this.CommonRequestParams = "`$authHeaders -TimeoutSec 60 -UseBasicParsing -OutFile `"`$(`$this.ResponseBodyFile)`" -PassThru"
   }
 
   Download() {
