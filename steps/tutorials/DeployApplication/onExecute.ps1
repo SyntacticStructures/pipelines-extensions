@@ -22,9 +22,7 @@ function DeployApplication() {
     $vmTargets = $DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
 
-  execute_command "echo 'before ssh'"
   setupSSH($vmClusterResName)
-  execute_command "echo 'after ssh'"
 
   $tardir = Join-Path $PWD -ChildPath "uploadFiles"
   execute_command "mkdir ${tardir}"
