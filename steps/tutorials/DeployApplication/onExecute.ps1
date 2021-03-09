@@ -5,6 +5,7 @@ $ErrorActionPreference = "Stop"
 
 function DeployApplication() {
   #  gci env:* | sort-object name
+  execute_command "echo 'wtf'"
   $vmClusterResName = $( get_resource_name -type VmCluster -operation "IN" )
   $vmTargets = $( (Get-Variable -Name "res_$( $vmClusterResName )_targets").Value | ConvertFrom-Json )
 
@@ -166,5 +167,5 @@ public static class TrustEverything
   }
 }
 
-check_no_verify_ssl
+#check_no_verify_ssl
 DeployApplication
