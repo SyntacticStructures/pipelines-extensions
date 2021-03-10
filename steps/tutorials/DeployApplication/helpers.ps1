@@ -25,6 +25,7 @@ function _downloadReleaseBundle() {
   execute_command "echo 'Release Bundle ${BundleName}/${BundleVersion} is exported'"
   $headers = @{ Authorization = "Basic ${EncodedAuth}" }
   execute_command "echo 'Downloading Release Bundle ${BundleName}/${BundleVersion}'"
+  $ProgressPreference = 'SilentlyContinue'
   execute_command "retry_command Invoke-WebRequest `"${DownloadURL}`" -Method Get -Headers `$headers ${CommonRequestParams} -OutFile ${ZipResponseBodyFile}"
   Expand-Archive -LiteralPath $ZipResponseBodyFile -DestinationPath $PWD
 }
