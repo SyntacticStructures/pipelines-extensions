@@ -74,7 +74,7 @@ DeployApplication() {
     fi
 
     # TODO: ssh-add, not scp -i
-    local ssh_base_command="ssh -n $vm_target"
+    local ssh_base_command="ssh -i $ssh_id -n $vm_target"
 
     local target_dir="~/$step_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
