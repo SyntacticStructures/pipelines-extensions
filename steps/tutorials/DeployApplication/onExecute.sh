@@ -16,10 +16,6 @@ DeployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
-  local ssh_base_command="ssh -i $ssh_id -n $vm_target"
-
-  exit 1
-
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
     execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
