@@ -18,7 +18,6 @@ DeployApplication() {
 
   local ssh_base_command="ssh -i $ssh_id -n $vm_target"
 
-  execute_command "$ssh_base_command ls /"
   exit 1
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
@@ -79,7 +78,7 @@ DeployApplication() {
     fi
 
     # TODO: ssh-add, not scp -i
-    local ssh_base_command="ssh -i $ssh_id -n $vm_target"
+    local ssh_base_command="ssh -i $ssh_id -n $vm_target -o StrictHostKeyChecking=no"
 
     local target_dir="~/$step_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
