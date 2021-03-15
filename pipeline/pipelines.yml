@@ -61,7 +61,7 @@ pipelines:
         configuration:
 #          environmentVariables:
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
-#          nodePool: w19Taylorl
+          nodePool: u18
           vmEnvironmentVariables:
             - "var1=foo"
             - "var2=${run_id}"
