@@ -111,9 +111,9 @@ DeployApplication() {
     execute_command "echo Creating target dir on vm"
     execute_command "$make_target_dir_command"
     execute_command "echo Uploading artifacts to vm"
-    execute_command "$upload_command" || failed_vms+=("$vm_target"); eval "$on_failure"
+    execute_command "$upload_command"
     execute_command "echo Running deploy command"
-    execute_command "$deploy_command" || failed_vms+=("$vm_target"); eval "$on_failure"
+    execute_command "$deploy_command"
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "echo Running post-deploy command"
