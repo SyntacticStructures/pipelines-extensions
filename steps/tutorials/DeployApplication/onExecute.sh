@@ -4,6 +4,7 @@ set -e -o pipefail
 source "./helpers.sh"
 
 DeployApplication() {
+  execute_command "get_resource_name --type VmCluster --operation IN --syntax-version v1.0"
 #  local buildinfo_res_name=$(get_resource_name --type BuildInfo --operation IN)
 #
 #  local filespec_res_name=$(get_resource_name --type FileSpec --operation IN)
@@ -11,7 +12,7 @@ DeployApplication() {
 #
 #  local releasebundle_res_name=$(get_resource_name --type ReleaseBundle --operation IN)
 #
-  local vm_cluster_name=$(get_resource_name --type VmCluster --operation IN)
+  local vm_cluster_name=$()
 #  local res_targets=$(eval echo "$"res_"$vm_cluster_name"_targets)
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 #  local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
