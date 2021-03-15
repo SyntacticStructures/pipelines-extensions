@@ -68,8 +68,8 @@ pipelines:
           inputResources:
             - name: myVM
 #            - name: myBuildInfo
-#            - name: myApp
-            - name: myReleaseBundle2
+            - name: myApp
+#            - name: myReleaseBundle2
           targetDirectory: "/opt/hello"
           # Artifactory removes the executable bit from files
           deployCommand: "du"

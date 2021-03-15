@@ -16,6 +16,7 @@ DeployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
+  # TODO: remove this ssh command
   execute_command "ssh -i /root/.ssh/myVM -n root@192.168.50.3 -o StrictHostKeyChecking=no \"ls /\""
 
 
