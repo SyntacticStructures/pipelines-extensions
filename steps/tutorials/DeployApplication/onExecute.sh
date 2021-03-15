@@ -16,7 +16,7 @@ DeployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
 #  local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 #
-  execute_command "cat $vm_cluster_name"
+  execute_command "echo $vm_cluster_name"
   execute_command "printenv"
   execute_command "cat $ssh_id"
   execute_command "ssh -i /root/.ssh/myVM -n root@192.168.50.3 -o StrictHostKeyChecking=no \"ls /\""
