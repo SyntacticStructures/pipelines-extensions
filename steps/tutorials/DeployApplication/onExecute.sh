@@ -17,8 +17,8 @@ DeployApplication() {
   local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
   # TODO: remove this ssh command
-  execute_command "ssh -i /root/.ssh/myVM -n root@192.168.50.3 -o StrictHostKeyChecking=no \"ls /\""
-
+  execute_command "ssh root@192.168.50.3 -o StrictHostKeyChecking=no \"ls /\""
+  exit 1
 
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
