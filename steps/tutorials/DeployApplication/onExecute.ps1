@@ -1,7 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-execute_command ". .\helpers.ps1"
-
 . .\helpers.ps1
 function DeployApplication() {
   #  gci env:* | sort-object name
@@ -38,8 +36,6 @@ function DeployApplication() {
       )
       Add-Content -Path $vmEnvFilePath -Value "export ${envVar}"
     }
-    # TODO delete this cat
-    execute_command "cat $vmEnvFilePath"
   }
 
   pushd $tardir
@@ -62,7 +58,6 @@ function DeployApplication() {
   execute_command "tar -czvf ../${tarballName} ."
   popd
 
-  # TODO -- IMPORTANT: do not hard-code vm addrs
   $failedVMs = @()
   for ($i = 0; $i -lt $vmTargets.Length; $i++) {
     $vmTarget = $vmTargets[$i]
@@ -71,7 +66,7 @@ function DeployApplication() {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
-    $sshBaseCmd = "ssh ${step_configuration_sshUser}@6.tcp.ngrok.io -p 11218 -o StrictHostKeyChecking=no"
+    $sshBaseCmd = "ssh ${step_configuration_sshUser}@${vmTarget} -o StrictHostKeyChecking=no"
 
     $targetDir = "~/${step_name}/${run_id}"
     if ($step_configuration_targetDirectory -ne $null) {
@@ -80,7 +75,7 @@ function DeployApplication() {
     $makeTargetDirCommand = "${sshBaseCmd} `"mkdir -p ${targetDir}`""
 
     # Command to upload app tarball to vm
-    $uploadCommand = "scp -P 11218 -o StrictHostKeyChecking=no .\${tarballName} ${step_configuration_sshUser}@6.tcp.ngrok.io`:${targetDir}"
+    $uploadCommand = "scp -o StrictHostKeyChecking=no .\${tarballName} ${step_configuration_sshUser}@${vmTarget}`:${targetDir}"
 
     # Command to source the file with vmEnvironmentVariables
     if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
@@ -131,8 +126,7 @@ function DeployApplication() {
   if (($step_configuration_rollbackCommand -ne $null) -and ($failedVMs.count -gt 0)) {
     Foreach ($vmTarget IN $vmTargets) {
       execute_command "echo 'Executing rollback command on vm: ${vmTarget}'"
-      # TODO -- IMPORTANT: do not hard-code vm addrs
-      $sshBaseCmd = "ssh ${step_configuration_sshUser}@6.tcp.ngrok.io -p 11218 -o StrictHostKeyChecking=no"
+      $sshBaseCmd = "ssh ${step_configuration_sshUser}@${vmTarget} -o StrictHostKeyChecking=no"
       try {
         execute_command "${sshBaseCommand} `"${step_configuration_rollbackCommand}`""
       }
