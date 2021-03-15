@@ -16,10 +16,6 @@ DeployApplication() {
   local ssh_id="$HOME/.ssh/$vm_cluster_name"
   local vm_targets=( $(echo "$res_targets" | jq --raw-output '.[]') )
 
-  # TODO: remove this ssh command
-  execute_command "ssh root@192.168.50.3 -o StrictHostKeyChecking=no \"ls /\""
-  exit 1
-
   res_types=( $buildinfo_res_name $filespec_res_name $releasebundle_res_name )
   if [ "${#res_types[@]}" != 1 ]; then
     execute_command "echo Exactly one resource of type BuildInfo\|ReleaseBundle\|FileSpec is supported."
@@ -77,8 +73,7 @@ DeployApplication() {
       execute_command "sleep ${step_configuration_rolloutDelay}s"
     fi
 
-    # TODO: ssh-add, not scp -i
-    local ssh_base_command="ssh -i $ssh_id -n $step_configuration_sshUser@$vm_target -o StrictHostKeyChecking=no"
+    local ssh_base_command="ssh $step_configuration_sshUser@$vm_target -o StrictHostKeyChecking=no"
 
     local target_dir="~/$step_name/$run_id"
     if [ -n "$step_configuration_targetDirectory" ]; then
@@ -87,7 +82,7 @@ DeployApplication() {
     local make_target_dir_command="$ssh_base_command \"mkdir -p $target_dir\""
 
     # Command to upload app tarball to vm
-    local upload_command="scp -i $ssh_id $step_tmp_dir/$tarball_name $vm_target:$target_dir"
+    local upload_command="scp $step_tmp_dir/$tarball_name $vm_target:$target_dir"
 
     # Command to run the deploy command from within the uploaded dir
     local untar="cd $target_dir/; tar -xvf $tarball_name; rm -f $tarball_name;"
@@ -134,7 +129,7 @@ DeployApplication() {
   if [ -n "$step_configuration_rollbackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
     for vm_target in "${vm_targets[@]}"; do
       execute_command "echo 'Executing rollback command on vm: $vm_target'"
-      local ssh_base_command="ssh -i $ssh_id -n $step_configuration_sshUser@$vm_target"
+      local ssh_base_command="ssh $step_configuration_sshUser@$vm_target"
       # If rollback fails, keep trying to roll back other vms
       execute_command "$ssh_base_command \"$step_configuration_rollbackCommand\" || continue"
     done
