@@ -54,10 +54,34 @@ resources:
       version: "5"
 
 pipelines:
-  - name: DeployToVM
+  - name: LinuxDeployToVM
     steps:
       - name: myDeploy
-        type: tutorials/DeployApplication
+        type: LinuxVMDeploy
+        configuration:
+#          environmentVariables:
+#            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
+#          nodePool: w19Taylorl
+          vmEnvironmentVariables:
+            - "var1=foo"
+            - "var2=${run_id}"
+          inputResources:
+            - name: myVM
+#            - name: myBuildInfo
+            - name: myApp
+#            - name: myReleaseBundle2
+          targetDirectory: "/opt/hello"
+          # Artifactory removes the executable bit from files
+          deployCommand: "du"
+          postDeployCommand: "echo 'this is the postDeploy command'; printenv"
+          sshUser: root
+          rolloutDelay: 3
+          rollbackCommand: "echo 'this is the rollback command'; ls"
+#          fastFail: false
+  - name: WindowsDeployToVM
+    steps:
+      - name: myDeploy
+        type: WindowsVMDeploy
         configuration:
 #          environmentVariables:
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
