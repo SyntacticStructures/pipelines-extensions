@@ -132,7 +132,7 @@ DeployApplication() {
   if [ -n "$step_configuration_rollbackCommand" ] && [ "${#failed_vms[@]}" -gt 0 ]; then
     for vm_target in "${vm_targets[@]}"; do
       execute_command "echo 'Executing rollback command on vm: $vm_target'"
-      local ssh_base_command="ssh -i $ssh_id -n $vm_target"
+      local ssh_base_command="ssh -i $ssh_id -n $step_configuration_sshUser@$vm_target"
       # If rollback fails, keep trying to roll back other vms
       execute_command "$ssh_base_command \"$step_configuration_rollbackCommand\" || continue"
     done
