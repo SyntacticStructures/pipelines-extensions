@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e -o pipefail
 
-source "./helpers.sh"
+#source "./helpers.sh"
 
 DeployApplication() {
   execute_command "get_resource_name --type ReleaseBundle --operation IN"
