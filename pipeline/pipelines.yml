@@ -59,7 +59,8 @@ pipelines:
       - name: myDeploy
         type: tutorials/DeployApplication
         configuration:
-          environmentVariables:
+#          environmentVariables:
+#            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
 #          nodePool: w19Taylorl
           vmEnvironmentVariables:
             - "var1=foo"
