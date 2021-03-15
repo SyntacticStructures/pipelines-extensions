@@ -18,7 +18,7 @@ function DeployApplication() {
     execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
-  if ("$DEPLOY_TARGETS_OVERRIDE" -ne $null) {
+  if ($DEPLOY_TARGETS_OVERRIDE -ne $null) {
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     $vmTargets = $DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
