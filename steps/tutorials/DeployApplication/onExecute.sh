@@ -102,10 +102,10 @@ DeployApplication() {
     local post_deploy_command="$ssh_base_command \
     \"cd $target_dir; $source_env_file $step_configuration_postDeployCommand\""
 
-    on_failure='failed_vms+=("$vm_target"); break'
+    on_failure="failed_vms+=($vm_target); break"
     # Don't exit on failed commands if fastFail is specified as false
     if [ -n "$step_configuration_fastFail" ] && [ "$step_configuration_fastFail" == false ]; then
-      on_failure='failed_vms+=("$vm_target"); continue'
+      on_failure="failed_vms+=('$vm_target'); continue"
     fi
     execute_command "echo Creating target dir on vm"
     execute_command "$make_target_dir_command" || eval "$on_failure"
