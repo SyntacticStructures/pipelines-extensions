@@ -117,7 +117,7 @@ DeployApplication() {
 
     if [ -n "$step_configuration_postDeployCommand" ]; then
       execute_command "echo Running post-deploy command"
-      execute_command "$post_deploy_command"
+      execute_command "$post_deploy_command || failed_vms+=($vm_target); eval $on_failure"
     fi
 
     # Deploy was successful.
