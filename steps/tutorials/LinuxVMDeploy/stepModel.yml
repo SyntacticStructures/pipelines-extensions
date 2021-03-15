@@ -1,6 +1,5 @@
 platforms:
   - os: Linux
-  - os: Windows
 configuration:
   targetDirectory:
     type: String
