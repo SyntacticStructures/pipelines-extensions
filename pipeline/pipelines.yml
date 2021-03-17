@@ -66,7 +66,7 @@ pipelines:
             - "var1=foo"
             - "var2=${run_id}"
           inputResources:
-            - name: myVM
+#            - name: myVM
 #            - name: myBuildInfo
             - name: myApp
 #            - name: myReleaseBundle2
