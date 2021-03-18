@@ -59,8 +59,8 @@ pipelines:
       - name: myDeploy
         type: jfrog_dev/LinuxVMDeploy
         configuration:
-#          environmentVariables:
-#            rolloutDelay: 1
+          environmentVariables:
+            sshUser: root
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
           nodePool: u18
           vmEnvironmentVariables:
@@ -75,7 +75,7 @@ pipelines:
           # Artifactory removes the executable bit from files
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
-          sshUser: root
+          sshUser: "${sshUser}"
 #          rolloutDelay: 2
           rollbackCommand: "echo 'this is the rollback command'; ls"
 #          fastFail: false
