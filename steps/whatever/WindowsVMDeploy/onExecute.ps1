@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 . .\helpers.ps1
+
 function DeployApplication() {
   #  gci env:* | sort-object name
   $vmClusterResName = $( get_resource_name -type VmCluster -operation "IN" )
@@ -16,7 +17,7 @@ function DeployApplication() {
     execute_command "throw `"Exactly one resource of type BuildInfo`|ReleaseBundle`|FileSpec is supported.`""
   }
 
-  if ($DEPLOY_TARGETS_OVERRIDE -ne $null) {
+  if ($null -ne $DEPLOY_TARGETS_OVERRIDE) {
     execute_command "echo 'Overriding vm deploy targets with: $DEPLOY_TARGETS_OVERRIDE'"
     $vmTargets = $DEPLOY_TARGETS_OVERRIDE.Split(",")
   }
@@ -29,7 +30,7 @@ function DeployApplication() {
   # Create a file with env vars to source on the target vms
   $vmEnvFilename = "${step_name}-${run_id}.env"
   $vmEnvFilePath = "${tardir}\${vmEnvFilename}"
-  if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
+  if ($null -ne $step_configuration_vmEnvironmentVariables_len) {
     for ($i = 0; $i -lt $step_configuration_vmEnvironmentVariables_len; $i++) {
       $envVar = $ExecutionContext.InvokeCommand.ExpandString(
           $( (Get-Variable -Name "step_configuration_vmEnvironmentVariables_$( $i )").Value )
@@ -62,14 +63,14 @@ function DeployApplication() {
   for ($i = 0; $i -lt $vmTargets.Length; $i++) {
     $vmTarget = $vmTargets[$i]
 
-    if ($step_configuration_rolloutDelay -ne $null -and $i -ne 0) {
+    if ($null -ne $step_configuration_rolloutDelay -and $i -ne 0) {
       execute_command "Start-Sleep -s $step_configuration_rolloutDelay"
     }
 
     $sshBaseCmd = "ssh ${step_configuration_sshUser}@${vmTarget} -o StrictHostKeyChecking=no"
 
     $targetDir = "~/${step_name}/${run_id}"
-    if ($step_configuration_targetDirectory -ne $null) {
+    if ($null -ne $step_configuration_targetDirectory) {
       $targetDir = $step_configuration_targetDirectory
     }
     $makeTargetDirCommand = "${sshBaseCmd} `"mkdir -p ${targetDir}`""
@@ -78,7 +79,7 @@ function DeployApplication() {
     $uploadCommand = "scp -o StrictHostKeyChecking=no .\${tarballName} ${step_configuration_sshUser}@${vmTarget}`:${targetDir}"
 
     # Command to source the file with vmEnvironmentVariables
-    if ($step_configuration_vmEnvironmentVariables_len -ne $null) {
+    if ($null -ne $step_configuration_vmEnvironmentVariables_len) {
       $sourceEnvFile = "source ${targetDir}/${vmEnvFilename};"
     }
 
@@ -98,7 +99,7 @@ function DeployApplication() {
 
       execute_command "echo Running deploy command"
       execute_command $deployCommand
-      if ($step_configuration_postDeployCommand -ne $null) {
+      if ($null -ne $step_configuration_postDeployCommand) {
         execute_command "echo Running post-deploy command"
         execute_command $postDeployCommand
       }
@@ -123,7 +124,7 @@ function DeployApplication() {
   }
 
   # Do rollback
-  if (($step_configuration_rollbackCommand -ne $null) -and ($failedVMs.count -gt 0)) {
+  if (($null -ne $step_configuration_rollbackCommand) -and ($failedVMs.count -gt 0)) {
     Foreach ($vmTarget IN $vmTargets) {
       execute_command "echo 'Executing rollback command on vm: ${vmTarget}'"
       $sshBaseCmd = "ssh ${step_configuration_sshUser}@${vmTarget} -o StrictHostKeyChecking=no"
