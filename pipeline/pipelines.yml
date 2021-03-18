@@ -59,8 +59,8 @@ pipelines:
       - name: myDeploy
         type: jfrog_dev/LinuxVMDeploy
         configuration:
-#          environmentVariables:
-#            targetDirectory: "/opt/poodles"
+          environmentVariables:
+            rolloutDelay: 1
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
           nodePool: u18
           vmEnvironmentVariables:
@@ -76,7 +76,7 @@ pipelines:
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
           sshUser: root
-          rolloutDelay: 3
+          rolloutDelay: "${rolloutDelay}"
           rollbackCommand: "echo 'this is the rollback command'; ls"
 #          fastFail: false
   - name: WindowsDeployToVM
