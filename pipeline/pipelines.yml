@@ -59,7 +59,7 @@ pipelines:
       - name: myDeploy
         type: jfrog_dev/LinuxVMDeploy
         configuration:
-          environmentVariables:
+#          environmentVariables:
 #            targetDirectory: "/opt/poodles"
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
           nodePool: u18
