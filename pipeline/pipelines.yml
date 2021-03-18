@@ -60,7 +60,7 @@ pipelines:
         type: jfrog_dev/LinuxVMDeploy
         configuration:
           environmentVariables:
-            targetDirectory: "/opt/poodles"
+#            targetDirectory: "/opt/poodles"
 #            DEPLOY_TARGETS_OVERRIDE: "192.168.50.2,192.168.50.3"
           nodePool: u18
           vmEnvironmentVariables:
@@ -71,7 +71,7 @@ pipelines:
             - name: myBuildInfo
 #            - name: myApp
 #            - name: myReleaseBundle2
-          targetDirectory: "${targetDirectory}"
+#          targetDirectory: "${targetDirectory}"
           # Artifactory removes the executable bit from files
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
