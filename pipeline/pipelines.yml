@@ -76,7 +76,7 @@ pipelines:
           deployCommand: "du"
           postDeployCommand: "echo 'this is the postDeploy command'; printenv"
           sshUser: root
-          rolloutDelay: "(${rolloutDelay})"
+          rolloutDelay: (${rolloutDelay})
           rollbackCommand: "echo 'this is the rollback command'; ls"
 #          fastFail: false
   - name: WindowsDeployToVM
