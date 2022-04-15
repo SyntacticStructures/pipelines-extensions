@@ -1,5 +1,7 @@
 platforms:
-  - os: Linuxz
+  - os: Linux
 configuration:
+  bar:
+    type: Brongs
   foo:
     type: Strings
