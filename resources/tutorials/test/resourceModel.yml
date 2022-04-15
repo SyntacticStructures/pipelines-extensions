@@ -6,4 +6,4 @@ configuration:
   number:
     type: Int
   flag:
-    type: Boolean
+    type: Booleanz
