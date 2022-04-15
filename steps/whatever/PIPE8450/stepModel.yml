@@ -2,4 +2,4 @@ platforms:
   - os: Linux
 configuration:
   foo:
-    type: String
+    type: Strings
