@@ -2,6 +2,6 @@ platforms:
   - os: Linux
 configuration:
   bar:
-    type: Brongs
+    type: InvalidTypeBar
   foo:
-    type: Strings
+    type: InvalidTypeFoo
