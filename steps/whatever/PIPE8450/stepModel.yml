@@ -2,6 +2,6 @@ platforms:
   - os: Linux
 configuration:
   bar:
-    type: Brongs
+    type: Boolean
   foo:
-    type: Strings
+    type: String
