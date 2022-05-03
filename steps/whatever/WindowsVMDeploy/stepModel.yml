@@ -1,0 +1,21 @@
+platforms:
+  - os: Windows
+configuration:
+  targetDirectory:
+    type: String
+  fastFail:
+    type: Boolean
+  deployCommand:
+    type: String
+  postDeployCommand:
+    type: String
+  rolloutDelay:
+    type: Int
+  rollbackCommand:
+    type: String
+  sshUser:
+    type: String
+    validate:
+      notEmpty: true
+  vmEnvironmentVariables:
+    type: String[]
