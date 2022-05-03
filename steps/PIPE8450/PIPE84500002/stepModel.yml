@@ -2,4 +2,4 @@ platforms:
   - os: Linux
 configuration:
   baz:
-    type: Blulean
+    type: Boolean
